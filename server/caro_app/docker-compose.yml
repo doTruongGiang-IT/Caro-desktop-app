@@ -1,0 +1,25 @@
+version: '3'
+services:
+    np-server:
+        image: np_caro_server
+        networks:
+            - np_net
+        container_name: caro_server
+        ports:
+            - 8080:8080
+        depends_on:
+            - np-database
+
+    np-database:
+        image: postgres:latest
+        networks:
+            - np_net
+        environment:
+            POSTGRES_DB: caro_socket
+            POSTGRES_USER: np_user
+            POSTGRES_PASSWORD: asd123!@#
+        ports:
+            - 5433:5432
+
+networks:
+    np_net: null
