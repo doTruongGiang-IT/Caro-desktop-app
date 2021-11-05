@@ -2,14 +2,17 @@ version: '3'
 services:
     np-server:
         image: np_caro_server
+        volumes:
+            - ./:/app
         networks:
             - np_net
         container_name: caro_server
+        command: bash mvnw spring-boot:run
         ports:
             - 8080:8080
         depends_on:
             - np-database
-
+            
     np-database:
         image: postgres:latest
         networks:
@@ -19,7 +22,7 @@ services:
             POSTGRES_USER: np_user
             POSTGRES_PASSWORD: asd123!@#
         ports:
-            - 5433:5432
-
+            - 5434:5432
+ 
 networks:
     np_net: null

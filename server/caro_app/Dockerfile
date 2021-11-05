@@ -1,8 +1,10 @@
 FROM openjdk:11
 
-ARG JAR_FILE=target/*.jar
+EXPOSE 8080
 
-COPY ${JAR_FILE} /app.jar
+WORKDIR /app
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY . /app
+
+RUN bash mvnw clean package -DskipTests
 
