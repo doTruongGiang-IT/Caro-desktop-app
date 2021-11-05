@@ -6,5 +6,5 @@ WORKDIR /app
 
 COPY . /app
 
-RUN bash mvnw clean package -DskipTests
+# RUN bash mvnw clean package -DskipTests
 
