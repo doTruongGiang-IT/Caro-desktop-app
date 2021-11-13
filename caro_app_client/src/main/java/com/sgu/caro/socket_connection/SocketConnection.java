@@ -31,7 +31,9 @@ public class SocketConnection {
     private static Map <String, Boolean> state = new HashMap<String, Boolean>();
     private static ArrayList<Thread> events = new ArrayList<Thread>();
 
-    public SocketConnection() {
+    public SocketConnection() {}
+    
+    public void startConnection(){
         try {
             socket = new Socket("localhost", 5000);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
