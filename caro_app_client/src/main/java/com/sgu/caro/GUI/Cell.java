@@ -1,8 +1,8 @@
 package com.sgu.caro.GUI;
 
 public class Cell {
-    private int x;
-    private int y;
+    private int posX;
+    private int posY;
     private int w;
     private int h;
     private String value;
@@ -15,21 +15,21 @@ public class Cell {
         value = EMPTY_VALUE;
     }
 
-    public Cell(int x, int y, int w, int h, String value) {
+    public Cell(int posX, int posY, int w, int h, String value) {
 //        this();
-        this.x = x;
-        this.y = y;
+        this.posX = posX;
+        this.posY = posY;
         this.w = w;
         this.h = h;
         this.value = this.value;
     }
 
-    public int getX() {
-        return x;
+	public int getPosX() {
+        return posX;
     }
 
-    public int getY() {
-        return y;
+    public int getPosY() {
+        return posY;
     }
 
     public int getW() {
@@ -44,12 +44,12 @@ public class Cell {
         return value;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setPosX(int posX) {
+        this.posX = posX;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setPosY(int posY) {
+        this.posY = posY;
     }
 
     public void setW(int w) {
