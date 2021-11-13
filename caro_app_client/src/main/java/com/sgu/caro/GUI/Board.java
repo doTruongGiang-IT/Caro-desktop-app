@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 public class Board extends JPanel{
     private static int N = 20;
     private static int M = 20;
+    private int width = 600, height = 600;
     
     private Image imgX, imgO, imgOCurrent, imgXCurrent;
     private String currentPlayer = Cell.O_VALUE;
@@ -24,13 +25,12 @@ public class Board extends JPanel{
     Cell currentCell;
     
     public Board() {
-        this.setPreferredSize(new Dimension(605, 600));
+        this.setPreferredSize(new Dimension(width, height));
         
         for(int i = 0; i < N; ++i) {
             for(int j = 0; j < M; ++j) {
                 Cell cell = new Cell();
                 matrix[i][j] = cell;
-                
             }
         }
         
@@ -62,16 +62,16 @@ public class Board extends JPanel{
         try{
             ImageIcon img; 
             img = new ImageIcon(ImageIO.read(new File("images/x.png")));
-            imgX = img.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imgX = img.getImage().getScaledInstance(width/N, height/M, Image.SCALE_SMOOTH);
             
             img = new ImageIcon(ImageIO.read(new File("images/x-current.png")));
-            imgXCurrent = img.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imgXCurrent = img.getImage().getScaledInstance(width/N, height/M, Image.SCALE_SMOOTH);
      
             img = new ImageIcon(ImageIO.read(new File("images/o.png")));
-            imgO = img.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imgO = img.getImage().getScaledInstance(width/N, height/M, Image.SCALE_SMOOTH);
             
             img = new ImageIcon(ImageIO.read(new File("images/o-current.png")));
-            imgOCurrent = img.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imgOCurrent = img.getImage().getScaledInstance(width/N, height/M, Image.SCALE_SMOOTH);
         }
         catch(Exception e) {
             e.printStackTrace();
