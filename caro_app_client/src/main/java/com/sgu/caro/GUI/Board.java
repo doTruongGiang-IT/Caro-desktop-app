@@ -44,7 +44,7 @@ public class Board extends JPanel{
                 for(int i = 0; i < N; ++i) {
                     for(int j = 0; j < M; ++j) {
                         Cell cell = matrix[i][j];
-                        if(xClick > cell.getPosX() && xClick <= (cell.getW() + cell.getPosX()) && yClick > cell.getPosY() && yClick <= (cell.getPosY() + cell.getH())){
+                        if(xClick > cell.getPosX() && xClick <= (cell.getWidth() + cell.getPosX()) && yClick > cell.getPosY() && yClick <= (cell.getPosY() + cell.getHeight())){
                             System.out.println(cell.getPosX() + " " + cell.getPosY());
                             if(cell.getValue().equals("")){
                                 cell.setValue(currentPlayer);
@@ -102,8 +102,8 @@ public class Board extends JPanel{
                 Cell cell = matrix[i][j];
                 cell.setPosY(y);
                 cell.setPosX(x);
-                cell.setW(w);
-                cell.setH(h);
+                cell.setWidth(w);
+                cell.setHeight(h);
                 
                 graphics2D.setColor(color);
                 

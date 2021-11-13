@@ -3,8 +3,8 @@ package com.sgu.caro.GUI;
 public class Cell {
     private int posX;
     private int posY;
-    private int w;
-    private int h;
+    private int width;
+    private int height;
     private String value;
     
     public static final String X_VALUE = "X";
@@ -15,12 +15,12 @@ public class Cell {
         value = EMPTY_VALUE;
     }
 
-    public Cell(int posX, int posY, int w, int h, String value) {
+    public Cell(int posX, int posY, int width, int height, String value) {
 //        this();
         this.posX = posX;
         this.posY = posY;
-        this.w = w;
-        this.h = h;
+        this.width = width;
+        this.height = height;
         this.value = this.value;
     }
 
@@ -32,15 +32,15 @@ public class Cell {
         return posY;
     }
 
-    public int getW() {
-        return w;
+    public int getWidth() {
+    	return width;
     }
 
-    public int getH() {
-        return h;
+    public int getHeight() {
+    	return height;
     }
 
-    public String getValue() {
+	public String getValue() {
         return value;
     }
 
@@ -52,12 +52,12 @@ public class Cell {
         this.posY = posY;
     }
 
-    public void setW(int w) {
-        this.w = w;
+    public void setWidth(int width) {
+    	this.width = width;
     }
 
-    public void setH(int h) {
-        this.h = h;
+    public void setHeight(int height) {
+    	this.height = height;
     }
 
     public void setValue(String value) {
