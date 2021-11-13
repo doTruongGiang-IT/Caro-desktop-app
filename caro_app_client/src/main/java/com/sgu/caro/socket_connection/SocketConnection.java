@@ -77,6 +77,15 @@ public class SocketConnection {
         events.add(thread);
         thread.start();
     }
+        
+   public void sendData(String data){
+        try {
+            out.write(data);
+            out.newLine();
+            out.flush();
+        } catch (IOException e) { System.err.println(e); }
+    }
+    
 
     public void stopEvent(String handlerID){
         state.put(handlerID, false);
