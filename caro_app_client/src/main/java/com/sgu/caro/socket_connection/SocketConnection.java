@@ -26,7 +26,6 @@ public class SocketConnection {
     private static Socket socket = null;
     private static BufferedReader in = null;
     private static BufferedWriter out = null;
-    private static BufferedReader stdIn = null;    
     private static String socketHost = "localhost";    
     private static int socketPort = 5000;
     private static Map <String, Boolean> state = new HashMap<String, Boolean>();
@@ -37,7 +36,6 @@ public class SocketConnection {
             socket = new Socket("localhost", 5000);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            stdIn = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("===== Connected to server =====");
         } catch (IOException e) { System.err.println(e); }
     }
@@ -46,7 +44,6 @@ public class SocketConnection {
         try {
             in.close();
             out.close();
-            stdIn.close();
             socket.close();
             System.out.println("===== Closed connection to server =====");
         } catch (IOException e) { System.err.println(e); }
@@ -60,10 +57,7 @@ public class SocketConnection {
         state.put(handlerID, true);
 
         while(state.get(handlerID)) {
-            try {
-                String rawData = in.readLine();
-                handler.onHandle(in, out);
-            } catch (IOException e) { System.err.println(e); }
+            handler.onHandle(in, out);
         }
     }
      
