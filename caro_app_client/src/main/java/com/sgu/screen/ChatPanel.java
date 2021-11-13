@@ -24,7 +24,6 @@ public class ChatPanel extends javax.swing.JPanel {
         txtChat.setColumns(20);
         txtChat.setLineWrap(true);
         txtChat.setRows(5);
-        txtChat.setText("hhfgejfkgefiugewufgewkgfewgwuwe fewjhiu fewkgufiew fiewgiubk fewjgfiuwge fewkjfiug  fewkhwef fewhfu");
         scrollPaneChat.setViewportView(txtChat);
 
         btnSubmit.setText("Gửi");
@@ -53,7 +52,7 @@ public class ChatPanel extends javax.swing.JPanel {
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-    }// </editor-fold>                        
+    }// </editor-fold>                          
 
 
     // Variables declaration - do not modify                     
