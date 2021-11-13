@@ -29,7 +29,7 @@ public class MatchDesign extends JFrame{
         }
         this.setSize(1100, 640);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(true);
+        this.setResizable(false);
         
         // Set Layout cho Panel chính
         panel = new JPanel();
