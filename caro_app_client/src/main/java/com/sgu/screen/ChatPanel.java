@@ -19,7 +19,7 @@ public class ChatPanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(250, 600));
         setPreferredSize(new java.awt.Dimension(250, 600));
 
-        scrollPaneChat.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null));
+        scrollPaneChat.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Trò chuyện"));
 
         txtChat.setColumns(20);
         txtChat.setLineWrap(true);
@@ -46,8 +46,8 @@ public class ChatPanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(scrollPaneChat, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
-                .addGap(27, 27, 27)
+                .addComponent(scrollPaneChat, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(inputText, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)

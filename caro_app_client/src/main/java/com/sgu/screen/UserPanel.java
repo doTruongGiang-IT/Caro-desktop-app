@@ -39,7 +39,7 @@ public class UserPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(250, 600));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "X"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "X"));
 
         lblUsername1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblUsername1.setText("Username");
@@ -99,7 +99,7 @@ public class UserPanel extends javax.swing.JPanel {
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "O"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "O"));
 
         lblUsername2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblUsername2.setText("Username");
@@ -158,7 +158,7 @@ public class UserPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        scrollPaneListUser.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Khán giả"));
+        scrollPaneListUser.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Khán giả"));
 
         listUser.setColumns(16);
         listUser.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -183,10 +183,10 @@ public class UserPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
+                .addGap(22, 22, 22)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollPaneListUser, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                .addComponent(scrollPaneListUser, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>                        
