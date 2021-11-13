@@ -1,4 +1,4 @@
-package com.sgu.screen;
+package com.sgu.caro.GUI;
 
 public class ChatPanel extends javax.swing.JPanel {
 

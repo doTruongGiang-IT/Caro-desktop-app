@@ -1,4 +1,4 @@
-package com.sgu.screen;
+package com.sgu.caro.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
