@@ -9,3 +9,5 @@ services:
       MYSQL_DATABASE: caro_db
       MYSQL_USER: caro_user
       MYSQL_PASSWORD: caro_password
+    security_opt:
+      - seccomp:unconfined
