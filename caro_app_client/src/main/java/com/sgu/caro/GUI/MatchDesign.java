@@ -76,11 +76,5 @@ public class MatchDesign extends JFrame{
         new MatchDesign();
         SocketConnection socket = new SocketConnection();
         socket.startConnection();
-        socket.addListenConnection("result_match", new SocketHandler(){
-            @Override
-            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-                System.out.println("Match:  " + data);
-            }
-        });
     }
 }

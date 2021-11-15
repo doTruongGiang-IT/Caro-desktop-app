@@ -95,8 +95,8 @@ public class GoStepHandler {
             ArrayList <Integer> posX = new ArrayList<>();
             ArrayList <Integer> posY = new ArrayList<>();
             for (int i=x_l; i<=x_l + 4; i++){
-                posX.add(i);
-                posY.add(y);
+                posX.add(i+1);
+                posY.add(y+1);
             }
             return new ResultMatch(userID, posX, posY);
         }
@@ -115,8 +115,8 @@ public class GoStepHandler {
             ArrayList <Integer> posX = new ArrayList<>();
             ArrayList <Integer> posY = new ArrayList<>();
             for (int i=y_l; i<=y_l + 4; i++){
-                posY.add(i);
-                posX.add(x);
+                posY.add(i+1);
+                posX.add(x+1);
             }
             return new ResultMatch(userID, posX, posY);
         }
@@ -135,8 +135,8 @@ public class GoStepHandler {
             ArrayList <Integer> posX = new ArrayList<>();
             ArrayList <Integer> posY = new ArrayList<>();
             for (int i=0; i<=4; i++){
-                posX.add(x - c1 + i);
-                posY.add(y - c1 + i);
+                posX.add(x - c1 + i + 1);
+                posY.add(y - c1 + i + 1);
             }
             return new ResultMatch(userID, posX, posY);
         }
@@ -155,9 +155,10 @@ public class GoStepHandler {
             ArrayList <Integer> posX = new ArrayList<>();
             ArrayList <Integer> posY = new ArrayList<>();
             for (int i=0; i<=4; i++){
-                posX.add(x - d1 + i);
-                posY.add(y + d1 + i);
+                posX.add(x - d1 + i + 1);
+                posY.add(y + d1 - i + 1);
             }
+            System.out.println("founddasdas");
             return new ResultMatch(userID, posX, posY);
         }
         
