@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -14,7 +15,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User {
 	
 	@Id
@@ -56,6 +57,9 @@ public class User {
 	@Column(name = "day_of_birth")
 	private String dayOfBirth;
 	
+	@Column(name = "score", columnDefinition = "integer default 0")
+	private int score;
+
 	public User() {};
 
 	public User(@NotNull @NotEmpty @Email String username,
@@ -63,7 +67,8 @@ public class User {
 			@NotNull @NotBlank(message = "First name is required") @Size(min = 2, message = "First name should have at least 2 characters") String firstName,
 			@NotNull @NotBlank(message = "Last name is required") @Size(min = 3, message = "Last name should have at least 3 characters") String lastName,
 			@NotNull @NotBlank(message = "Gender is required") String gender,
-			@NotNull @NotBlank(message = "Day_of_birth is required") String dayOfBirth) {
+			@NotNull @NotBlank(message = "Day_of_birth is required") String dayOfBirth,
+			@NotNull int score) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -71,6 +76,7 @@ public class User {
 		this.lastName = lastName;
 		this.gender = gender;
 		this.dayOfBirth = dayOfBirth;
+		this.score = score;
 	};
 
 	public long getId() {
@@ -127,6 +133,14 @@ public class User {
 
 	public void setDayOfBirth(String dayOfBirth) {
 		this.dayOfBirth = dayOfBirth;
+	};
+	
+	public int getScore() {
+		return score;
+	};
+
+	public void setScore(int score) {
+		this.score = score;
 	};
 
 }
