@@ -1,5 +1,6 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONObject;
 
 
 /**
@@ -25,92 +29,95 @@ import java.util.Map;
  */
 public class SocketConnection {
     private static ServerSocket server = null;
-    private static Socket socket = null;
-    private static BufferedReader in = null;
-    private static BufferedWriter out = null;   
     private static String socketHost = "localhost";    
     private static int socketPort = 5000;
-    private static Map <String, Boolean> state = new HashMap<String, Boolean>();
-    private static ArrayList<Thread> events = new ArrayList<Thread>();
+    private static Map <String, Socket> socketClients = new HashMap<String, Socket>();
 
     public SocketConnection() {}
     
     public void startConnection(){
         try {
-            server = new ServerSocket(5000);
-            socket = server.accept();
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            server = new ServerSocket(socketPort); 
             System.out.println("===== Started socket  =====");
+
+            while (true){
+                Socket socket = server.accept();
+                System.out.println(socket);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                String userID = in.readLine(); 
+                System.out.println(userID);
+                socketClients.put(userID, socket);
+                
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleClient(socket, in, out);
+                    }
+                });  
+                thread.start();
+            }
+        } catch (IOException e) { System.err.println(e); }
+    }
+    
+    public void handleClient(Socket socket, BufferedReader in, BufferedWriter out){
+        try {
+            DataSocket dataSocket = new DataSocket();
+            while (true){
+                String rawDateReceive = in.readLine();
+                System.out.println(rawDateReceive);
+                JSONObject dataReceive = dataSocket.importData(rawDateReceive);
+                JSONObject data = dataReceive.getJSONObject("data");
+                String type = dataReceive.getString("type");
+
+                switch (type) {
+                    case "go_step":
+                        System.out.println("go_step");
+                        new GoStepHandler().run(data, in, out);
+                        break;
+                    case "stop":
+                        System.out.println("July");
+                        in.close();
+                        out.close();
+                        socket.close();
+                        break;
+                }
+            }
         } catch (IOException e) { System.err.println(e); }
     }
     
     public void stopConnection(){
         try {
-            in.close();
-            out.close();
-            socket.close();
             server.close();
             System.out.println("===== Closed socket =====");
         } catch (IOException e) { System.err.println(e); }
     }
     
-    public void listenConnectionBase(String handlerID, SocketHandler handler){
-        if (state.containsKey(handlerID)){
-            System.out.println("===== ERROR: handlerID is duplicated =====");
-            return ;
-        }
-        state.put(handlerID, true);
-
-        while(state.get(handlerID)) {
-            handler.onHandle(in, out);
-        }
-    }
-     
-    public void listenConnection(String handlerID, SocketHandler handler){
+    public void updateSocketClients(){
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                listenConnectionBase(handlerID, handler);
+                while (true){
+                    Map <String, Socket> userList = new SocketConnection().getSocketClients();
+
+                    for (Map.Entry<String, Socket> e : userList.entrySet()) {
+                        Socket socketClient = e.getValue();
+                        if (socketClient.isClosed()){
+                            socketClients.remove(e.getKey());
+                        }
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {System.out.println(e);}
+                }
             }
         });  
-        events.add(thread);
         thread.start();
     }
-        
-   public void sendData(String data){
-        try {
-            out.write(data);
-            out.newLine();
-            out.flush();
-        } catch (IOException e) { System.err.println(e); }
-    }
 
-    public void stopEvent(String handlerID){
-        state.put(handlerID, false);
-    }
-
-    public static Map<String, Boolean> getState() {
-        return state;
+    public static Map<String, Socket> getSocketClients() {
+        return socketClients;
     }
     
-    public static void main(String[] args) {
-        // Example 
-        SocketConnection instance = new SocketConnection();
-        instance.listenConnection("send_helloword", new SocketHandler(){
-            public void onHandle(BufferedReader in, BufferedWriter out) {
-                try {
-                    String dataFromServer = in.readLine();
-                    System.out.println("Receive: " + dataFromServer);
-                    out.write("Hello world from client");
-                    out.newLine();
-                    out.flush();
-                    
-                    if (dataFromServer.equals("end_match")){
-                        instance.stopEvent("send_helloword");
-                    }
-                } catch (IOException e) { System.err.println(e); }
-            }
-        });
-    }
+    public static void main(String[] args) {}
 }
