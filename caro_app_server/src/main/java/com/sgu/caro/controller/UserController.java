@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sgu.caro.entity.User;
 import com.sgu.caro.exception.ResourceNotFoundException;
 import com.sgu.caro.repository.UserRepository;
+import com.sgu.caro.token.JwtService;
+
+import antlr.Token;
 
 @RestController
 @RequestMapping("/caro_api/")
@@ -30,6 +34,9 @@ public class UserController {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	JwtService jwtService;
 	
 	// Get all employee
 	//@CrossOrigin(origins = "http://localhost:4200")
@@ -44,6 +51,40 @@ public class UserController {
 	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		return ResponseEntity.ok().body(user);
+	};
+	
+	// Get employee by id
+	//@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("auth")
+	public ResponseEntity<HashMap<String, String>> authentication(@Valid @RequestBody HashMap<String, String> credential) {
+		String username = "";
+		String password = "";
+		HashMap<String, String> result = new HashMap<String, String>();
+		
+		for(String element : credential.keySet()) {
+			if(element.equals("username")) {
+				username = credential.get(element);
+			};
+			if(element.equals("password")) {
+				password = credential.get(element);
+			};
+		};
+		
+		Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
+		User user = userRepository.findByUsername(username);
+		
+		if(user != null) {
+			if(pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+				String token = jwtService.generateTokenLogin(user.getUsername());
+				result.put("access_token", token);
+			}else {
+				result.put("error", "Wrong password");
+			};
+		}else {
+			throw new UsernameNotFoundException("User not exist");
+		};
+		
+		return ResponseEntity.ok().body(result);
 	};
 	
 	// Create new employee
@@ -64,6 +105,8 @@ public class UserController {
 		String hashPass = pbkdf2PasswordEncoder.encode(pass);
 		user.setPassword(hashPass);
 		user.setScore(0);
+		user.setRole("user");
+		user.setActive(true);
 		return userRepository.save(user);
 	};
 	
@@ -73,17 +116,20 @@ public class UserController {
 	public ResponseEntity<User> updateUser(@PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		String gender = updateUser.getGender();
-		int score = updateUser.getScore();
+//		int score = updateUser.getScore();
 		if(!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
 			user.setGender("undefiend");
 		};
-		if(score > 0) {
-			user.setScore(updateUser.getScore());
-		}else {
-			user.setScore(0);
-		};
+//		if(score > 0) {
+//			user.setScore(updateUser.getScore());
+//		}else {
+//			user.setScore(0);
+//		};
 		user.setFirstName(updateUser.getFirstName());
 		user.setLastName(updateUser.getLastName());
+		
+//		user.setActive(updateUser.isActive());
+		
 		User editUser = userRepository.save(user);
 		return ResponseEntity.ok().body(editUser);
 	};

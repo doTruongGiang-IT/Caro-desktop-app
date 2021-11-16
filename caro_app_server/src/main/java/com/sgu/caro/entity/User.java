@@ -59,6 +59,12 @@ public class User {
 	
 	@Column(name = "score", columnDefinition = "integer default 0")
 	private int score;
+	
+	@Column(name = "role", columnDefinition = "varchar(255) default 'user'")
+	private String role;
+	
+	@Column(name = "is_active", columnDefinition = "boolean default true")
+	private boolean isActive;
 
 	public User() {};
 
@@ -68,7 +74,7 @@ public class User {
 			@NotNull @NotBlank(message = "Last name is required") @Size(min = 3, message = "Last name should have at least 3 characters") String lastName,
 			@NotNull @NotBlank(message = "Gender is required") String gender,
 			@NotNull @NotBlank(message = "Day_of_birth is required") String dayOfBirth,
-			@NotNull int score) {
+			@NotNull int score, String role, boolean isActive) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -77,6 +83,8 @@ public class User {
 		this.gender = gender;
 		this.dayOfBirth = dayOfBirth;
 		this.score = score;
+		this.role = role;
+		this.isActive = isActive;
 	};
 
 	public long getId() {
@@ -142,5 +150,23 @@ public class User {
 	public void setScore(int score) {
 		this.score = score;
 	};
+
+	public String getRole() {
+		return role;
+	};
+
+	public void setRole(String role) {
+		this.role = role;
+	};
+
+	public boolean isActive() {
+		return isActive;
+	};
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	};
+	
+	
 
 }
