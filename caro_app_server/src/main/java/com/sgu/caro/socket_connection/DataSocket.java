@@ -97,6 +97,29 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     * 	# data format
+	{
+            "type": "send_message",
+            "data": {
+                "user": 1101, #id người dùng
+                "message": "this is a message" # nội dung tin nhắn
+            }
+	}
+     * @param userID
+     * @param message
+     * @return 
+     */
+    public String exportDataSendMessage(int userID, String message){
+        JSONObject jo = new JSONObject();        
+        JSONObject data = new JSONObject();
+        
+        jo.put("type", "send_message");
+        data.put("user", userID);
+        data.put("message", message);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
     
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);

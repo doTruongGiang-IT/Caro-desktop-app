@@ -1,6 +1,7 @@
 package com.sgu.caro.socket_connection;
 
 import com.sgu.caro.socket_connection.handler.GoStepHandler;
+import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -74,6 +75,10 @@ public class SocketConnection {
                     case "go_step":
                         System.out.println("go_step");
                         new GoStepHandler().run(data, in, out);
+                        break;
+                    case "send_message":
+                        System.out.println("send_message");
+                        new SendMessageHandler().run(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");

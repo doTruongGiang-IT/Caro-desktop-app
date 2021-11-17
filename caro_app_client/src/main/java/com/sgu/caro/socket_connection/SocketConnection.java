@@ -40,7 +40,7 @@ public class SocketConnection {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("===== Connected to server =====");
-            sendData("1104");
+            sendData("1004");
             
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -70,6 +70,10 @@ public class SocketConnection {
                     case "result_match":
                         System.out.println("result_match");
                         actions.get("result_match").onHandle(data, in, out);
+                        break;
+                    case "send_message":
+                        System.out.println("send_message");
+                        actions.get("send_message").onHandle(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");
