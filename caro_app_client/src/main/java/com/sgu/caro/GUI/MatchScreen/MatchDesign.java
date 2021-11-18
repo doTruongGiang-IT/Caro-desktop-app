@@ -1,14 +1,20 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
+import com.sgu.caro.socket_connection.SocketConnection;
+import com.sgu.caro.socket_connection.SocketHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.io.File;
+import java.io.IOException;
+import org.json.JSONObject;
 
 
 public class MatchDesign extends JFrame{
@@ -68,5 +74,7 @@ public class MatchDesign extends JFrame{
     
     public static void main(String[] args) {
         new MatchDesign();
+        SocketConnection socket = new SocketConnection();
+        socket.startConnection();
     }
 }

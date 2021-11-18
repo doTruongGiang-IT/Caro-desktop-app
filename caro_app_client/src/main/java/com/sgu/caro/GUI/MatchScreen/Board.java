@@ -1,4 +1,4 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +12,15 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import com.sgu.caro.socket_connection.SocketConnection;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketHandler;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class Board extends JPanel{
     private static int N = 20;
@@ -20,12 +29,20 @@ public class Board extends JPanel{
     
     private Image imgX, imgO, imgOCurrent, imgXCurrent;
     private String currentPlayer = Cell.O_VALUE;
+    private SocketConnection socket;
+    private DataSocket dataSocket;
+    private boolean isFree = (currentPlayer == Cell.X_VALUE);
     
     private Cell[][] matrix = new Cell[N][M];
     Cell currentCell;
     
+    /* For testing */
+    private final int userID = 1004;
+    
     public Board() {
         this.setPreferredSize(new Dimension(width, height));
+        socket = new SocketConnection();
+        dataSocket = new DataSocket();
         
         for(int i = 0; i < N; ++i) {
             for(int j = 0; j < M; ++j) {
@@ -33,6 +50,54 @@ public class Board extends JPanel{
                 matrix[i][j] = cell;
             }
         }
+        
+        socket.addListenConnection("go_step", new SocketHandler(){
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+                int currentUserID = data.getInt("user");
+                int posX, posY;
+                posX = data.getJSONArray("pos").getInt(0);
+                posY = data.getJSONArray("pos").getInt(1);
+
+                Cell cell = matrix[posX-1][posY-1];
+                
+                if (currentUserID != userID){
+                    cell.setValue(currentPlayer);
+                    isFree = true;
+                }
+                else {
+                    cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE);
+                }
+                validate();
+                repaint();
+            }
+        });
+        
+        socket.addListenConnection("result_match", new SocketHandler(){
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+                int currentUserID = data.getInt("user");
+                int posX, posY;
+                
+                for (int i=0; i<5; i++){
+                    JSONArray e = data.getJSONArray("res_pos").getJSONArray(i);
+                    posX = e.getInt(0);
+                    posY = e.getInt(1);
+                    
+                    Cell cell = matrix[posX-1][posY-1];
+                    if (currentUserID != userID){
+                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
+                    }
+                    else {
+                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
+                    }
+                }
+                
+                
+            }
+        });
+        
+        int cellSize = width/N;
         
         addMouseListener(new MouseAdapter() {
             @Override
@@ -45,13 +110,20 @@ public class Board extends JPanel{
                     for(int j = 0; j < M; ++j) {
                         Cell cell = matrix[i][j];
                         if(xClick > cell.getPosX() && xClick <= (cell.getWidth() + cell.getPosX()) && yClick > cell.getPosY() && yClick <= (cell.getPosY() + cell.getHeight())){
-                            System.out.println(cell.getPosX() + " " + cell.getPosY());
-                            if(cell.getValue().equals("")){
-                                cell.setValue(currentPlayer);
-                                currentPlayer = currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE;
+                            int cellPosX = cell.getPosX()/cellSize + 1;
+                            int cellPosY = cell.getPosY()/cellSize + 1;
+                            System.out.println(cellPosX + " " + cellPosY);
+                            System.out.println(currentPlayer);
+                            
+                            if(cell.getValue().equals("") && isFree){
+                                String data = dataSocket.exportDataGoStep(userID, cellPosX, cellPosY);
+                                socket.sendData(data);
+                                isFree = false;
+//                                cell.setValue(currentPlayer);
+//                                currentPlayer = currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE;
                                 currentCell = cell;
-                                validate();
-                                repaint();
+//                                validate();
+//                                repaint();
                             }
                         }
                     }
@@ -116,6 +188,12 @@ public class Board extends JPanel{
                 }
                 else if(cell.getValue().equals(Cell.X_VALUE)) {
                     graphics2D.drawImage(imgX, x, y, w, h, this);
+                }
+                else if(cell.getValue().equals(Cell.O_VALUE_WON)) {
+                    graphics2D.drawImage(imgXCurrent, x, y, w, h, this);
+                }
+                else if(cell.getValue().equals(Cell.X_VALUE_WON)) {
+                    graphics2D.drawImage(imgOCurrent, x, y, w, h, this);
                 }
                 ++k;
             }

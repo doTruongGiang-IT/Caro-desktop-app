@@ -1,4 +1,4 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
 public class Cell {
     private int posX;
@@ -9,6 +9,8 @@ public class Cell {
     
     public static final String X_VALUE = "X";
     public static final String O_VALUE = "O";
+    public static final String X_VALUE_WON = "XW";
+    public static final String O_VALUE_WON = "OW";
     public static final String EMPTY_VALUE = "";
     
     public Cell() {

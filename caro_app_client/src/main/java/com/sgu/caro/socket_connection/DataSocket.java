@@ -89,7 +89,6 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
-    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }

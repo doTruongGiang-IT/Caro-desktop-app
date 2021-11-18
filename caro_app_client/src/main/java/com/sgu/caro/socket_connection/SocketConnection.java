@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONObject;
 
 
 /**
@@ -28,20 +29,67 @@ public class SocketConnection {
     private static BufferedWriter out = null;
     private static String socketHost = "localhost";    
     private static int socketPort = 5000;
-    private static Map <String, Boolean> state = new HashMap<String, Boolean>();
+    private static Map <String, SocketHandler> actions = new HashMap<String, SocketHandler>();
     private static ArrayList<Thread> events = new ArrayList<Thread>();
 
     public SocketConnection() {}
     
     public void startConnection(){
         try {
-            socket = new Socket("localhost", 5000);
+            socket = new Socket(socketHost, socketPort);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("===== Connected to server =====");
+            sendData("1004");
+            
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    handleServer(socket, in, out);
+                }
+            });  
+            thread.start();
         } catch (IOException e) { System.err.println(e); }
     }
     
+    public void handleServer(Socket socket, BufferedReader in, BufferedWriter out){
+        try {
+            DataSocket dataSocket = new DataSocket();
+            while (true){
+                String rawDateReceive = in.readLine();
+                System.out.println("Receive" + rawDateReceive);
+                JSONObject dataReceive = dataSocket.importData(rawDateReceive);
+                JSONObject data = dataReceive.getJSONObject("data");
+                String type = dataReceive.getString("type");
+
+                switch (type) {
+                    case "go_step":
+                        System.out.println("go_step");
+                        actions.get("go_step").onHandle(data, in, out);
+                        break;
+                    case "result_match":
+                        System.out.println("result_match");
+                        actions.get("result_match").onHandle(data, in, out);
+                        break;
+                    case "send_message":
+                        System.out.println("send_message");
+                        actions.get("send_message").onHandle(data, in, out);
+                        break;
+                    case "stop":
+                        System.out.println("July");
+                        in.close();
+                        out.close();
+                        socket.close();
+                        break;
+                }
+            }
+        } catch (IOException e) { System.err.println(e); }
+    }
+    
+    public void addListenConnection(String actionID, SocketHandler handler){
+        actions.put(actionID, handler);
+    }
+            
     public void stopConnection(){
         try {
             in.close();
@@ -51,28 +99,7 @@ public class SocketConnection {
         } catch (IOException e) { System.err.println(e); }
     }
     
-    public void listenConnectionBase(String handlerID, SocketHandler handler){
-        if (state.containsKey(handlerID)){
-            System.out.println("===== ERROR: handlerID is duplicated =====");
-            return ;
-        }
-        state.put(handlerID, true);
-
-        while(state.get(handlerID)) {
-            handler.onHandle(in, out);
-        }
-    }
-     
-    public void listenConnection(String handlerID, SocketHandler handler){
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                listenConnectionBase(handlerID, handler);
-            }
-        });  
-        events.add(thread);
-        thread.start();
-    }
+    
         
    public void sendData(String data){
         try {
@@ -82,32 +109,5 @@ public class SocketConnection {
         } catch (IOException e) { System.err.println(e); }
     }
     
-
-    public void stopEvent(String handlerID){
-        state.put(handlerID, false);
-    }
-
-    public static Map<String, Boolean> getState() {
-        return state;
-    }
-    
-    public static void main(String[] args) {
-        // Example 
-        SocketConnection instance = new SocketConnection();
-        instance.listenConnection("send_helloword", new SocketHandler(){
-            public void onHandle(BufferedReader in, BufferedWriter out) {
-                try {
-                    String dataFromServer = in.readLine();
-                    System.out.println("Receive: " + dataFromServer);
-                    out.write("Hello world from client");
-                    out.newLine();
-                    out.flush();
-                    
-                    if (dataFromServer.equals("end_match")){
-                        instance.stopEvent("send_helloword");
-                    }
-                } catch (IOException e) { System.err.println(e); }
-            }
-        });
-    }
+    public static void main(String[] args) {}
 }

@@ -1,7 +1,17 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
+
+import com.sgu.caro.socket_connection.SocketConnection;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketHandler;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import org.json.JSONObject;
+import java.awt.event.*;
 
 public class ChatPanel extends javax.swing.JPanel {
-
+    private SocketConnection socket;
+    private DataSocket dataSocket;
+    
     public ChatPanel() {
         initComponents();
     }
@@ -9,7 +19,9 @@ public class ChatPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+        socket = new SocketConnection();
+        dataSocket = new DataSocket();
+        
         scrollPaneChat = new javax.swing.JScrollPane();
         txtChat = new javax.swing.JTextArea();
         inputText = new javax.swing.JTextField();
@@ -27,7 +39,31 @@ public class ChatPanel extends javax.swing.JPanel {
         scrollPaneChat.setViewportView(txtChat);
 
         btnSubmit.setText("Gửi");
-
+        
+        btnSubmit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Khi gui
+                int userID = 1004;
+                String message = inputText.getText();
+                
+                String dataSend = dataSocket.exportDataSendMessage(userID, message);
+                socket.sendData(dataSend);
+            }
+        });
+        
+        
+        socket.addListenConnection("send_message", new SocketHandler(){
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+               // Xu ly khi nhan data
+                System.out.println(data);
+                
+                // NP-23
+                // ...
+            }
+        });
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
