@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 //import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,16 +42,35 @@ public class UserController {
 	// Get all employee
 	//@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("users")
-	public List<User> getAllUsers() {
-		return this.userRepository.findAll();
+	public List<User> getAllUsers(@RequestHeader Map<String,String> headers) {
+		boolean flag = false;
+		for (var entry : headers.entrySet()) {
+		    if(entry.getKey().equals("authorization")) {
+				if(!jwtService.isTokenExpired(entry.getValue())) {
+					flag = true;
+				};
+			};
+		};
+		return flag ? this.userRepository.findAll() : null;
 	};
 	
 	// Get employee by id
 	//@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-		return ResponseEntity.ok().body(user);
+	public ResponseEntity<User> getUserById(@RequestHeader Map<String,String> headers, @PathVariable(value = "id") long userId) {
+		User user = null;
+		boolean flag = false;
+		for (var entry : headers.entrySet()) {
+		    if(entry.getKey().equals("authorization")) {
+				if(!jwtService.isTokenExpired(entry.getValue())) {
+					flag = true;
+				};
+			};
+		};
+		if(flag) {
+			user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		};
+		return flag ? ResponseEntity.ok().body(user) : null;
 	};
 	
 	// Get employee by id
@@ -113,36 +133,57 @@ public class UserController {
 	// Update smart phone by id
 	//@CrossOrigin(origins = "http://localhost:4200")
 	@PutMapping("users/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-		String gender = updateUser.getGender();
-//		int score = updateUser.getScore();
-		if(!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
-			user.setGender("undefiend");
+	public ResponseEntity<User> updateUser(@RequestHeader Map<String,String> headers, @PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
+		User editUser = null;
+		boolean flag = false;
+		for (var entry : headers.entrySet()) {
+		    if(entry.getKey().equals("authorization")) {
+				if(!jwtService.isTokenExpired(entry.getValue())) {
+					flag = true;
+				};
+			};
 		};
-//		if(score > 0) {
-//			user.setScore(updateUser.getScore());
-//		}else {
-//			user.setScore(0);
-//		};
-		user.setFirstName(updateUser.getFirstName());
-		user.setLastName(updateUser.getLastName());
-		
-//		user.setActive(updateUser.isActive());
-		
-		User editUser = userRepository.save(user);
-		return ResponseEntity.ok().body(editUser);
+		if(flag) {
+			User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+			String gender = updateUser.getGender();
+//			int score = updateUser.getScore();
+			if(!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
+				user.setGender("undefiend");
+			};
+//			if(score > 0) {
+//				user.setScore(updateUser.getScore());
+//			}else {
+//				user.setScore(0);
+//			};
+			user.setFirstName(updateUser.getFirstName());
+			user.setLastName(updateUser.getLastName());
+			
+//			user.setActive(updateUser.isActive());
+			
+			editUser = userRepository.save(user);
+		};
+		return flag ? ResponseEntity.ok().body(editUser) : null;
 	};
 	
 	// Delete smart phone by id
 	//@CrossOrigin(origins = "http://localhost:4200")
 	@DeleteMapping("users/{id}")
-	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-		this.userRepository.delete(user);
+	public Map<String, Boolean> deleteUser(@RequestHeader Map<String,String> headers, @PathVariable(value = "id") long userId) {
 		Map<String, Boolean> respone = new HashMap<>();
-		respone.put("User deleted: ", Boolean.TRUE);
-		return respone;
+		boolean flag = false;
+		for (var entry : headers.entrySet()) {
+		    if(entry.getKey().equals("authorization")) {
+				if(!jwtService.isTokenExpired(entry.getValue())) {
+					flag = true;
+				};
+			};
+		};
+		if(flag) {
+			User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+			this.userRepository.delete(user);	
+			respone.put("User deleted: ", Boolean.TRUE);
+		};
+		return flag ? respone : null;
 	};
 	
 }

@@ -17,7 +17,7 @@ public class JwtService {
 
 	public static final String USERNAME = "username";
 	public static final String SECRET_KEY = "11111111111111111111111111111111";
-	public static final int EXPIRE_TIME = 86400000;
+	public static final int EXPIRE_TIME = 360000;
 	
 	public String generateTokenLogin(String username) {
 	    String token = null;
@@ -79,7 +79,7 @@ public class JwtService {
 	    return sharedSecret;
 	};
 	
-	private Boolean isTokenExpired(String token) {
+	public Boolean isTokenExpired(String token) {
 	    Date expiration = getExpirationDateFromToken(token);
 	    return expiration.before(new Date());
 	};
