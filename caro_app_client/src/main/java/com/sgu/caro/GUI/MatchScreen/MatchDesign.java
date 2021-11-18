@@ -1,4 +1,4 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.socket_connection.SocketHandler;

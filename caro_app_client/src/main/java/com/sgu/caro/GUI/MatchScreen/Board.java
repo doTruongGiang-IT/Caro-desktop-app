@@ -1,4 +1,4 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
 import java.awt.Color;
 import java.awt.Dimension;

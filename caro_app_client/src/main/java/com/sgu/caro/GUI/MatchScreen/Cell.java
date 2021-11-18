@@ -1,4 +1,4 @@
-package com.sgu.caro.GUI;
+package com.sgu.caro.GUI.MatchScreen;
 
 public class Cell {
     private int posX;
