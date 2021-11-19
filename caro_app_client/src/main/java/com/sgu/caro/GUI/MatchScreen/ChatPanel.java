@@ -7,9 +7,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import java.awt.Font;
-import java.awt.Graphics;
-
 import org.json.JSONObject;
 import java.awt.event.*;
 
@@ -53,17 +50,29 @@ public class ChatPanel extends javax.swing.JPanel {
                 // Khi gui
                 int userID = 1001;
                 String message = inputText.getText();
+                inputText.setText("");
                 String dataSend = dataSocket.exportDataSendMessage(userID, message);
                 socket.sendData(dataSend);
             }
         });
         
+        inputText.addKeyListener(new KeyAdapter() {
+        	public void keyPressed(KeyEvent e) {
+        		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    int userID = 1001;
+                    String message = inputText.getText();
+                    inputText.setText("");
+                    String dataSend = dataSocket.exportDataSendMessage(userID, message);
+                    socket.sendData(dataSend);
+        		}
+        	}
+        });
         
         socket.addListenConnection("send_message", new SocketHandler(){
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 try {
-                    txtChat.append(data.getInt("user") + ":  " + data.getString("message") + "\n");
+                    txtChat.append(data.getInt("user") + ":   " + data.getString("message") + "\n");
                     String received = in.readLine();
                     JSONObject obj = new JSONObject(received);
                     System.out.println("obj - " +obj);
