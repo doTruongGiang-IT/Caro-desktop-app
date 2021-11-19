@@ -40,7 +40,7 @@ public class SocketConnection {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("===== Connected to server =====");
-            sendData("1004");
+            sendData("1001");
             
             Thread thread = new Thread(new Runnable() {
                 @Override

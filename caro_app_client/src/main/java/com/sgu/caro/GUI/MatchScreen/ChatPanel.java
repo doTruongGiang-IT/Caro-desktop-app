@@ -5,6 +5,11 @@ import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.StringTokenizer;
+import java.awt.Font;
+import java.awt.Graphics;
+
 import org.json.JSONObject;
 import java.awt.event.*;
 
@@ -36,6 +41,8 @@ public class ChatPanel extends javax.swing.JPanel {
         txtChat.setColumns(20);
         txtChat.setLineWrap(true);
         txtChat.setRows(5);
+//        Font bolder = new Font("serif", Font.BOLD, 20);
+//        txtChat.setFont(bolder);
         scrollPaneChat.setViewportView(txtChat);
 
         btnSubmit.setText("Gửi");
@@ -44,9 +51,8 @@ public class ChatPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Khi gui
-                int userID = 1004;
+                int userID = 1001;
                 String message = inputText.getText();
-                
                 String dataSend = dataSocket.exportDataSendMessage(userID, message);
                 socket.sendData(dataSend);
             }
@@ -56,11 +62,15 @@ public class ChatPanel extends javax.swing.JPanel {
         socket.addListenConnection("send_message", new SocketHandler(){
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-               // Xu ly khi nhan data
-                System.out.println(data);
-                
-                // NP-23
-                // ...
+                try {
+                    txtChat.append(data.getInt("user") + ":  " + data.getString("message") + "\n");
+                    String received = in.readLine();
+                    JSONObject obj = new JSONObject(received);
+                    System.out.println("obj - " +obj);
+                    txtChat.append(obj.getJSONObject("data").getInt("user") + ": " + obj.getJSONObject("data").getString("message") + "\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
             }
         });
         
