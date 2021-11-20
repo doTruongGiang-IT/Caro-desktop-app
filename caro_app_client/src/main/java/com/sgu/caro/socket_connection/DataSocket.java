@@ -71,7 +71,7 @@ public class DataSocket {
             "type": "accept_pariring",
             "data": {
                 "user": 1101, #id người dùng
-                "iS_accepted": true # đồng ý ghép cặp hay không
+                "is_accepted": true # đồng ý ghép cặp hay không
             }
 	}
      * @param userID
@@ -85,6 +85,27 @@ public class DataSocket {
         jo.put("type", "accept_pariring");
         data.put("user", userID);
         data.put("is_accepted", isAccepted);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "go_match",
+            "data": {
+                "user": 1101, #id người dùng
+            }
+	}
+     * @param userID
+     * @return 
+     */
+    public String exportDataGoMatch(int userID){
+        JSONObject jo = new JSONObject();        
+        JSONObject data = new JSONObject();
+        
+        jo.put("type", "go_match");
+        data.put("user", userID);
         jo.put("data", data);
         return encryptData(jo.toString());
     }

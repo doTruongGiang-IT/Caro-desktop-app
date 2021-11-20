@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import org.json.JSONObject;
 
 public class Login {
-
+    public static JFrame mainScreen;
     JFrame jframe;
     JButton loginButton;
     JTextField email;
@@ -117,9 +117,12 @@ public class Login {
                     
                     if (responseData.has("access_token")) {
                         String jwt = responseData.getString("access_token");
+                        int userId = Integer.parseInt(responseData.getString("user_id"));
                         System.out.println("access_token: " + jwt);
                         TokenManager.setJwt(jwt);
-                        new MainScreenDesign().setVisible(true);
+                        TokenManager.setUser_id(userId);
+                        mainScreen = new MainScreenDesign();
+                        mainScreen.setVisible(true);
                         jframe.setVisible(false);
                     } else {
                         String error = responseData.getString("error");

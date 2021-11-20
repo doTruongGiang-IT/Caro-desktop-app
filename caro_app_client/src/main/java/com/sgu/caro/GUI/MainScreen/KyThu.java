@@ -27,9 +27,7 @@ public class KyThu extends javax.swing.JPanel {
         initComponents();
         lblIcon.setIcon(imgOffLine);
     }
-
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+                     
     private void initComponents() {
 
         lblUserName = new javax.swing.JLabel();

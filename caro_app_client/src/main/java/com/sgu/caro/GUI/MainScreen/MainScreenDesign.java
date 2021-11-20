@@ -1,6 +1,8 @@
 package com.sgu.caro.GUI.MainScreen;
 
 import com.sgu.caro.api_connection.TokenManager;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketConnection;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,8 +21,15 @@ import javax.swing.JScrollPane;
 
 public class MainScreenDesign extends JFrame{
     public static boolean loadMatch = true;
+    private static SocketConnection socket = new SocketConnection();
+    private static DataSocket dataSocket = new DataSocket();
+    private static int userId = new TokenManager().getUser_id();
     
     public MainScreenDesign() {
+        // Init socket
+        SocketConnection socket = new SocketConnection();
+        socket.startConnection();
+        
         initComponents();
         
         // Cái này test chơi thôi - sau này load bàn chơi và kỳ thủ
@@ -70,6 +79,8 @@ public class MainScreenDesign extends JFrame{
         btnNewGame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if(loadMatch) {
+                    String data = dataSocket.exportDataGoMatch(userId);
+                    socket.sendData(data);
                     new LoadMatch().setVisible(true);
                     loadMatch = false;
                 }

@@ -87,12 +87,14 @@ public class DataSocket {
      * @param userID
      * @return 
      */
-    public String exportDataSendInvitation(int userID){
+    public String exportDataSendInvitation(int userID, String displayName, int score){
         JSONObject jo = new JSONObject();        
         JSONObject data = new JSONObject();
         
-        jo.put("type", "accept_pariring");
+        jo.put("type", "send_invitation");
         data.put("user", userID);
+        data.put("display_name", displayName);
+        data.put("score", score);
         jo.put("data", data);
         return encryptData(jo.toString());
     }
@@ -121,6 +123,28 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+        /**
+     * 	# data format
+	{
+            "type": "start_match",
+            "data": {
+                "is_started": true
+            }
+	}
+     * @param userID
+     * @param message
+     * @return 
+     */
+    public String exportDataStartMatch(boolean is_started){
+        JSONObject jo = new JSONObject();        
+        JSONObject data = new JSONObject();
+        
+        jo.put("type", "start_match");
+        data.put("is_started", is_started);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }
@@ -133,6 +157,5 @@ public class DataSocket {
                 new ArrayList<Integer>( Arrays.asList(12, 5, 15, 16, 20))
             )
         );
-        System.out.println(new DataSocket().exportDataSendInvitation(1101));
     }
 }

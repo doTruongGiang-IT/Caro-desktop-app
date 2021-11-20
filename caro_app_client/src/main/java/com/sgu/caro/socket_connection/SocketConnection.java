@@ -1,5 +1,6 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.api_connection.TokenManager;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,7 +41,8 @@ public class SocketConnection {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("===== Connected to server =====");
-            sendData("1001");
+            System.out.println(String.valueOf(TokenManager.getUser_id()));
+            sendData(String.valueOf(TokenManager.getUser_id()));
             
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -74,6 +76,10 @@ public class SocketConnection {
                     case "send_message":
                         System.out.println("send_message");
                         actions.get("send_message").onHandle(data, in, out);
+                        break;
+                    case "send_invitation":
+                        System.out.println("send_invitation");
+                        actions.get("send_invitation").onHandle(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");

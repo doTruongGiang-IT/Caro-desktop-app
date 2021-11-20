@@ -1,5 +1,6 @@
 package com.sgu.caro.GUI.MatchScreen;
 
+import com.sgu.caro.api_connection.TokenManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -31,13 +32,13 @@ public class Board extends JPanel{
     private String currentPlayer = Cell.O_VALUE;
     private SocketConnection socket;
     private DataSocket dataSocket;
-    private boolean isFree = (currentPlayer == Cell.X_VALUE);
+    private boolean isFree = (currentPlayer.equals(Cell.X_VALUE));
     
     private Cell[][] matrix = new Cell[N][M];
     Cell currentCell;
     
     /* For testing */
-    private final int userID = 1004;
+    private final int userID = TokenManager.getUser_id();
     
     public Board() {
         this.setPreferredSize(new Dimension(width, height));
@@ -61,12 +62,12 @@ public class Board extends JPanel{
 
                 Cell cell = matrix[posX-1][posY-1];
                 
-                if (currentUserID != userID){
+                if (currentUserID == userID){
                     cell.setValue(currentPlayer);
-                    isFree = true;
                 }
                 else {
                     cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE);
+                    isFree = true;
                 }
                 validate();
                 repaint();
@@ -85,11 +86,11 @@ public class Board extends JPanel{
                     posY = e.getInt(1);
                     
                     Cell cell = matrix[posX-1][posY-1];
-                    if (currentUserID != userID){
-                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
+                    if (currentUserID == userID){
+                        cell.setValue(currentPlayer);
                     }
                     else {
-                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
+                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
                     }
                 }
                 
