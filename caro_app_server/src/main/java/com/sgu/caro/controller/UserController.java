@@ -32,6 +32,7 @@ import antlr.Token;
 @RestController
 @RequestMapping("/caro_api/")
 public class UserController {
+	public static final String ADMIN_ROLE = "admin";
 
 	@Autowired
 	UserRepository userRepository;
@@ -46,7 +47,9 @@ public class UserController {
 		boolean flag = false;
 		for (var entry : headers.entrySet()) {
 		    if(entry.getKey().equals("authorization")) {
-				if(!jwtService.isTokenExpired(entry.getValue())) {
+		    	String username = jwtService.getUsernameFromToken(entry.getValue());
+		    	String role = userRepository.findByUsername(username).getRole();
+				if(!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
 					flag = true;
 				};
 			};
@@ -62,7 +65,9 @@ public class UserController {
 		boolean flag = false;
 		for (var entry : headers.entrySet()) {
 		    if(entry.getKey().equals("authorization")) {
-				if(!jwtService.isTokenExpired(entry.getValue())) {
+		    	String username = jwtService.getUsernameFromToken(entry.getValue());
+		    	String role = userRepository.findByUsername(username).getRole();
+				if(!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
 					flag = true;
 				};
 			};
@@ -107,6 +112,40 @@ public class UserController {
 		return ResponseEntity.ok().body(result);
 	};
 	
+	// Get employee by id
+		//@CrossOrigin(origins = "http://localhost:4200")
+		@PostMapping("authAdmin")
+		public ResponseEntity<HashMap<String, String>> authenticationForAdmin(@Valid @RequestBody HashMap<String, String> credential) {
+			String username = "";
+			String password = "";
+			HashMap<String, String> result = new HashMap<String, String>();
+			
+			for(String element : credential.keySet()) {
+				if(element.equals("username")) {
+					username = credential.get(element);
+				};
+				if(element.equals("password")) {
+					password = credential.get(element);
+				};
+			};
+			
+			Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
+			User user = userRepository.findByUsername(username);
+			
+			if(user != null) {
+				if(pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+					String token = jwtService.generateTokenLogin(user.getUsername());
+					result.put("access_token", token);
+				}else {
+					result.put("error", "Wrong password");
+				};
+			}else {
+				throw new UsernameNotFoundException("User not exist");
+			};
+			
+			return ResponseEntity.ok().body(result);
+		};
+	
 	// Create new employee
 	//@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("users")
@@ -138,7 +177,9 @@ public class UserController {
 		boolean flag = false;
 		for (var entry : headers.entrySet()) {
 		    if(entry.getKey().equals("authorization")) {
-				if(!jwtService.isTokenExpired(entry.getValue())) {
+		    	String username = jwtService.getUsernameFromToken(entry.getValue());
+		    	String role = userRepository.findByUsername(username).getRole();
+				if(!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
 					flag = true;
 				};
 			};
@@ -173,7 +214,9 @@ public class UserController {
 		boolean flag = false;
 		for (var entry : headers.entrySet()) {
 		    if(entry.getKey().equals("authorization")) {
-				if(!jwtService.isTokenExpired(entry.getValue())) {
+		    	String username = jwtService.getUsernameFromToken(entry.getValue());
+		    	String role = userRepository.findByUsername(username).getRole();
+				if(!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
 					flag = true;
 				};
 			};
