@@ -17,7 +17,7 @@ public class JwtService {
 
 	public static final String USERNAME = "username";
 	public static final String SECRET_KEY = "11111111111111111111111111111111";
-	public static final int EXPIRE_TIME = 100;
+	public static final int EXPIRE_TIME = 720000;
 	
 	public String generateTokenLogin(String username) {
 	    String token = null;
