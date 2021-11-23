@@ -110,6 +110,52 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     *  # data format
+	{
+            "type": "end_match",
+            "data": {
+                "user_1": 1101, #id người dùng 1
+                "user_2": 1101, #id người dùng 2 
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataEndMatch(int userID1, int userID2) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "end_match");
+        data.put("user_1", userID1);
+        data.put("user_2", userID2);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match",
+            "data": {
+                "user": 1101, #id người dùng 1
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatch(int userID1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match");
+        data.put("user", userID1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }

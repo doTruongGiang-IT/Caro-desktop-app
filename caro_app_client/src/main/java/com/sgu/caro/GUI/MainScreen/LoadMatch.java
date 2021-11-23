@@ -3,6 +3,7 @@ package com.sgu.caro.GUI.MainScreen;
 import com.sgu.caro.GUI.Login.Login;
 import com.sgu.caro.GUI.MatchScreen.Cell;
 import com.sgu.caro.GUI.MatchScreen.MatchDesign;
+import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
@@ -29,7 +30,7 @@ public class LoadMatch extends javax.swing.JFrame {
     private static DataSocket dataSocket = new DataSocket();
     private static int userId = new TokenManager().getUser_id();
     private boolean getPairing = false;
-    private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public LoadMatch() {
         socket.addListenConnection("send_invitation", new SocketHandler() {
@@ -44,6 +45,8 @@ public class LoadMatch extends javax.swing.JFrame {
                 txtUserName.setText(displayname);
                 txtScore.setText(String.valueOf(score));
 
+                MatchDesign.user2 = userId;
+                
                 final Runnable runnable = new Runnable() {
                     int countdownStarter = 30;
                     @Override
@@ -222,14 +225,12 @@ public class LoadMatch extends javax.swing.JFrame {
         // TODO add your handling code here:
         scheduler.shutdown();
         
-        try {
-            Thread.sleep(1200);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(LoadMatch.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
         if (getPairing) {
             String dataSend = dataSocket.exportDataAcceptPairing(userId, false);
+            socket.sendData(dataSend);
+        }
+        else{
+            String dataSend = dataSocket.exportDataOutMatch(userId);
             socket.sendData(dataSend);
         }
         this.setVisible(false);
@@ -241,12 +242,6 @@ public class LoadMatch extends javax.swing.JFrame {
         // TODO add your handling code here:
         scheduler.shutdown();
         
-        try {
-            Thread.sleep(1200);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(LoadMatch.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
         btnDongY.setEnabled(false);
         
         String dataSend = dataSocket.exportDataAcceptPairing(userId, true);
@@ -257,8 +252,10 @@ public class LoadMatch extends javax.swing.JFrame {
     }
 
     private void startMatchScreen(String step_type) {
-        new MatchDesign(step_type);
-        Login.mainScreen.setVisible(false);
+        WindowManager.matchScreen = new MatchDesign(step_type);
+        WindowManager.matchScreen.setVisible(true);
+        WindowManager.mainScreen.setVisible(false);
+        MainScreenDesign.loadMatch = true;
         this.setVisible(false);
         this.dispose();
     }

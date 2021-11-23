@@ -26,9 +26,9 @@ class ResultMatch {
 }
 
 class Matrix {
-    public static int maxX = 20;
-    public static int maxY = 20;
-    public static int[][] matrix = new int[maxX][maxY];
+    public int maxX = 20;
+    public int maxY = 20;
+    public int[][] matrix = new int[maxX][maxY];
 }
 
 public class GoStepHandler {

@@ -11,13 +11,13 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 
 public class GoMatchHandler {
-    private static Queue<Integer> userQueue = new LinkedList<>();
+    public static ArrayList<Integer> userQueue = new ArrayList<>();
     private static DataSocket datasocket = new DataSocket();
     private static final String getUserByUsernameURL = "http://localhost:8080/caro_api/users/";
     private static APIConnection apiConnection = new APIConnection();
@@ -37,8 +37,8 @@ public class GoMatchHandler {
                 Logger.getLogger(GoMatchHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (userQueue.size() >= 2){
-                int user_id_1 = userQueue.remove();
-                int user_id_2 = userQueue.remove();
+                int user_id_1 = userQueue.remove(0);
+                int user_id_2 = userQueue.remove(0);
                 
                 JSONObject user1 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_1);
                 JSONObject user2 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_2);

@@ -157,4 +157,13 @@ public class AcceptPairingHandler {
         Group group = new Group(userId1, userId2, new ArrayList<>());
         groups.add(group);
     }
+    
+    public void removeGroup(int userId){
+        for (Group g : groups) {
+            if (g.getUser_1() == userId || g.getUser_2() == userId) {
+                groups.remove(g);
+                break;
+            }
+        }
+    }
 }

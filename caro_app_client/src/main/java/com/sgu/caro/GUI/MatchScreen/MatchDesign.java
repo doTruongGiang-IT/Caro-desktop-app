@@ -18,6 +18,8 @@ import org.json.JSONObject;
 
 
 public class MatchDesign extends JFrame{
+    public static int user2;
+    
     public MatchDesign(String stepType) {
         initComponents(stepType);
         

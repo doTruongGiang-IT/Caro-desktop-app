@@ -1,9 +1,11 @@
 package com.sgu.caro.socket_connection;
 
 import com.sgu.caro.socket_connection.handler.AcceptPairingHandler;
+import com.sgu.caro.socket_connection.handler.EndMatchHandler;
 import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import com.sgu.caro.socket_connection.handler.GoMatchHandler;
+import com.sgu.caro.socket_connection.handler.OutMatchHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -100,9 +102,17 @@ public class SocketConnection {
                         System.out.println("go_match");
                         new GoMatchHandler().run(data, in, out);
                         break;
+                    case "out_match":
+                        System.out.println("out_match");
+                        new OutMatchHandler().run(data, in, out);
+                        break;
                     case "accept_pariring":
                         System.out.println("accept_pariring");
                         new AcceptPairingHandler().run(data, in, out);
+                        break;
+                    case "end_match":
+                        System.out.println("end_match");
+                        new EndMatchHandler().run(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");
