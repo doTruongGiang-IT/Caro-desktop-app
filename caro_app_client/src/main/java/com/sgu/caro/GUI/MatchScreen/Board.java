@@ -29,7 +29,7 @@ public class Board extends JPanel{
     private int width = 600, height = 600;
     
     private Image imgX, imgO, imgOCurrent, imgXCurrent;
-    private String currentPlayer = Cell.O_VALUE;
+    private String currentPlayer = Cell.X_VALUE;
     private SocketConnection socket;
     private DataSocket dataSocket;
     private boolean isFree = (currentPlayer.equals(Cell.X_VALUE));
@@ -40,7 +40,15 @@ public class Board extends JPanel{
     /* For testing */
     private final int userID = TokenManager.getUser_id();
     
-    public Board() {
+    public Board(String stepType) {
+        
+        if (stepType.equals("X")){
+            currentPlayer = Cell.X_VALUE;
+        }
+        else{
+            currentPlayer = Cell.O_VALUE;
+        }
+        
         this.setPreferredSize(new Dimension(width, height));
         socket = new SocketConnection();
         dataSocket = new DataSocket();
@@ -87,10 +95,10 @@ public class Board extends JPanel{
                     
                     Cell cell = matrix[posX-1][posY-1];
                     if (currentUserID == userID){
-                        cell.setValue(currentPlayer);
-                    }
-                    else {
                         cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
+                    }
+                    else {                        
+                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
                     }
                 }
                 

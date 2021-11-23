@@ -85,19 +85,21 @@ public class AcceptPairingHandler {
         int userId = data.getInt("user");
         boolean is_accepted = data.getBoolean("is_accepted");
         Group group = getGroup(userId);
-        String dataSend;
+        String dataSend1, dataSend2;
         
         if (is_accepted) {
             group.setAccept_pairing_1(userId, true);
             group.setAccept_pairing_2(userId, true);
 
             if (group.isAccept_pairing_1() && group.isAccept_pairing_2()) {
-                dataSend = datasocket.exportDataStartMatch(true);
+                dataSend1 = datasocket.exportDataStartMatch(true, "X");
+                dataSend2 = datasocket.exportDataStartMatch(true, "O");
             } else {
                 return;
             }
         } else {
-            dataSend = datasocket.exportDataStartMatch(false);
+            dataSend1 = datasocket.exportDataStartMatch(false, "");
+            dataSend2 = datasocket.exportDataStartMatch(false, "");
         }
 
         int user_id_1 = group.getUser_1();
@@ -110,12 +112,12 @@ public class AcceptPairingHandler {
         try {
             BufferedWriter outUser1 = new BufferedWriter(new OutputStreamWriter(socketUser1.getOutputStream()));
             BufferedWriter outUser2 = new BufferedWriter(new OutputStreamWriter(socketUser2.getOutputStream()));
-
-            outUser1.write(dataSend);
+            System.out.println(dataSend1);
+            outUser1.write(dataSend1);
             outUser1.newLine();
             outUser1.flush();
 
-            outUser2.write(dataSend);
+            outUser2.write(dataSend2);
             outUser2.newLine();
             outUser2.flush();
 

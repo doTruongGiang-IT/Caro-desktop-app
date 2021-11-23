@@ -135,12 +135,13 @@ public class DataSocket {
      * @param message
      * @return 
      */
-    public String exportDataStartMatch(boolean is_started){
+    public String exportDataStartMatch(boolean is_started, String stepType){
         JSONObject jo = new JSONObject();        
         JSONObject data = new JSONObject();
         
         jo.put("type", "start_match");
         data.put("is_started", is_started);
+        data.put("step_type", stepType);
         jo.put("data", data);
         return encryptData(jo.toString());
     }

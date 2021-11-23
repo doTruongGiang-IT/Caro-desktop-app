@@ -125,10 +125,8 @@ public class Login {
                         mainScreen.setVisible(true);
                         jframe.setVisible(false);
                     } else {
-                        String error = responseData.getString("error");
-                        System.out.println("error: " + error);
                         usernameError.setForeground(Color.RED);
-                        usernameError.setText(error);
+                        usernameError.setText("Đăng nhập thất bại");
                         passwordError.setText("");
                     }
                 } catch (URISyntaxException e1) {

@@ -81,6 +81,10 @@ public class SocketConnection {
                         System.out.println("send_invitation");
                         actions.get("send_invitation").onHandle(data, in, out);
                         break;
+                    case "start_match":
+                        System.out.println("start_match");
+                        actions.get("start_match").onHandle(data, in, out);
+                        break;
                     case "stop":
                         System.out.println("July");
                         in.close();

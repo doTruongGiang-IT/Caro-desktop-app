@@ -1,46 +1,56 @@
 package com.sgu.caro.socket_connection.handler;
 
-import com.sgu.caro.exception.ResourceNotFoundException;
-import com.sgu.caro.repository.UserRepository;
+import com.sgu.caro.api_connection.APIConnection;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
-import com.sgu.caro.socket_connection.handler.AcceptPairingHandler;
+import org.springframework.web.client.RestTemplate;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.LinkedList;
-import java.util.Queue;
-import com.sgu.caro.entity.User;
 import org.json.JSONObject;
 
 public class GoMatchHandler {
     private static Queue<Integer> userQueue = new LinkedList<>();
     private static DataSocket datasocket = new DataSocket();
-    private static UserRepository userRepository;
-    
+    private static final String getUserByUsernameURL = "http://localhost:8080/caro_api/users/";
+    private static APIConnection apiConnection = new APIConnection();
+            
     public void run(JSONObject data, BufferedReader in, BufferedWriter out){
         userQueue.add(data.getInt("user"));
+        JSONObject user1 = apiConnection.callGetAPI(getUserByUsernameURL + data.getInt("user"));
+        System.out.println(user1.toString());
+        System.out.println(userQueue.size());
     }
     
     public void getPair(){
         while (true){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GoMatchHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
             if (userQueue.size() >= 2){
                 int user_id_1 = userQueue.remove();
                 int user_id_2 = userQueue.remove();
                 
-                User user1 = userRepository.findById(Long.valueOf(user_id_1)).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-                User user2 = userRepository.findById(Long.valueOf(user_id_2)).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                JSONObject user1 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_1);
+                JSONObject user2 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_2);
                 
-                String display_name_1 = user1.getName();
-                String display_name_2 = user2.getName();
+                System.out.println(user1.toString());
+                System.out.println(user2.toString());
                 
-                int score_1 = user1.getScore();
-                int score_2 = user2.getScore();
+                String display_name_1 = user1.getString("firstName") + user1.getString("lastName");
+                String display_name_2 = user2.getString("firstName") + user2.getString("lastName");
+                
+                int score_1 = user1.getInt("score");
+                int score_2 = user2.getInt("score");
                 
                 Map <String, Socket> userList = new SocketConnection().getSocketClients();
                 Socket socketUser1 = userList.get(String.valueOf(user_id_1));
@@ -52,6 +62,9 @@ public class GoMatchHandler {
                     
                     String dataSendUser1 = datasocket.exportDataSendInvitation(user_id_2, display_name_2, score_2);
                     String dataSendUser2 = datasocket.exportDataSendInvitation(user_id_1, display_name_1, score_1);
+                    
+                    System.out.println(dataSendUser1);
+                    System.out.println(dataSendUser2);
                     
                     outUser1.write(dataSendUser1);
                     outUser1.newLine();

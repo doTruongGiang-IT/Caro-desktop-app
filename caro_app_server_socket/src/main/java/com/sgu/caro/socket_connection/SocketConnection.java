@@ -1,5 +1,6 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.socket_connection.handler.AcceptPairingHandler;
 import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import com.sgu.caro.socket_connection.handler.GoMatchHandler;
@@ -43,7 +44,15 @@ public class SocketConnection {
         try {
             server = new ServerSocket(socketPort);
             System.out.println("===== Started socket  =====");
-
+            
+            Thread thread_go_match = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new GoMatchHandler().getPair();
+                }
+            });
+            thread_go_match.start();
+            
             while (true) {
                 Socket socket = server.accept();
                 System.out.println(socket);
@@ -61,6 +70,7 @@ public class SocketConnection {
                 });
                 thread.start();
             }
+            
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -69,14 +79,6 @@ public class SocketConnection {
     public void handleClient(Socket socket, BufferedReader in, BufferedWriter out) {
         try {
             DataSocket dataSocket = new DataSocket();
-
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    new GoMatchHandler().getPair();
-                }
-            });
-            thread.start();
 
             while (true) {
                 String rawDateReceive = in.readLine();
@@ -100,7 +102,7 @@ public class SocketConnection {
                         break;
                     case "accept_pariring":
                         System.out.println("accept_pariring");
-                        new GoMatchHandler().run(data, in, out);
+                        new AcceptPairingHandler().run(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");

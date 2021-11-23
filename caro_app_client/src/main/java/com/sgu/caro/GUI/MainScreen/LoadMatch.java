@@ -16,6 +16,8 @@ import java.net.Socket;
 import java.util.concurrent.*;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -27,13 +29,14 @@ public class LoadMatch extends javax.swing.JFrame {
     private static DataSocket dataSocket = new DataSocket();
     private static int userId = new TokenManager().getUser_id();
     private boolean getPairing = false;
-    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public LoadMatch() {
         socket.addListenConnection("send_invitation", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 getPairing = true;
+                System.out.println(data.toString());
                 int userId = data.getInt("user");
                 String displayname = data.getString("display_name");
                 int score = data.getInt("score");
@@ -43,11 +46,11 @@ public class LoadMatch extends javax.swing.JFrame {
 
                 final Runnable runnable = new Runnable() {
                     int countdownStarter = 30;
-
+                    @Override
                     public void run() {
 
                         System.out.println(countdownStarter);
-                        lblClock.setText("THỜI GIAN CHỜ: " + String.valueOf(countdownStarter));
+                        txtTime.setText(String.valueOf(countdownStarter) + "s");
                         countdownStarter--;
 
                         if (countdownStarter < 0) {
@@ -65,9 +68,10 @@ public class LoadMatch extends javax.swing.JFrame {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 boolean is_started = data.getBoolean("is_started");
-
+                String step_type = data.getString("step_type");
+                System.out.println(data.toString());
                 if (is_started) {
-                    startMatchScreen();
+                    startMatchScreen(step_type);
                 } else {
                     System.out.println("Not accept");
                     btnHuyMouseClicked(null);
@@ -216,6 +220,14 @@ public class LoadMatch extends javax.swing.JFrame {
 
     private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        scheduler.shutdown();
+        
+        try {
+            Thread.sleep(1200);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LoadMatch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         if (getPairing) {
             String dataSend = dataSocket.exportDataAcceptPairing(userId, false);
             socket.sendData(dataSend);
@@ -227,15 +239,25 @@ public class LoadMatch extends javax.swing.JFrame {
 
     private void btnDongYMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        scheduler.shutdown();
+        
+        try {
+            Thread.sleep(1200);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LoadMatch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        btnDongY.setEnabled(false);
+        
         String dataSend = dataSocket.exportDataAcceptPairing(userId, true);
+        System.out.println(dataSend);
         socket.sendData(dataSend);
 
-        scheduler.shutdown();
         // Giao dienj waiting for other
     }
 
-    private void startMatchScreen() {
-        new MatchDesign();
+    private void startMatchScreen(String step_type) {
+        new MatchDesign(step_type);
         Login.mainScreen.setVisible(false);
         this.setVisible(false);
         this.dispose();
