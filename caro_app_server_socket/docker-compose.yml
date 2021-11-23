@@ -1,13 +1,12 @@
 version: '3.1'
 services:
-  db:
-    image: mysql:8.0
+  socket:
+    image: np_caro_socket:latest
+    command: bash -c "mvn compile && mvn exec:java -Dexec.mainClass=com.sgu.caro.CaroAppServerApplication"
     ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: asd123!@#
-      MYSQL_DATABASE: caro_db
-      MYSQL_USER: caro_user
-      MYSQL_PASSWORD: caro_password
-    security_opt:
-      - seccomp:unconfined
+      - "0.0.0.0:5000:5000"
+
+networks: 
+  default: 
+    external: 
+      name: caro_network
