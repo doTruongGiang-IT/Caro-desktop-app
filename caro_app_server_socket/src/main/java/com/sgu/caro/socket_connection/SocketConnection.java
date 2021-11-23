@@ -65,7 +65,7 @@ public class SocketConnection {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        handleClient(socket, in, out);
+                        handleClient(userID, socket, in, out);
                     }
                 });
                 thread.start();
@@ -76,7 +76,7 @@ public class SocketConnection {
         }
     }
 
-    public void handleClient(Socket socket, BufferedReader in, BufferedWriter out) {
+    public void handleClient(String userID, Socket socket, BufferedReader in, BufferedWriter out) {
         try {
             DataSocket dataSocket = new DataSocket();
 
@@ -113,6 +113,7 @@ public class SocketConnection {
                 }
             }
         } catch (IOException e) {
+            socketClients.remove(userID);
             System.err.println(e);
         }
     }
@@ -132,7 +133,8 @@ public class SocketConnection {
             public void run() {
                 while (true) {
                     Map<String, Socket> userList = new SocketConnection().getSocketClients();
-
+                    System.out.println(userList.size());
+                    
                     for (Map.Entry<String, Socket> e : userList.entrySet()) {
                         Socket socketClient = e.getValue();
                         if (socketClient.isClosed()) {

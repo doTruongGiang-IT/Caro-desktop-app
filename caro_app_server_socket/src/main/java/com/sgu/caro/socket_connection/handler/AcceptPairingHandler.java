@@ -14,6 +14,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
+import java.lang.Math;
 
 class Group {
 
@@ -72,6 +73,22 @@ class Group {
             this.accept_pairing_2 = accept_pairing_2;
         }
     }
+    
+    public int inGroup(int userId){
+        if (userId == user_1 || userId == user_2){
+            return 1;
+        }
+        else if (watchers.contains(userId)){
+            return 2;
+        }
+        else{
+            return 0;
+        }
+    }
+    
+    public String toString(){
+        return String.valueOf(Math.min(user_1, user_2)) + "|" + String.valueOf(Math.max(user_1, user_2));
+    }
 }
 
 public class AcceptPairingHandler {
@@ -94,6 +111,7 @@ public class AcceptPairingHandler {
             if (group.isAccept_pairing_1() && group.isAccept_pairing_2()) {
                 dataSend1 = datasocket.exportDataStartMatch(true, "X");
                 dataSend2 = datasocket.exportDataStartMatch(true, "O");
+                new GoStepHandler().addMatrix(group);
             } else {
                 return;
             }
@@ -120,7 +138,7 @@ public class AcceptPairingHandler {
             outUser2.write(dataSend2);
             outUser2.newLine();
             outUser2.flush();
-
+            
         } catch (IOException ex) {
             Logger.getLogger(GoMatchHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
