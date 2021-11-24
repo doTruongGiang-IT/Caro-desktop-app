@@ -4,7 +4,7 @@ public class TokenManager {
 
     private static String jwt;
     private static int user_id;
-    private static final String HOST = "http://139.177.184.240:8080";
+    private static final String HOST = "http://localhost:8080";
 
     public static String getJwt() {
         return jwt;
