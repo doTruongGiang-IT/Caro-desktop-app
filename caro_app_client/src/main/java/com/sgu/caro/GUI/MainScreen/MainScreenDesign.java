@@ -1,11 +1,23 @@
 package com.sgu.caro.GUI.MainScreen;
 
+import com.sgu.caro.GUI.MatchScreen.Board;
+import com.sgu.caro.GUI.MatchScreen.Cell;
+import com.sgu.caro.GUI.MatchScreen.MatchDesign;
+import com.sgu.caro.GUI.MatchScreen.ResultMatchScreen;
+import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketConnection;
+import com.sgu.caro.socket_connection.SocketHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -16,23 +28,62 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MainScreenDesign extends JFrame{
     public static boolean loadMatch = true;
+    private static SocketConnection socket = new SocketConnection();
+    private static DataSocket dataSocket = new DataSocket();
+    private static int userId = new TokenManager().getUser_id();
     
     public MainScreenDesign() {
+        // Init socket
+        SocketConnection socket = new SocketConnection();
+        socket.startConnection();
+        
         initComponents();
         
-        // Cái này test chơi thôi - sau này load bàn chơi và kỳ thủ
-        for(int i = 0; i <= 20; ++i) {
-            BanChoi cc = new BanChoi();
-            leftPanel.add(cc);
-        }
+        socket.addListenConnection("get_group", new SocketHandler() {
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+                leftPanel.removeAll();
+                JSONArray groups = data.getJSONArray("groups");
+                for (int i=0; i<groups.length(); i++){
+                    JSONObject element = groups.getJSONObject(i);
+                    System.out.println(i + 1 + 
+                        String.valueOf(element.getInt("user_1")) +
+                        String.valueOf(element.getInt("user_2")) +
+                        element.getInt("number_of_watchers"));
+                    BanChoi board = new BanChoi(
+                        i + 1, 
+                        String.valueOf(element.getInt("user_1")), 
+                        String.valueOf(element.getInt("user_2")),
+                        element.getInt("number_of_watchers")
+                    );
+                    leftPanel.add(board);
+                }
+                    
+            }
+        });
         
-        for(int i = 0; i <= 20; ++i) {
-            KyThu cc = new KyThu();
-            rightPanel.add(cc);
-        }
+        socket.addListenConnection("get_user", new SocketHandler() {
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+                rightPanel.removeAll();
+                JSONArray users = data.getJSONArray("users");
+                for (int i=0; i<users.length(); i++){
+                    JSONObject element = users.getJSONObject(i);
+                    KyThu player = new KyThu(
+                        element.getInt("id"), 
+                        element.getString("name"),
+                        element.getInt("score")
+                    );
+                    rightPanel.add(player);
+                }
+                    
+            }
+        });
     }
     private void initComponents() {
         
@@ -70,6 +121,8 @@ public class MainScreenDesign extends JFrame{
         btnNewGame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if(loadMatch) {
+                    String data = dataSocket.exportDataGoMatch(userId);
+                    socket.sendData(data);
                     new LoadMatch().setVisible(true);
                     loadMatch = false;
                 }

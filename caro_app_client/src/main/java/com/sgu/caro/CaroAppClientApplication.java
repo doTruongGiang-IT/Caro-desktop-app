@@ -1,13 +1,16 @@
 package com.sgu.caro;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.sgu.caro.GUI.Login.Login;
+import com.sgu.caro.GUI.MatchScreen.ResultMatchScreen;
+import java.io.IOException;
 
-@SpringBootApplication
 public class CaroAppClientApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CaroAppClientApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        try {
+            new Login();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

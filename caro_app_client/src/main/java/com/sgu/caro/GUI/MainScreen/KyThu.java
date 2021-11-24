@@ -10,7 +10,15 @@ public class KyThu extends javax.swing.JPanel {
 
     private ImageIcon imgOnline, imgOffLine;
     
-    public KyThu() {
+    private int userId;
+    private String name;
+    private int score;
+    
+    public KyThu(int userId, String name, int score) {
+        this.userId = userId;
+        this.name = name;
+        this.score = score;
+        
         try{
             Image img; 
             imgOnline = new ImageIcon(ImageIO.read(new File("images/icon-online.png")));
@@ -25,19 +33,21 @@ public class KyThu extends javax.swing.JPanel {
             e.printStackTrace();
         }
         initComponents();
-        lblIcon.setIcon(imgOffLine);
+        lblIcon.setIcon(imgOnline);
     }
-
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+                     
     private void initComponents() {
 
+        lblId = new javax.swing.JLabel();
         lblUserName = new javax.swing.JLabel();
+        lblScore = new javax.swing.JLabel();
         lblIcon = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        lblUserName.setText("Username1");
+        lblId.setText("Id: " + String.valueOf(userId));
+        lblUserName.setText("Name: " + name);
+        lblScore.setText("Score: " + String.valueOf(score));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -45,17 +55,20 @@ public class KyThu extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(lblUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                .addComponent(lblId, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblScore, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(lblIcon)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblId, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .addComponent(lblUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(lblScore, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -64,6 +77,8 @@ public class KyThu extends javax.swing.JPanel {
 
     // Variables declaration - do not modify                     
     private javax.swing.JLabel lblIcon;
+    private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblUserName;
+    private javax.swing.JLabel lblScore;
     // End of variables declaration                   
 }

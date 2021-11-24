@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+  socket:
+    image: np_caro_socket:latest
+    command: bash -c "mvn compile && mvn exec:java -Dexec.mainClass=com.sgu.caro.CaroAppServerApplication"
+    ports:
+      - "0.0.0.0:5000:5000"
+
+networks: 
+  default: 
+    external: 
+      name: caro_network

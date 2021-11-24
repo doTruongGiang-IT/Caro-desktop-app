@@ -71,7 +71,7 @@ public class DataSocket {
             "type": "accept_pariring",
             "data": {
                 "user": 1101, #id người dùng
-                "iS_accepted": true # đồng ý ghép cặp hay không
+                "is_accepted": true # đồng ý ghép cặp hay không
             }
 	}
      * @param userID
@@ -85,6 +85,73 @@ public class DataSocket {
         jo.put("type", "accept_pariring");
         data.put("user", userID);
         data.put("is_accepted", isAccepted);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "go_match",
+            "data": {
+                "user": 1101, #id người dùng
+            }
+	}
+     * @param userID
+     * @return 
+     */
+    public String exportDataGoMatch(int userID){
+        JSONObject jo = new JSONObject();        
+        JSONObject data = new JSONObject();
+        
+        jo.put("type", "go_match");
+        data.put("user", userID);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "end_match",
+            "data": {
+                "user_1": 1101, #id người dùng 1
+                "user_2": 1101, #id người dùng 2 
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataEndMatch(int userID1, int userID2) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "end_match");
+        data.put("user_1", userID1);
+        data.put("user_2", userID2);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match",
+            "data": {
+                "user": 1101, #id người dùng 1
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatch(int userID1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match");
+        data.put("user", userID1);
         jo.put("data", data);
         return encryptData(jo.toString());
     }

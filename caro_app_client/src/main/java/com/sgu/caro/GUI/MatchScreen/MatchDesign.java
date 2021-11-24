@@ -1,5 +1,6 @@
 package com.sgu.caro.GUI.MatchScreen;
 
+import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.socket_connection.SocketHandler;
 import java.awt.BorderLayout;
@@ -18,12 +19,13 @@ import org.json.JSONObject;
 
 
 public class MatchDesign extends JFrame{
-    public MatchDesign() {
-        initComponents();
+    public static int user2;
+    public MatchDesign(String stepType) {
+        initComponents(stepType);
         
     }
     
-    private void initComponents() {
+    private void initComponents(String stepType) {
         
         this.setTitle("Game Caro");
         try {
@@ -42,7 +44,7 @@ public class MatchDesign extends JFrame{
         panel.setLayout(new BorderLayout());
         
         // Set các Panel
-        board = new Board();
+        board = new Board(stepType);
         userPanel = new UserPanel();
         chatPanel = new ChatPanel();
         
@@ -73,7 +75,7 @@ public class MatchDesign extends JFrame{
     private ChatPanel chatPanel;
     
     public static void main(String[] args) {
-        new MatchDesign();
+        new MatchDesign("O");
         SocketConnection socket = new SocketConnection();
         socket.startConnection();
     }
