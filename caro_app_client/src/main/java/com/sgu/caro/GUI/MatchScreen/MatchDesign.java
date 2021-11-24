@@ -1,5 +1,6 @@
 package com.sgu.caro.GUI.MatchScreen;
 
+import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.socket_connection.SocketHandler;
 import java.awt.BorderLayout;
@@ -19,7 +20,6 @@ import org.json.JSONObject;
 
 public class MatchDesign extends JFrame{
     public static int user2;
-    
     public MatchDesign(String stepType) {
         initComponents(stepType);
         

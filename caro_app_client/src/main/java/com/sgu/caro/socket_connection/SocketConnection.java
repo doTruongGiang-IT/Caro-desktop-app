@@ -1,5 +1,6 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.api_connection.TokenManager;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -84,6 +85,14 @@ public class SocketConnection {
                     case "start_match":
                         System.out.println("start_match");
                         actions.get("start_match").onHandle(data, in, out);
+                        break;
+                    case "get_group":
+                        System.out.println("get_group");
+                        actions.get("get_group").onHandle(data, in, out);
+                        break;
+                    case "get_user":
+                        System.out.println("get_user");
+                        actions.get("get_user").onHandle(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");

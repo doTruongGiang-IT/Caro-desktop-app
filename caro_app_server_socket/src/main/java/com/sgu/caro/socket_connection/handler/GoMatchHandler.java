@@ -19,12 +19,11 @@ import org.json.JSONObject;
 public class GoMatchHandler {
     public static ArrayList<Integer> userQueue = new ArrayList<>();
     private static DataSocket datasocket = new DataSocket();
-    private static final String getUserByUsernameURL = "http://localhost:8080/caro_api/users/";
     private static APIConnection apiConnection = new APIConnection();
             
     public void run(JSONObject data, BufferedReader in, BufferedWriter out){
         userQueue.add(data.getInt("user"));
-        JSONObject user1 = apiConnection.callGetAPI(getUserByUsernameURL + data.getInt("user"));
+        JSONObject user1 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + data.getInt("user"));
         System.out.println(user1.toString());
         System.out.println(userQueue.size());
     }
@@ -40,8 +39,8 @@ public class GoMatchHandler {
                 int user_id_1 = userQueue.remove(0);
                 int user_id_2 = userQueue.remove(0);
                 
-                JSONObject user1 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_1);
-                JSONObject user2 = apiConnection.callGetAPI(getUserByUsernameURL + user_id_2);
+                JSONObject user1 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_1);
+                JSONObject user2 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_2);
                 
                 System.out.println(user1.toString());
                 System.out.println(user2.toString());

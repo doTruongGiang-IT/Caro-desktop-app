@@ -2,6 +2,7 @@ package com.sgu.caro.socket_connection.handler;
 
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.entity.Group;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;

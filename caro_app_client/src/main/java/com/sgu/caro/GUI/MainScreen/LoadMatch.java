@@ -30,9 +30,11 @@ public class LoadMatch extends javax.swing.JFrame {
     private static DataSocket dataSocket = new DataSocket();
     private static int userId = new TokenManager().getUser_id();
     private boolean getPairing = false;
+    private boolean clickHuyBtn = false;
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public LoadMatch() {
+        clickHuyBtn = true;
         socket.addListenConnection("send_invitation", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
@@ -77,7 +79,10 @@ public class LoadMatch extends javax.swing.JFrame {
                     startMatchScreen(step_type);
                 } else {
                     System.out.println("Not accept");
-                    btnHuyMouseClicked(null);
+                    
+                    if (clickHuyBtn){
+                        btnHuyMouseClicked(null);
+                    }
                 }
             }
         });
@@ -224,13 +229,15 @@ public class LoadMatch extends javax.swing.JFrame {
     private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
         scheduler.shutdown();
-        
+        clickHuyBtn = false;
         if (getPairing) {
             String dataSend = dataSocket.exportDataAcceptPairing(userId, false);
+            System.out.println("Sending: " + dataSend);
             socket.sendData(dataSend);
         }
         else{
             String dataSend = dataSocket.exportDataOutMatch(userId);
+            System.out.println("Sending: " + dataSend);
             socket.sendData(dataSend);
         }
         this.setVisible(false);

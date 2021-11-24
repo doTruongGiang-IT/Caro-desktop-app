@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.json.JSONObject;
 import java.util.Collections;
+import org.json.JSONArray;
 import org.springframework.http.MediaType;
 
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +16,10 @@ public class APIConnection {
 
     private static final String username = "socket@caro.com";
     private static final String password = "socket123!@#";
-    private static final String authAPIURL = "http://localhost:8080/caro_api/authAdmin";
+    public static final String HOST = "http://localhost:8080";
+    public static final String authAPIURL = HOST + "/caro_api/authAdmin";
+    public static final String getUserByUsernameAPIURL = HOST + "/caro_api/users/";
+    public static final String getUserListAPIURL = HOST + "/caro_api/users";
     private static String jwt = "";
 
     public APIConnection() {
@@ -50,6 +54,22 @@ public class APIConnection {
 
         DataSocket datasocket = new DataSocket();
         JSONObject jsonObj = datasocket.importData(resultRestTemplate.getBody());
+        return jsonObj;
+    }
+    
+    public JSONArray callGetListAPI(String URL) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.set("Authorization", jwt);
+
+        HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+        ResponseEntity<String> resultRestTemplate = restTemplate.exchange(URL, HttpMethod.GET, entity, String.class);
+
+        DataSocket datasocket = new DataSocket();
+        JSONArray jsonObj = datasocket.importDataList(resultRestTemplate.getBody());
         return jsonObj;
     }
 

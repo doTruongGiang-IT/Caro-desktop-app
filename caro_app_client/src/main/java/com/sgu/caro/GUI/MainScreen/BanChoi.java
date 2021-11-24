@@ -1,13 +1,21 @@
 package com.sgu.caro.GUI.MainScreen;
 
 public class BanChoi extends javax.swing.JPanel {
-
-    public BanChoi() {
+    private int stt;
+    private String user_1, user_2;
+    private int numberOfWatchers;
+    
+    public BanChoi(int stt, String user_1, String user_2, int numberOfWatchers) {
+        this.stt = stt;
+        this.user_1 = user_1;
+        this.user_2 = user_2;
+        this.numberOfWatchers = numberOfWatchers;
         initComponents();
     }
 
     private void initComponents() {
 
+        lblStt = new javax.swing.JLabel();
         lblUser1 = new javax.swing.JLabel();
         lblUser2 = new javax.swing.JLabel();
         lblBanChoi = new javax.swing.JLabel();
@@ -16,11 +24,10 @@ public class BanChoi extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        lblUser1.setText("Bàn 1");
-
-        lblUser2.setText("Bàn 1");
-
-        lblBanChoi.setText("Bàn 1");
+        lblStt.setText(String.valueOf(stt));
+        lblUser1.setText("User 1: " + user_1);
+        lblUser2.setText("User 2: " + user_2);
+        lblBanChoi.setText("Watchers: " + String.valueOf(numberOfWatchers));
 
         btnWatch.setText("Vào Xem");
 
@@ -55,6 +62,7 @@ public class BanChoi extends javax.swing.JPanel {
     // Variables declaration - do not modify                     
     private javax.swing.JButton btnWatch;
     private javax.swing.JLabel lblBanChoi;
+    private javax.swing.JLabel lblStt;
     private javax.swing.JLabel lblUser1;
     private javax.swing.JLabel lblUser2;
     // End of variables declaration                   

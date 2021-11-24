@@ -6,6 +6,7 @@ import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import com.sgu.caro.socket_connection.handler.GoMatchHandler;
 import com.sgu.caro.socket_connection.handler.OutMatchHandler;
+import com.sgu.caro.socket_connection.handler.GetInfoHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class SocketConnection {
         try {
             server = new ServerSocket(socketPort);
             System.out.println("===== Started socket  =====");
-            
+
             Thread thread_go_match = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -54,7 +55,23 @@ public class SocketConnection {
                 }
             });
             thread_go_match.start();
-            
+
+            Thread thread_get_group = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new GetInfoHandler().getGroup();
+                }
+            });
+            thread_get_group.start();
+
+            Thread thread_get_user = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new GetInfoHandler().getUser();
+                }
+            });
+            thread_get_user.start();
+
             while (true) {
                 Socket socket = server.accept();
                 System.out.println(socket);
@@ -72,7 +89,7 @@ public class SocketConnection {
                 });
                 thread.start();
             }
-            
+
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -124,6 +141,8 @@ public class SocketConnection {
             }
         } catch (IOException e) {
             socketClients.remove(userID);
+//            new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
+//            GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             System.err.println(e);
         }
     }
@@ -144,7 +163,7 @@ public class SocketConnection {
                 while (true) {
                     Map<String, Socket> userList = new SocketConnection().getSocketClients();
                     System.out.println(userList.size());
-                    
+
                     for (Map.Entry<String, Socket> e : userList.entrySet()) {
                         Socket socketClient = e.getValue();
                         if (socketClient.isClosed()) {

@@ -2,10 +2,8 @@ version: '3.1'
 services:
   db:
     image: mysql:8.0
-    restart: always
     ports:
       - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: asd123!@#
       MYSQL_DATABASE: caro_db
@@ -13,21 +11,3 @@ services:
       MYSQL_PASSWORD: caro_password
     security_opt:
       - seccomp:unconfined
-    healthcheck:
-        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-        timeout: 20s
-        retries: 10
-
-  api:
-    image: np_caro_api:latest
-    command: bash -c "mvn clean install && mvn spring-boot:run"
-    ports:
-      - "0.0.0.0:8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-
-networks: 
-  default: 
-    external: 
-      name: caro_network

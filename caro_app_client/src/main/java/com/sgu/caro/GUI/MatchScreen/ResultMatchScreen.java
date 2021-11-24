@@ -150,7 +150,7 @@ public class ResultMatchScreen extends javax.swing.JFrame{
         dongy_btn.setBounds(56, 175, 120, 40);
         jPanel1.add(dongy_btn);
 
-        quaylai_btn.setBackground(new java.awt.Color(200, 206, 210));
+        quaylai_btn.setBackground(new java.awt.Color(91, 231, 196));
         quaylai_btn.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
         quaylai_btn.setForeground(new java.awt.Color(255, 255, 255));
         quaylai_btn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -269,6 +269,8 @@ public class ResultMatchScreen extends javax.swing.JFrame{
 
     private void quaylai_btnMouseClicked(java.awt.event.MouseEvent evt) {                                         
         System.out.println("Quay Lại");
+        System.out.println("Main Screen: " + WindowManager.mainScreen);
+        System.out.println("Match Screen: " + WindowManager.matchScreen);
         WindowManager.matchScreen.dispose();
         WindowManager.mainScreen = new MainScreenDesign();
         WindowManager.mainScreen.setVisible(true);

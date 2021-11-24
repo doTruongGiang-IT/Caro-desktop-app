@@ -1,5 +1,7 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.entity.Group;
+import com.sgu.caro.entity.User;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.List;
@@ -123,7 +125,7 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
-        /**
+    /**
      * 	# data format
 	{
             "type": "start_match",
@@ -131,8 +133,8 @@ public class DataSocket {
                 "is_started": true
             }
 	}
-     * @param userID
-     * @param message
+     * @param is_started
+     * @param stepType
      * @return 
      */
     public String exportDataStartMatch(boolean is_started, String stepType){
@@ -146,8 +148,96 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     * 	# data format
+	{
+            "type": "get_group",
+            "data": {
+                "groups": [
+                    {
+                        user_1: 1001,
+                        user_2: 1002,
+                        number_of_watchers: 10,
+                    },
+                    {
+                        user_1: 1001,
+                        user_2: 1002,
+                        number_of_watchers: 10,
+                    }
+                ]
+            }
+	}
+     * @param groups
+     * @return 
+     */
+    public String exportDataGetGroup(ArrayList<Group> groups){
+        JSONObject jo = new JSONObject();      
+        JSONObject data = new JSONObject();      
+        List<JSONObject> grouplist = new ArrayList<>();
+        
+        jo.put("type", "get_group");
+        for (Group group : groups){      
+            JSONObject element = new JSONObject();
+            element.put("user_1", group.getUser_1());
+            element.put("user_2", group.getUser_2());
+            element.put("number_of_watchers", group.getWatchers().size());
+            grouplist.add(element);
+        }
+        
+        JSONArray groupdata = new JSONArray(grouplist);
+        data.put("groups", groupdata);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     * 	# data format
+	{
+            "type": "get_user",
+            "data": {
+                "users": [
+                    {
+                       "id": 1100,
+                       "name": "name1",
+                       "score" 1200
+                    },
+                    {
+                       "id": 1200,
+                       "name": "name2",
+                       "score" 1200
+                   }
+                ]
+            }
+	}
+     * @param users
+     * @return 
+     */
+    public String exportDataGetUser(ArrayList<User> users){
+        JSONObject jo = new JSONObject();      
+        JSONObject data = new JSONObject();
+        List<JSONObject> userlist = new ArrayList<>();
+        
+        jo.put("type", "get_user");
+        for (User user : users){      
+            JSONObject element = new JSONObject();
+            element.put("id", user.getId());
+            element.put("name", user.getName());
+            element.put("score", user.getScore());
+            userlist.add(element);
+        }
+        
+        JSONArray userdata = new JSONArray(userlist);
+        data.put("users", userdata);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
+    }
+    
+    public JSONArray importDataList(String rawData){
+        return new JSONArray(rawData);
     }
     
     public static void main(String[] args) {
