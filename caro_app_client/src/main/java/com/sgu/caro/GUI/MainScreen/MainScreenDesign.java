@@ -5,6 +5,7 @@ import com.sgu.caro.GUI.MatchScreen.Cell;
 import com.sgu.caro.GUI.MatchScreen.MatchDesign;
 import com.sgu.caro.GUI.MatchScreen.ResultMatchScreen;
 import com.sgu.caro.GUI.WindowManager;
+import com.sgu.caro.api_connection.AESEncryption;
 import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
@@ -40,7 +41,8 @@ public class MainScreenDesign extends JFrame{
     public MainScreenDesign() {
         // Init socket
         SocketConnection socket = new SocketConnection();
-        socket.startConnection();
+        AESEncryption encryption = new AESEncryption();
+        encryption.addRSAPublicKeySocketHandle();
         
         initComponents();
         

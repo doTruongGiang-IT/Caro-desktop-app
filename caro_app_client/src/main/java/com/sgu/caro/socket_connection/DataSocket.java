@@ -1,15 +1,23 @@
 package com.sgu.caro.socket_connection;
 
+import com.sgu.caro.api_connection.AESEncryption;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.List;
 import java.util.ArrayList;
+import org.json.JSONException;
 
 public class DataSocket {
+    AESEncryption encryption = new AESEncryption();
+    
     public DataSocket() {}
     
     public String encryptData(String rawData){
-        return rawData;
+        return encryption.encrypt(rawData);
+    }
+    
+    public String decryptData(String encryptedData){
+        return encryption.decrypt(encryptedData);
     }
     
     /**
@@ -143,7 +151,6 @@ public class DataSocket {
             }
 	}
      * @param userID1
-     * @param userID2
      * @return 
      */
     public String exportDataOutMatch(int userID1) {
@@ -156,8 +163,54 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     *  # data format
+	{
+            "type": "public_key",
+            "data": "",
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataPublicKey() {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "public_key");
+        jo.put("data", "");
+        return jo.toString();
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "aes_key",
+            "data": {
+                "aes_key": "129321sdh91821"
+            },
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataAESKey(String AESKey) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "aes_key");
+        data.put("aes_key", AESKey);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
-        return new JSONObject(rawData);
+        try {
+            return new JSONObject(decryptData(rawData));
+        }
+        catch (JSONException e){
+            return new JSONObject(decryptData(rawData));
+        }
     }
     
     public static void main(String[] args) {

@@ -2,12 +2,16 @@ package com.sgu.caro.GUI.Login;
 
 import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.GUI.WindowManager;
+import com.sgu.caro.api_connection.AESEncryption;
+import com.sgu.caro.api_connection.APIConnection;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.sgu.caro.api_connection.DataAPI;
 import com.sgu.caro.api_connection.TokenManager;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketConnection;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -36,6 +40,8 @@ public class Login {
     JLabel passwordError;
     JLabel picLabel;
     DataAPI dataAPI = new DataAPI();
+    APIConnection apiConnection = new APIConnection();
+    DataSocket dataSocket = new DataSocket();
 
     public Login() throws IOException {
         BufferedImage myPicture = ImageIO.read(new File("./images/logo.png"));
@@ -115,20 +121,13 @@ public class Login {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                String API_URL = TokenManager.getHOST() + "/caro_api/auth";
 
-                String requestData = dataAPI.exportLoginAPI(email.getText(), String.valueOf(password.getPassword()));
-                try {
-                    HttpClient client = HttpClient.newHttpClient();
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(new URI(API_URL))
-                            .headers("Content-Type", "application/json;charset=UTF-8")
-                            .POST(HttpRequest.BodyPublishers.ofString(requestData))
-                            .build();
-                    HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                    JSONObject responseData = dataAPI.importData(response.body().toString());
-                    System.out.println(response.body().toString());
+                String username_value = email.getText();
+                String password_value = String.valueOf(password.getPassword());
+                apiConnection.callPostAESKeyAPI(username_value, new AESEncryption().getSecretKey());
+                JSONObject responseData = apiConnection.callPostAuthAPI(username_value, password_value);
 
+                if (responseData != null){
                     if (responseData.has("access_token")) {
                         String jwt = responseData.getString("access_token");
                         int userId = Integer.parseInt(responseData.getString("user_id"));
@@ -138,14 +137,17 @@ public class Login {
                         WindowManager.mainScreen = new MainScreenDesign();
                         WindowManager.mainScreen.setVisible(true);
                         jframe.setVisible(false);
+                        SocketConnection socket = new SocketConnection();
+                        socket.startConnection();
+                        
                     } else {
                         usernameError.setForeground(Color.RED);
                         usernameError.setText("Đăng nhập thất bại");
                         passwordError.setText("");
                     }
-                } catch (URISyntaxException e1) {
-                } catch (IOException e2) {
-                } catch (InterruptedException e2) {
+                }
+                else{
+                    System.out.println("Error occured in login (call API)");
                 }
             }
 

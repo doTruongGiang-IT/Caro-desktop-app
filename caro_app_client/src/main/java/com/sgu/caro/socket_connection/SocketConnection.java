@@ -33,6 +33,7 @@ public class SocketConnection {
     private static int socketPort = 5000;
     private static Map <String, SocketHandler> actions = new HashMap<String, SocketHandler>();
     private static ArrayList<Thread> events = new ArrayList<Thread>();
+    private static DataSocket dataSocket = new DataSocket();
 
     public SocketConnection() {}
     
@@ -44,6 +45,7 @@ public class SocketConnection {
             System.out.println("===== Connected to server =====");
             System.out.println(String.valueOf(TokenManager.getUser_id()));
             sendData(String.valueOf(TokenManager.getUser_id()));
+            sendData(dataSocket.exportDataPublicKey());
             
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -57,7 +59,6 @@ public class SocketConnection {
     
     public void handleServer(Socket socket, BufferedReader in, BufferedWriter out){
         try {
-            DataSocket dataSocket = new DataSocket();
             while (true){
                 String rawDateReceive = in.readLine();
                 System.out.println("Receive" + rawDateReceive);
@@ -91,6 +92,10 @@ public class SocketConnection {
                         actions.get("get_group").onHandle(data, in, out);
                         break;
                     case "get_user":
+                        System.out.println("get_user");
+                        actions.get("get_user").onHandle(data, in, out);
+                        break;
+                    case "public_key":
                         System.out.println("get_user");
                         actions.get("get_user").onHandle(data, in, out);
                         break;
