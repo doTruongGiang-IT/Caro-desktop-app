@@ -44,6 +44,7 @@ public class KyThu extends javax.swing.JPanel {
         lblIcon = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setMaximumSize(new java.awt.Dimension(270, 50));
 
         lblId.setText("Id: " + String.valueOf(userId));
         lblUserName.setText("Name: " + name);

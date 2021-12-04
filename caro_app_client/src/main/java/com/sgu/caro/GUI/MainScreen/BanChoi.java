@@ -23,6 +23,7 @@ public class BanChoi extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setMaximumSize(new java.awt.Dimension(600, 87));
 
         lblStt.setText(String.valueOf(stt));
         lblUser1.setText("User 1: " + user_1);
