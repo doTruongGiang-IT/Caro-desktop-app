@@ -48,6 +48,7 @@ public class MainScreenDesign extends JFrame{
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 leftPanel.removeAll();
+                leftPanel.validate();
                 JSONArray groups = data.getJSONArray("groups");
                 for (int i=0; i<groups.length(); i++){
                     JSONObject element = groups.getJSONObject(i);
@@ -62,6 +63,7 @@ public class MainScreenDesign extends JFrame{
                         element.getInt("number_of_watchers")
                     );
                     leftPanel.add(board);
+                    leftPanel.validate();
                 }
                     
             }
