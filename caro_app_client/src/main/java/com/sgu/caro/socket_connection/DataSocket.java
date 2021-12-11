@@ -156,6 +156,27 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    public String exportDataRankScore() {
+        JSONObject jo = new JSONObject();
+
+        jo.put("type", "get_rank_score");
+        return encryptData(jo.toString());
+    }
+    
+    public String exportDataRankWinRate() {
+        JSONObject jo = new JSONObject();
+
+        jo.put("type", "get_rank_win_rate");
+        return encryptData(jo.toString());
+    }
+    
+    public String exportDataRankWinLength() {
+        JSONObject jo = new JSONObject();
+
+        jo.put("type", "get_rank_win_length");
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }
