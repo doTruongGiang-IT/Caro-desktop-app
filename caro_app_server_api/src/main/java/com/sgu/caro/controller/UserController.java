@@ -239,7 +239,33 @@ public class UserController {
             Field field = ReflectionUtils.findField(User.class, "isActive");
         	if(field != null) {
         		field.setAccessible(true);
-            	ReflectionUtils.setField(field, user, !user.isActive());
+            	ReflectionUtils.setField(field, user, false);
+        	};
+			user.setActive(user.isActive());
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
+    
+    @PatchMapping("unblock_user/{id}")
+    public ResponseEntity<User> unBlockUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            Field field = ReflectionUtils.findField(User.class, "isActive");
+        	if(field != null) {
+        		field.setAccessible(true);
+            	ReflectionUtils.setField(field, user, true);
         	};
 			user.setActive(user.isActive());
             editUser = userRepository.save(user);
