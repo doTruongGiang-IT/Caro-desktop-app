@@ -94,6 +94,10 @@ public class SocketConnection {
                         System.out.println("get_user");
                         actions.get("get_user").onHandle(data, in, out);
                         break;
+                    case "watch_achievement":
+                        System.out.println("watch_achievement");
+                        actions.get("watch_achievement").onHandle(data, in, out);
+                        break;
                     case "stop":
                         System.out.println("July");
                         in.close();

@@ -16,6 +16,7 @@ import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,9 +31,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.SystemColor;
+import java.awt.Rectangle;
 
 public class MainScreenDesign extends JFrame{
     public static boolean loadMatch = true;
+//    public static boolean loadAchievement = true;
     private static SocketConnection socket = new SocketConnection();
     private static DataSocket dataSocket = new DataSocket();
     private static int userId = new TokenManager().getUser_id();
@@ -119,7 +125,12 @@ public class MainScreenDesign extends JFrame{
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftScroll = new JScrollPane(leftPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
+        mainLeftPanel.add(lblBanCo);
+        mainLeftPanel.add(leftScroll);
+        
         btnNewGame = new JButton("Vào chơi");
+        mainLeftPanel.add(btnNewGame);
+        btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnNewGame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if(loadMatch) {
@@ -130,10 +141,29 @@ public class MainScreenDesign extends JFrame{
                 }
             }
         });
-        
-        mainLeftPanel.add(lblBanCo);
-        mainLeftPanel.add(leftScroll);
-        mainLeftPanel.add(btnNewGame);
+        lblSpace = new JLabel("................................");
+        lblSpace.setForeground(SystemColor.menu);
+        mainLeftPanel.add(lblSpace);
+                
+        btnThanhTich = new JButton("Xem thành tích");
+        btnThanhTich.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainLeftPanel.add(btnThanhTich);
+        btnThanhTich.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+//                if(loadAchievement) {
+//                    String data = dataSocket.exportDataGoMatch(userId);
+//                    socket.sendData(data);
+//                    new LoadAchievement().setVisible(true);
+//                    loadAchievement = false;
+//                }
+            	try {
+					new LoadAchievement().setVisible(true);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        });        
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
         
     
@@ -159,7 +189,7 @@ public class MainScreenDesign extends JFrame{
         mainPanel.add(mainRightPanel);
         
         // Thêm panel chính vào Jframe
-        this.add(mainPanel);
+        getContentPane().add(mainPanel, BorderLayout.SOUTH);
         
         // Set vị trí ở giữa
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -184,11 +214,12 @@ public class MainScreenDesign extends JFrame{
     private JScrollPane leftScroll;
     private JButton btnNewGame;
     private JLabel lblBanCo;
-    
     // mainRightPanel là panel chính chứa các component phần Danh sách kỳ thủ
     private JPanel mainRightPanel;
     // rightPanel, rightScroll để liệt kê danh sách kỳ thủ
     private JPanel rightPanel;
     private JScrollPane rightScroll;
     private JLabel lblKyThu;
+    private JButton btnThanhTich;
+    private JLabel lblSpace;
 }

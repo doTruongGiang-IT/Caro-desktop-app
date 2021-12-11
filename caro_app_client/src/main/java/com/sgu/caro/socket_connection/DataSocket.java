@@ -156,6 +156,41 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     * # data format
+     {
+     		"type": "watch_achievement",
+     		"data": {
+     			"user": 1101, #id người dùng 1
+     			"score": tổng điểm của người dùng 1
+     			"win_rate": tỷ lệ thắng của người dùng 1
+     			"win_count": số lần thắng của người dùng 1
+     			"win_length": chuỗi trận thắng dài nhất của người dùng 1
+     			"lose_rate": tỷ lệ thua của người dùng 1
+     			"lose_count": số lần thua của người dùng 1
+     			"lose_length": chuỗi trận thua dài nhất của người dùng 1
+     		}
+     }
+     * @param userID
+     * @return
+     */
+    public String exportDataWatchAchievement(int userID1, int score, int win_rate, int win_count, int win_length, int lose_rate, int lose_count, int lose_length) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "wathc_achievement");
+        data.put("user", userID1);
+        data.put("score", score);
+        data.put("win_rate", win_rate);
+        data.put("win_count", win_count);
+        data.put("win_length", win_length);
+        data.put("lose_rate", lose_rate);
+        data.put("lose_count", lose_count);
+        data.put("lose_length", lose_length);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }
