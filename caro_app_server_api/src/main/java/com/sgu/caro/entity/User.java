@@ -1,10 +1,17 @@
 package com.sgu.caro.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
@@ -66,6 +73,12 @@ public class User {
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
+    
+    @OneToMany(mappedBy="user_1")
+    private Set<Match> matches_1;
+    
+    @OneToMany(mappedBy="user_2")
+    private Set<Match> matches_2;
 
     public User() {
     }
