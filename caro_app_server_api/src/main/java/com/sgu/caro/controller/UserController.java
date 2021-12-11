@@ -104,12 +104,18 @@ public class UserController {
         User user = userRepository.findByUsername(username);
 
         if (user != null) {
-            if (pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+            if (pbkdf2PasswordEncoder.matches(password, user.getPassword()) && user.isActive()) {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
                 result.put("user_id", String.valueOf(user.getId()));
-            } else {
-                result.put("error", "Wrong password");
+            };
+            
+            if(pbkdf2PasswordEncoder.matches(password, user.getPassword()) && !user.isActive()) {
+            	result.put("error", "User has been blocked");
+            };
+            
+            if(!pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+                result.put("error", "Wrong credentials");
             };
         } else {
             throw new UsernameNotFoundException("User not exist");
@@ -145,7 +151,7 @@ public class UserController {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
             } else {
-                result.put("error", "Wrong password");
+                result.put("error", "Wrong credentials");
             };
         } else {
             throw new UsernameNotFoundException("User not exist");
@@ -210,14 +216,31 @@ public class UserController {
 //			};
             user.setFirstName(updateUser.getFirstName());
             user.setLastName(updateUser.getLastName());
-
-//			user.setActive(updateUser.isActive());
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
+    
+	@PutMapping("block_user/{id}")
+    public ResponseEntity<User> blockUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+			user.setActive(updateUser.isActive());
             editUser = userRepository.save(user);
         };
         return flag ? ResponseEntity.ok().body(editUser) : null;
     }
-
-    ;
 	
 	// Delete smart phone by id
 	//@CrossOrigin(origins = "http://localhost:4200")
@@ -240,7 +263,6 @@ public class UserController {
             respone.put("User deleted: ", Boolean.TRUE);
         };
         return flag ? respone : null;
-    }
-;
+    };
 
 }
