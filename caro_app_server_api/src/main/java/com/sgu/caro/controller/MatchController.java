@@ -98,6 +98,18 @@ public class MatchController {
         	match.setUser_1(null);
         	match.setUser_2(null);
         };
+        if(match.getResult() != user1.getId() && match.getResult() != user2.getId()) {
+        	match.setResult(0);
+        };
+        
+        /*0: Thắng bình thường
+         * 1: Hòa
+         * 2: Người chơi hết lượt
+         * 3: Người chơi rời cuộc đấu
+        */
+        if(match.getResult_type() >= 4) {
+        	match.setResult_type(1);
+        };
         return matchRepository.save(match);
     };
 	
