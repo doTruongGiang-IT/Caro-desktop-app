@@ -3,8 +3,10 @@ package com.sgu.caro.controller;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
@@ -48,7 +50,8 @@ public class MatchController {
     JwtService jwtService;
 	
 	@GetMapping("matches")
-    public List<Match> getAllMatch(@RequestHeader Map<String, String> headers) {
+    public List<Object> getAllMatch(@RequestHeader Map<String, String> headers) {
+		List<Object> formatMatches = new ArrayList<Object>();
         boolean flag = false;
         for (var entry : headers.entrySet()) {
             if (entry.getKey().equals("authorization")) {
@@ -59,12 +62,43 @@ public class MatchController {
                 };
             };
         };
-        return flag ? this.matchRepository.findAll() : null;
+        if(flag) {
+        	List<Match> matches = matchRepository.findAll();
+        	for (Match match : matches) {
+        		User user_1 = userRepository.findById(match.getUser_1()).orElseThrow(() -> new ResourceNotFoundException("User 1 not found"));
+                User user_2 = userRepository.findById(match.getUser_2()).orElseThrow(() -> new ResourceNotFoundException("User 2 not found"));
+                LinkedHashMap<String, Object> hashMatch = new LinkedHashMap<String, Object>();
+                
+                long id = match.getId();
+                long user1 = match.getUser_1();
+                String name1 = user_1.getFirstName() + " " + user_1.getLastName();
+                long user2 = match.getUser_2();
+                String name2 = user_2.getFirstName() + " " + user_2.getLastName();
+                long result = match.getResult();
+                int result_type = match.getResult_type();
+                String startDate = match.getStart_date();
+                String endDate = match.getEnd_date();
+                
+                hashMatch.put("id", id);
+                hashMatch.put("user_1", user1);
+                hashMatch.put("name_1", name1);
+                hashMatch.put("user_2", user2);
+                hashMatch.put("name_2", name2);
+                hashMatch.put("result", result);
+                hashMatch.put("result_type", result_type);
+                hashMatch.put("start_date", startDate);
+                hashMatch.put("end_date", endDate);
+                formatMatches.add(hashMatch);
+        	};
+        };
+        
+        return flag ? formatMatches : null;
     };
     
     @GetMapping("matches/{id}")
-    public ResponseEntity<Match> getMatchById(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long matchId) {
+    public ResponseEntity<Object> getMatchById(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long matchId) {
         Match match = null;
+        LinkedHashMap<String, Object> hashMatch = new LinkedHashMap<String, Object>();
         boolean flag = false;
         for (var entry : headers.entrySet()) {
             if (entry.getKey().equals("authorization")) {
@@ -77,16 +111,42 @@ public class MatchController {
         };
         if (flag) {
             match = matchRepository.findById(matchId).orElseThrow(() -> new ResourceNotFoundException("Match not found"));
+            User user_1 = userRepository.findById(match.getUser_1()).orElseThrow(() -> new ResourceNotFoundException("User 1 not found"));
+            User user_2 = userRepository.findById(match.getUser_2()).orElseThrow(() -> new ResourceNotFoundException("User 2 not found"));
+            
+            long id = match.getId();
+            long user1 = match.getUser_1();
+            String name1 = user_1.getFirstName() + " " + user_1.getLastName();
+            long user2 = match.getUser_2();
+            String name2 = user_2.getFirstName() + " " + user_2.getLastName();
+            long result = match.getResult();
+            int result_type = match.getResult_type();
+            String startDate = match.getStart_date();
+            String endDate = match.getEnd_date();
+            
+            hashMatch.put("id", id);
+            hashMatch.put("user_1", user1);
+            hashMatch.put("name_1", name1);
+            hashMatch.put("user_2", user2);
+            hashMatch.put("name_2", name2);
+            hashMatch.put("result", result);
+            hashMatch.put("result_type", result_type);
+            hashMatch.put("start_date", startDate);
+            hashMatch.put("end_date", endDate);
         };
-        return flag ? ResponseEntity.ok().body(match) : null;
+        return flag ? ResponseEntity.ok().body(hashMatch) : null;
     };
     
     @PostMapping("matches")
-    public Match createMatch(@Valid @RequestBody Match match) {
+    public Match createMatch(@Valid @RequestBody Match match) throws Exception {
         String startDate = match.getStart_date();
         String endDate = match.getEnd_date();
-        User user1 = match.getUser_1();
-        User user2 = match.getUser_2();
+        long user1 = match.getUser_1();
+        long user2 = match.getUser_2();
+        
+        User user_1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User 1 not found"));
+        User user_2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User 2 not found"));
+        
     	String regex = "([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})";
         if (!startDate.matches(regex)) {
             match.setStart_date(null);
@@ -94,11 +154,10 @@ public class MatchController {
         if (!endDate.matches(regex)) {
             match.setEnd_date(null);
         };
-        if(user1.getId() == user2.getId()) {
-        	match.setUser_1(null);
-        	match.setUser_2(null);
+        if(user1 == user2) {
+        	throw new Exception("Wrong format for create match");
         };
-        if((match.getResult() != user1.getId() && match.getResult() != user2.getId()) || match.getResult_type() >= 4 || match.getResult_type() == 1) {
+        if((match.getResult() != user1 && match.getResult() != user2) || match.getResult_type() >= 4 || match.getResult_type() == 1) {
         	match.setResult(0);
         };
         

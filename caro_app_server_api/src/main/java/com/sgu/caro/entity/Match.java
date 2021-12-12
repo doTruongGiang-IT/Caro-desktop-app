@@ -27,17 +27,15 @@ public class Match {
     private long id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name="user_1")
-    private User user_1;
+    @Column(name="user_1")
+    private long user_1;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name="user_2")
-    private User user_2;
+    @Column(name="user_2")
+    private long user_2;
 
     @Column(name = "result")
-    private int result;
+    private long result;
     
     @NotNull
     @Column(name = "result_type")
@@ -58,7 +56,7 @@ public class Match {
     public Match() {
     }
 
-	public Match(@NotNull User user_1, @NotNull User user_2, @NotNull int result, @NotNull int result_type,
+	public Match(@NotNull long user_1, @NotNull long user_2, @NotNull long result, @NotNull int result_type,
 			@NotNull @NotBlank(message = "Start date is required") String start_date,
 			@NotNull @NotBlank(message = "End date is required") String end_date) {
 		super();
@@ -80,27 +78,27 @@ public class Match {
 		this.id = id;
 	}
 
-	public User getUser_1() {
+	public long getUser_1() {
 		return user_1;
 	}
 
-	public void setUser_1(User user_1) {
+	public void setUser_1(long user_1) {
 		this.user_1 = user_1;
 	}
 
-	public User getUser_2() {
+	public long getUser_2() {
 		return user_2;
 	}
 
-	public void setUser_2(User user_2) {
+	public void setUser_2(long user_2) {
 		this.user_2 = user_2;
 	}
 
-	public int getResult() {
+	public long getResult() {
 		return result;
 	}
 
-	public void setResult(int result) {
+	public void setResult(long result) {
 		this.result = result;
 	}
 

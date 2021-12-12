@@ -73,12 +73,6 @@ public class User {
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
-    
-    @OneToMany(mappedBy="user_1")
-    private Set<Match> matches_1;
-    
-    @OneToMany(mappedBy="user_2")
-    private Set<Match> matches_2;
 
     public User() {
     }
