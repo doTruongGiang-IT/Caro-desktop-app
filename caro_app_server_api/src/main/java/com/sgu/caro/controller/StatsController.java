@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,22 +64,60 @@ public class StatsController {
             };
         };
         if(flag) {
+        	int winLength = 0;
+        	int loseLength = 0;
         	List<Match> matches = (List<Match>) matchRepository.findAll();
         	User userStats = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         	Predicate<Match> byUserId = user -> (user.getUser_1() == userId || user.getUser_2() == userId);
         	Predicate<Match> byUserWinId = user -> (user.getResult() == userId);
+        	Predicate<Match> byUserLoseId = user -> (user.getResult() != userId && user.getResult() != 0 && (user.getUser_1() == userId || user.getUser_2() == userId));
         	List<Match> userMatches = matches.stream().filter(byUserId).collect(Collectors.toList());
         	List<Match> userWinMatches = userMatches.stream().filter(byUserWinId).collect(Collectors.toList());
+        	List<Match> userLoseMatches = userMatches.stream().filter(byUserLoseId).collect(Collectors.toList());
         	
         	int matchesCount = userMatches.size();
         	int winMatchesCount = userWinMatches.size();
+        	int loseMatchesCount = userLoseMatches.size();
     		float winRate = (winMatchesCount * 100) / matchesCount;
+    		
+    		Comparator<Match> compareById = (Match match1, Match match2) -> match1.getStart_date().compareTo(match2.getStart_date());
+    		Collections.sort(userMatches, compareById);
+    		
+//    		for(int i = 0; i < matchesCount; i++) {
+//    			int winTemp = 0;
+//				int loseTemp = 0;
+//				
+//    			for(int j = i+1; j < matchesCount; j++) {
+//    				if(userMatches.get(i).getResult() == userId && userMatches.get(j).getResult() == userId) {
+//        				winTemp++;
+//        			};
+//        			
+//        			if((userMatches.get(i).getResult() != userId && userMatches.get(j).getResult() != userId) && (userMatches.get(i).getResult() != 0 && userMatches.get(j).getResult() != 0)) {
+//        				loseTemp++;
+//        			};
+//    			};
+//    			
+//    			if(winLength <= winTemp) {
+//    				winLength = winTemp;
+//    			};
+//    			
+//    			if(loseLength <= loseTemp) {
+//    				loseLength = loseTemp;
+//    			};
+//    		};
+//    		
+//    		if(winMatchesCount == 1) {
+//    			winLength = 1;
+//    		};
+//    		if(loseMatchesCount == 1) {
+//    			loseLength = 1;
+//    		};
     		
     		hashAchievement.put("win_rate", winRate);
     		hashAchievement.put("win_count", winMatchesCount);
-    		hashAchievement.put("lose_count", matchesCount - winMatchesCount);
+    		hashAchievement.put("lose_count", loseMatchesCount);
     		hashAchievement.put("win_length", winMatchesCount);
-    		hashAchievement.put("lose_length", matchesCount - winMatchesCount);
+    		hashAchievement.put("lose_length", loseMatchesCount);
     		hashAchievement.put("score", userStats.getScore());
         };
         return flag ? ResponseEntity.ok().body(hashAchievement) : null;
