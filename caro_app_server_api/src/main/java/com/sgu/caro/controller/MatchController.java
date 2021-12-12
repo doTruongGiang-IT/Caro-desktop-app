@@ -169,7 +169,62 @@ public class MatchController {
         if(match.getResult_type() >= 4 || match.getResult() == 0) {
         	match.setResult_type(1);
         };
+        
+        // User 1 win
+        if(match.getResult() == user1) {
+        	Field field = ReflectionUtils.findField(User.class, "score");
+        	if(field != null) {
+        		field.setAccessible(true);
+        		ReflectionUtils.setField(field, user_1, user_1.getScore() + 3);
+        		ReflectionUtils.setField(field, user_2, Math.max(user_2.getScore() - 1, 0));
+        	};
+    		user_1.setScore(user_1.getScore());
+    		user_2.setScore(user_2.getScore());
+            userRepository.save(user_1);
+            userRepository.save(user_2);
+        };
+        
+        // User 2 win
+        if(match.getResult() == user2) {
+        	Field field = ReflectionUtils.findField(User.class, "score");
+        	if(field != null) {
+        		field.setAccessible(true);
+        		ReflectionUtils.setField(field, user_2, user_2.getScore() + 3);
+        		ReflectionUtils.setField(field, user_1, Math.max(user_1.getScore() - 1, 0));
+        	};
+    		user_2.setScore(user_2.getScore());
+    		user_1.setScore(user_1.getScore());
+            userRepository.save(user_2);
+            userRepository.save(user_1);
+        };
+        
+        // User 1 & 2 even
+        if(match.getResult() == 0) {
+        	Field field = ReflectionUtils.findField(User.class, "score");
+        	if(field != null) {
+        		field.setAccessible(true);
+        		ReflectionUtils.setField(field, user_2, user_2.getScore() + 1);
+        		ReflectionUtils.setField(field, user_1, user_1.getScore() + 1);
+        	};
+    		user_2.setScore(user_2.getScore());
+    		user_1.setScore(user_1.getScore());
+            userRepository.save(user_2);
+            userRepository.save(user_1);
+        };
+        
         return matchRepository.save(match);
     };
 	
 }
+
+//  for(var entry : type.entrySet()) {
+//	if(entry.getKey().equals("win")) {
+//		ReflectionUtils.setField(field, user, user.getScore() + 3);
+//	};
+//	if(entry.getKey().equals("lose")) {
+//		ReflectionUtils.setField(field, user, user.getScore() - 1);
+//	};
+//	if(entry.getKey().equals("even")) {
+//		ReflectionUtils.setField(field, user, user.getScore() + 1);
+//	};
+//};

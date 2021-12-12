@@ -64,8 +64,8 @@ public class StatsController {
             };
         };
         if(flag) {
-        	int winLength = 0;
-        	int loseLength = 0;
+        	int max_win_length = 0;
+        	int max_loss_length = 0;
         	List<Match> matches = (List<Match>) matchRepository.findAll();
         	User userStats = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         	Predicate<Match> byUserId = user -> (user.getUser_1() == userId || user.getUser_2() == userId);
@@ -83,42 +83,34 @@ public class StatsController {
     		Comparator<Match> compareById = (Match match1, Match match2) -> match1.getStart_date().compareTo(match2.getStart_date());
     		Collections.sort(userMatches, compareById);
     		
-//    		for(int i = 0; i < matchesCount; i++) {
-//    			int winTemp = 0;
-//				int loseTemp = 0;
-//				
-//    			for(int j = i+1; j < matchesCount; j++) {
-//    				if(userMatches.get(i).getResult() == userId && userMatches.get(j).getResult() == userId) {
-//        				winTemp++;
-//        			};
-//        			
-//        			if((userMatches.get(i).getResult() != userId && userMatches.get(j).getResult() != userId) && (userMatches.get(i).getResult() != 0 && userMatches.get(j).getResult() != 0)) {
-//        				loseTemp++;
-//        			};
-//    			};
-//    			
-//    			if(winLength <= winTemp) {
-//    				winLength = winTemp;
-//    			};
-//    			
-//    			if(loseLength <= loseTemp) {
-//    				loseLength = loseTemp;
-//    			};
-//    		};
-//    		
-//    		if(winMatchesCount == 1) {
-//    			winLength = 1;
-//    		};
-//    		if(loseMatchesCount == 1) {
-//    			loseLength = 1;
-//    		};
+    		int win_length = 1;
+		    int loss_length = 1;
+		    
+    		for(int i = 1; i < matchesCount; i++){ 
+    		    if(userMatches.get(i).getResult() == userId){
+    		        if(userMatches.get(i-1).getResult() == userMatches.get(i).getResult()){
+    		            win_length++;
+    		        }else{
+    		            win_length = 1;
+    		        };
+    		    }else if (userMatches.get(i).getResult() != userId && userMatches.get(i).getResult() != 0){
+    		        if (userMatches.get(i-1).getResult() != userId && userMatches.get(i-1).getResult() != 0){
+    		            loss_length++;
+    		        }else{
+    		            loss_length = 1;
+    		        };
+    		    };
+    		    max_win_length = Math.max(max_win_length, win_length);
+    		    max_loss_length = Math.max(max_loss_length, loss_length);
+    		};
     		
     		hashAchievement.put("win_rate", winRate);
     		hashAchievement.put("win_count", winMatchesCount);
     		hashAchievement.put("lose_count", loseMatchesCount);
-    		hashAchievement.put("win_length", winMatchesCount);
-    		hashAchievement.put("lose_length", loseMatchesCount);
+    		hashAchievement.put("win_length", max_win_length);
+    		hashAchievement.put("lose_length", max_loss_length);
     		hashAchievement.put("score", userStats.getScore());
+    		hashAchievement.put("all", userMatches);
         };
         return flag ? ResponseEntity.ok().body(hashAchievement) : null;
     };
