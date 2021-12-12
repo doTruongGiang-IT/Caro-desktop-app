@@ -98,7 +98,7 @@ public class MatchController {
         	match.setUser_1(null);
         	match.setUser_2(null);
         };
-        if(match.getResult() != user1.getId() && match.getResult() != user2.getId()) {
+        if((match.getResult() != user1.getId() && match.getResult() != user2.getId()) || match.getResult_type() >= 4 || match.getResult_type() == 1) {
         	match.setResult(0);
         };
         
@@ -107,7 +107,7 @@ public class MatchController {
          * 2: Người chơi hết lượt
          * 3: Người chơi rời cuộc đấu
         */
-        if(match.getResult_type() >= 4) {
+        if(match.getResult_type() >= 4 || match.getResult() == 0) {
         	match.setResult_type(1);
         };
         return matchRepository.save(match);
