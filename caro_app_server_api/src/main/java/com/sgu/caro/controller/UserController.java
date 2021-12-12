@@ -272,6 +272,31 @@ public class UserController {
         };
         return flag ? ResponseEntity.ok().body(editUser) : null;
     };
+    
+    @PatchMapping("reject_invite/{id}")
+    public ResponseEntity<User> score(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            Field field = ReflectionUtils.findField(User.class, "score");
+        	if(field != null) {
+        		field.setAccessible(true);
+            	ReflectionUtils.setField(field, user, Math.max(user.getScore() - 1, 0));
+        	};
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
 	
 	@DeleteMapping("users/{id}")
     public Map<String, Boolean> deleteUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {

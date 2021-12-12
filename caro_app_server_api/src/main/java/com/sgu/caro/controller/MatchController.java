@@ -216,15 +216,3 @@ public class MatchController {
     };
 	
 }
-
-//  for(var entry : type.entrySet()) {
-//	if(entry.getKey().equals("win")) {
-//		ReflectionUtils.setField(field, user, user.getScore() + 3);
-//	};
-//	if(entry.getKey().equals("lose")) {
-//		ReflectionUtils.setField(field, user, user.getScore() - 1);
-//	};
-//	if(entry.getKey().equals("even")) {
-//		ReflectionUtils.setField(field, user, user.getScore() + 1);
-//	};
-//};

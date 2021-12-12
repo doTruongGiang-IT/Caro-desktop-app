@@ -36,10 +36,13 @@ import com.sgu.caro.repository.UserRepository;
 import com.sgu.caro.token.JwtService;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/caro_api/")
 public class StatsController {
+	
+	public static final String ADMIN_ROLE = "admin";
 
 	@Autowired
 	MatchRepository matchRepository;
@@ -50,6 +53,45 @@ public class StatsController {
 	@Autowired
     JwtService jwtService;
 	
+	@GetMapping("rating")
+    public List<Object> getAllMatch(@RequestHeader Map<String, String> headers, @Valid @RequestBody Map<String, String> type) {
+		List<Object> stats = new ArrayList<Object>();
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if(flag) {
+        	List<User> users = new ArrayList<User>();
+        	for(Map.Entry entry : type.entrySet()) {
+        		users = userRepository.findAll(Sort.by(Sort.Direction.DESC, (String) entry.getValue()));
+        	};
+        	for(User user : users) {
+        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
+        		long id = user.getId();
+        		String firstName = user.getFirstName();
+        		String lastName = user.getLastName();
+        		double score = user.getScore();
+        		float winRate = user.getWin_rate();
+        		int winLength = user.getWin_length();
+        		
+        		hashStats.put("id", id);
+        		hashStats.put("name", firstName + " " + lastName);
+        		hashStats.put("win_rate", winRate);
+        		hashStats.put("win_length", winLength);
+        		hashStats.put("score", score);
+        		stats.add(hashStats);
+        	};
+        };
+        
+        return flag ? stats : null;
+    };
+	
 	@GetMapping("stats/{id}")
     public ResponseEntity<Object> getMatchById(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
 		LinkedHashMap<String, Object> hashAchievement = new LinkedHashMap<String, Object>();
@@ -58,7 +100,8 @@ public class StatsController {
         for (var entry : headers.entrySet()) {
             if (entry.getKey().equals("authorization")) {
                 String username = jwtService.getUsernameFromToken(entry.getValue());
-                if (!jwtService.isTokenExpired(entry.getValue())) {
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
                     flag = true;
                 };
             };
@@ -110,7 +153,21 @@ public class StatsController {
     		hashAchievement.put("win_length", max_win_length);
     		hashAchievement.put("lose_length", max_loss_length);
     		hashAchievement.put("score", userStats.getScore());
-    		hashAchievement.put("all", userMatches);
+    		
+    		userStats.setWin_rate(winRate);
+    		userStats.setWin_length(max_win_length);
+    		
+    		Field win_rate = ReflectionUtils.findField(User.class, "win_rate");
+    		Field winLength = ReflectionUtils.findField(User.class, "win_length");
+        	if(win_rate != null) {
+        		win_rate.setAccessible(true);
+            	ReflectionUtils.setField(win_rate, userStats, winRate);
+        	};
+        	if(winLength != null) {
+        		winLength.setAccessible(true);
+            	ReflectionUtils.setField(winLength, userStats, max_win_length);
+        	};
+            userRepository.save(userStats);
         };
         return flag ? ResponseEntity.ok().body(hashAchievement) : null;
     };
