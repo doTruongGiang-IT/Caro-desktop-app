@@ -1,10 +1,17 @@
 package com.sgu.caro.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
@@ -60,6 +67,12 @@ public class User {
 
     @Column(name = "score", columnDefinition = "integer default 0")
     private int score;
+    
+    @Column(name = "winRate", columnDefinition = "integer default 0")
+    private float winRate;
+    
+    @Column(name = "winLength", columnDefinition = "integer default 0")
+    private int winLength;
 
     @Column(name = "role", columnDefinition = "varchar(255) default 'user'")
     private String role;
@@ -76,7 +89,7 @@ public class User {
             @NotNull @NotBlank(message = "Last name is required") @Size(min = 3, message = "Last name should have at least 3 characters") String lastName,
             @NotNull @NotBlank(message = "Gender is required") String gender,
             @NotNull @NotBlank(message = "Day_of_birth is required") String dayOfBirth,
-            @NotNull int score, String role, boolean isActive) {
+            @NotNull int score, @NotNull float winRate, @NotNull int winLength, String role, boolean isActive) {
         super();
         this.username = username;
         this.password = password;
@@ -85,6 +98,8 @@ public class User {
         this.gender = gender;
         this.dayOfBirth = dayOfBirth;
         this.score = score;
+        this.winRate = winRate;
+        this.winLength = winLength;
         this.role = role;
         this.isActive = isActive;
     }
@@ -153,7 +168,23 @@ public class User {
         this.score = score;
     }
 
-    public String getRole() {
+    public float getWin_rate() {
+		return winRate;
+	}
+
+	public void setWin_rate(float win_rate) {
+		this.winRate = win_rate;
+	}
+
+	public int getWin_length() {
+		return winLength;
+	}
+
+	public void setWin_length(int win_length) {
+		this.winLength = win_length;
+	}
+
+	public String getRole() {
         return role;
     }
 
