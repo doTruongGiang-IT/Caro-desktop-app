@@ -1,6 +1,7 @@
 package com.sgu.caro.GUI.Login;
 
 import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
+import com.sgu.caro.GUI.Signup.Signup;
 import com.sgu.caro.GUI.WindowManager;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -27,14 +28,15 @@ import javax.imageio.ImageIO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Login {
-    JFrame jframe;
+public class Login extends JFrame {
     JButton loginButton;
     JTextField email;
     JPasswordField password;
     JLabel usernameError;
     JLabel passwordError;
     JLabel picLabel;
+    JButton signupButton;
+    JLabel notificationLabel;
     DataAPI dataAPI = new DataAPI();
 
     public Login() throws IOException {
@@ -45,7 +47,7 @@ public class Login {
         newImage = new ImageIcon(newimg);  
         picLabel = new JLabel(newImage);
 
-        jframe = new JFrame("Đăng nhập");
+        this.setTitle("Đăng nhập");
         email = new JTextField() {
             protected void paintComponent(Graphics g) {
                 if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
@@ -102,8 +104,28 @@ public class Login {
                 setBorder(new RoundedCornerBorder());
             }
         };
+        
+        signupButton = new JButton("SIGNUP") {
+            protected void paintComponent(Graphics g) {
+                if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setPaint(getBackground());
+                    g2.fill(((RoundedCornerBorder) getBorder()).getBorderShape(
+                            0, 0, getWidth() - 1, getHeight() - 1));
+                    g2.dispose();
+                }
+                super.paintComponent(g);
+            }
+
+            public void updateUI() {
+                super.updateUI();
+                setOpaque(false);
+                setBorder(new RoundedCornerBorder());
+            }
+        };
         usernameError = new JLabel();
         passwordError = new JLabel();
+        notificationLabel = new JLabel();
 
         init();
     }
@@ -137,7 +159,7 @@ public class Login {
                         TokenManager.setUser_id(userId);
                         WindowManager.mainScreen = new MainScreenDesign();
                         WindowManager.mainScreen.setVisible(true);
-                        jframe.setVisible(false);
+                        setVisible(false);
                     } else {
                         usernameError.setForeground(Color.RED);
                         usernameError.setText("Đăng nhập thất bại");
@@ -149,6 +171,21 @@ public class Login {
                 }
             }
 
+        });
+        
+        signupButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+				try {
+					new Signup().setVisible(true);
+					setVisible(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            }
         });
 
         //email validation listener
@@ -304,6 +341,10 @@ public class Login {
         loginButton.setBackground(Color.decode("#00649F"));
         loginButton.setForeground(Color.WHITE);
         loginButton.setFocusPainted(false);
+        signupButton.setPreferredSize(new Dimension(250, 35));
+        signupButton.setBackground(Color.decode("#00649F"));
+        signupButton.setForeground(Color.WHITE);
+        signupButton.setFocusPainted(false);
 
         email.setText("Nhập email");
         email.setForeground(Color.gray);
@@ -316,9 +357,13 @@ public class Login {
 
         passwordError.setFont(new Font("SansSerif", Font.BOLD, 11));
         passwordError.setForeground(Color.RED);
+        
+        notificationLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
+        notificationLabel.setForeground(Color.BLACK);
+        notificationLabel.setText("Bạn chưa có tài khoản, đăng ký ngay!");
 
-        jframe.setLayout(new GridBagLayout());
-        jframe.getContentPane().setBackground(Color.WHITE);
+        this.setLayout(new GridBagLayout());
+        this.getContentPane().setBackground(Color.WHITE);
         Insets textInsets = new Insets(10, 10, 5, 10);
         Insets buttonInsets = new Insets(20, 10, 10, 10);
         Insets errorInsets = new Insets(0, 20, 0, 0);
@@ -326,41 +371,52 @@ public class Login {
         GridBagConstraints input = new GridBagConstraints();
         input.anchor = GridBagConstraints.CENTER;
         input.gridy = 1;
-        jframe.add(picLabel, input);
+        this.add(picLabel, input);
 
         input.anchor = GridBagConstraints.CENTER;
         input.insets = textInsets;
         input.gridy = 2;
-        jframe.add(email, input);
+        this.add(email, input);
 
         input.gridy = 3;
         input.insets = errorInsets;
         input.anchor = GridBagConstraints.WEST;
-        jframe.add(usernameError, input);
+        this.add(usernameError, input);
 
         input.gridy = 4;
         input.insets = textInsets;
         input.anchor = GridBagConstraints.CENTER;
-        jframe.add(password, input);
+        this.add(password, input);
 
         input.gridy = 5;
         input.insets = errorInsets;
         input.anchor = GridBagConstraints.WEST;
-        jframe.add(passwordError, input);
+        this.add(passwordError, input);
 
         input.insets = buttonInsets;
         input.anchor = GridBagConstraints.WEST;
         input.gridx = 0;
         input.gridy = 6;
-        jframe.add(loginButton, input);
+        this.add(loginButton, input);
+        
+//        input.anchor = GridBagConstraints.CENTER;
+//        input.insets = textInsets;
+//        input.gridy = 7;
+//        this.add(notificationLabel, input);
+        
+        input.insets = buttonInsets;
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 7;
+        this.add(signupButton, input);
 
-        jframe.setSize(350, 400);
-        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setVisible(true);
-        jframe.setResizable(false);
-        jframe.setLocationRelativeTo(null);
+        this.setSize(350, 500);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(true);
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
 
-        jframe.requestFocus();
+        this.requestFocus();
         addEventListeners();
     }
 
