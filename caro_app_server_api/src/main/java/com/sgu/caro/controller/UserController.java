@@ -154,7 +154,11 @@ public class UserController {
         String pass = user.getPassword();
         Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
         String regex = "([0-9]{4})/([0-9]{2})/([0-9]{2})";
-        if (!dateString.matches(regex)) {
+        String dateRegex = "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))/02/29)$" 
+        	      + "|^(((19|2[0-9])[0-9]{2})/02/(0[1-9]|1[0-9]|2[0-8]))$"
+        	      + "|^(((19|2[0-9])[0-9]{2})/(0[13578]|10|12)/(0[1-9]|[12][0-9]|3[01]))$" 
+        	      + "|^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
+        if (!dateString.matches(dateRegex)) {
             user.setDayOfBirth(null);
         };
         if (!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
@@ -184,15 +188,22 @@ public class UserController {
         if (flag) {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             String gender = updateUser.getGender();
-//			int score = updateUser.getScore();
+            String dateString = updateUser.getDayOfBirth();
+            String dateRegex = "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))/02/29)$" 
+          	      + "|^(((19|2[0-9])[0-9]{2})/02/(0[1-9]|1[0-9]|2[0-8]))$"
+          	      + "|^(((19|2[0-9])[0-9]{2})/(0[13578]|10|12)/(0[1-9]|[12][0-9]|3[01]))$" 
+          	      + "|^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
+	        if (!dateString.matches(dateRegex)) {
+	            user.setDayOfBirth(null);
+	        };
+	        if (dateString.matches(dateRegex)) {
+	            user.setDayOfBirth(dateString);
+	        };
             if (!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
                 user.setGender("undefiend");
+            }else {;
+            	user.setGender(gender);
             };
-//			if(score > 0) {
-//				user.setScore(updateUser.getScore());
-//			}else {
-//				user.setScore(0);
-//			};
             user.setFirstName(updateUser.getFirstName());
             user.setLastName(updateUser.getLastName());
             editUser = userRepository.save(user);
