@@ -1,5 +1,6 @@
 package com.sgu.caro.controller;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -26,7 +28,6 @@ import com.sgu.caro.entity.User;
 import com.sgu.caro.exception.ResourceNotFoundException;
 import com.sgu.caro.repository.UserRepository;
 import com.sgu.caro.token.JwtService;
-
 import antlr.Token;
 
 @RestController
@@ -41,8 +42,6 @@ public class UserController {
     @Autowired
     JwtService jwtService;
 
-    // Get all employee
-    //@CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("users")
     public List<User> getAllUsers(@RequestHeader Map<String, String> headers) {
         boolean flag = false;
@@ -56,12 +55,8 @@ public class UserController {
             };
         };
         return flag ? this.userRepository.findAll() : null;
-    }
-
-    ;
+    };
 	
-	// Get employee by id
-	//@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("users/{id}")
     public ResponseEntity<User> getUserById(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
         User user = null;
@@ -79,12 +74,8 @@ public class UserController {
             user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         };
         return flag ? ResponseEntity.ok().body(user) : null;
-    }
-
-    ;
+    };
 	
-	// Get employee by id
-	//@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("auth")
     public ResponseEntity<HashMap<String, String>> authentication(@Valid @RequestBody HashMap<String, String> credential) {
         String username = "";
@@ -104,25 +95,27 @@ public class UserController {
         User user = userRepository.findByUsername(username);
 
         if (user != null) {
-            if (pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+            if (pbkdf2PasswordEncoder.matches(password, user.getPassword()) && user.isActive()) {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
                 result.put("user_id", String.valueOf(user.getId()));
-            } else {
-                result.put("error", "Wrong password");
+            };
+            
+            if(pbkdf2PasswordEncoder.matches(password, user.getPassword()) && !user.isActive()) {
+            	result.put("error", "User has been blocked");
+            };
+            
+            if(!pbkdf2PasswordEncoder.matches(password, user.getPassword())) {
+                result.put("error", "Wrong credentials");
             };
         } else {
             throw new UsernameNotFoundException("User not exist");
         };
 
         return ResponseEntity.ok().body(result);
-    }
-
-    ;
+    };
 	
-	// Get employee by id
-		//@CrossOrigin(origins = "http://localhost:4200")
-		@PostMapping("authAdmin")
+	@PostMapping("authAdmin")
     public ResponseEntity<HashMap<String, String>> authenticationForAdmin(@Valid @RequestBody HashMap<String, String> credential) {
         String username = "";
         String password = "";
@@ -145,19 +138,15 @@ public class UserController {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
             } else {
-                result.put("error", "Wrong password");
+                result.put("error", "Wrong credentials");
             };
         } else {
             throw new UsernameNotFoundException("User not exist");
         };
 
         return ResponseEntity.ok().body(result);
-    }
-
-    ;
+    };
 	
-	// Create new employee
-	//@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("users")
     public User createUser(@Valid @RequestBody User user) {
         String dateString = user.getDayOfBirth();
@@ -165,7 +154,11 @@ public class UserController {
         String pass = user.getPassword();
         Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
         String regex = "([0-9]{4})/([0-9]{2})/([0-9]{2})";
-        if (!dateString.matches(regex)) {
+        String dateRegex = "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))/02/29)$" 
+        	      + "|^(((19|2[0-9])[0-9]{2})/02/(0[1-9]|1[0-9]|2[0-8]))$"
+        	      + "|^(((19|2[0-9])[0-9]{2})/(0[13578]|10|12)/(0[1-9]|[12][0-9]|3[01]))$" 
+        	      + "|^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
+        if (!dateString.matches(dateRegex)) {
             user.setDayOfBirth(null);
         };
         if (!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
@@ -177,12 +170,8 @@ public class UserController {
         user.setRole("user");
         user.setActive(true);
         return userRepository.save(user);
-    }
-
-    ;
+    };
 	
-	// Update smart phone by id
-	//@CrossOrigin(origins = "http://localhost:4200")
 	@PutMapping("users/{id}")
     public ResponseEntity<User> updateUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
         User editUser = null;
@@ -199,28 +188,127 @@ public class UserController {
         if (flag) {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             String gender = updateUser.getGender();
-//			int score = updateUser.getScore();
+            String dateString = updateUser.getDayOfBirth();
+            String dateRegex = "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))/02/29)$" 
+          	      + "|^(((19|2[0-9])[0-9]{2})/02/(0[1-9]|1[0-9]|2[0-8]))$"
+          	      + "|^(((19|2[0-9])[0-9]{2})/(0[13578]|10|12)/(0[1-9]|[12][0-9]|3[01]))$" 
+          	      + "|^(((19|2[0-9])[0-9]{2})/(0[469]|11)/(0[1-9]|[12][0-9]|30))$";
+	        if (!dateString.matches(dateRegex)) {
+	            user.setDayOfBirth(null);
+	        };
+	        if (dateString.matches(dateRegex)) {
+	            user.setDayOfBirth(dateString);
+	        };
             if (!gender.equals("male") && !gender.equals("female") && !gender.equals("undefiend")) {
                 user.setGender("undefiend");
+            }else {;
+            	user.setGender(gender);
             };
-//			if(score > 0) {
-//				user.setScore(updateUser.getScore());
-//			}else {
-//				user.setScore(0);
-//			};
             user.setFirstName(updateUser.getFirstName());
             user.setLastName(updateUser.getLastName());
-
-//			user.setActive(updateUser.isActive());
             editUser = userRepository.save(user);
         };
         return flag ? ResponseEntity.ok().body(editUser) : null;
-    }
-
-    ;
+    };
+    
+//	@PutMapping("block_user/{id}")
+//    public ResponseEntity<User> blockUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId, @Valid @RequestBody User updateUser) {
+//        User editUser = null;
+//        boolean flag = false;
+//        for (var entry : headers.entrySet()) {
+//            if (entry.getKey().equals("authorization")) {
+//                String username = jwtService.getUsernameFromToken(entry.getValue());
+//                String role = userRepository.findByUsername(username).getRole();
+//                if (role.equals(ADMIN_ROLE)) {
+//                    flag = true;
+//                };
+//            };
+//        };
+//        if (flag) {
+//            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//			user.setActive(updateUser.isActive());
+//            editUser = userRepository.save(user);
+//        };
+//        return flag ? ResponseEntity.ok().body(editUser) : null;
+//    };
+    
+    @PatchMapping("block_user/{id}")
+    public ResponseEntity<User> blockUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            Field field = ReflectionUtils.findField(User.class, "isActive");
+        	if(field != null) {
+        		field.setAccessible(true);
+            	ReflectionUtils.setField(field, user, false);
+        	};
+			user.setActive(user.isActive());
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
+    
+    @PatchMapping("unblock_user/{id}")
+    public ResponseEntity<User> unBlockUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            Field field = ReflectionUtils.findField(User.class, "isActive");
+        	if(field != null) {
+        		field.setAccessible(true);
+            	ReflectionUtils.setField(field, user, true);
+        	};
+			user.setActive(user.isActive());
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
+    
+    @PatchMapping("reject_invite/{id}")
+    public ResponseEntity<User> score(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
+        User editUser = null;
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if (flag) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            Field field = ReflectionUtils.findField(User.class, "score");
+        	if(field != null) {
+        		field.setAccessible(true);
+            	ReflectionUtils.setField(field, user, Math.max(user.getScore() - 1, 0));
+        	};
+            editUser = userRepository.save(user);
+        };
+        return flag ? ResponseEntity.ok().body(editUser) : null;
+    };
 	
-	// Delete smart phone by id
-	//@CrossOrigin(origins = "http://localhost:4200")
 	@DeleteMapping("users/{id}")
     public Map<String, Boolean> deleteUser(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") long userId) {
         Map<String, Boolean> respone = new HashMap<>();
@@ -240,7 +328,6 @@ public class UserController {
             respone.put("User deleted: ", Boolean.TRUE);
         };
         return flag ? respone : null;
-    }
-;
+    };
 
 }
