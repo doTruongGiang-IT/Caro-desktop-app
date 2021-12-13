@@ -11,6 +11,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.json.JSONObject;
 
 
@@ -39,6 +43,9 @@ public class SocketConnection {
     public void startConnection(){
         try {
             socket = new Socket(socketHost, socketPort);
+//        	System.setProperty("javax.net.ssl.trustStore", "../carostore.jks");
+//        	System.setProperty("javax.net.ssl.keyStorePassword", "");
+            socket = ((SSLSocketFactory)SSLSocketFactory.getDefault()).createSocket(socketHost, socketPort);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("===== Connected to server =====");

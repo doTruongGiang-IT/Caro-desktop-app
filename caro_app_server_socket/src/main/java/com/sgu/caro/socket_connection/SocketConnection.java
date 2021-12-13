@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.net.ssl.SSLServerSocketFactory;
+
 import org.json.JSONObject;
 
 /**
@@ -46,6 +49,9 @@ public class SocketConnection {
     public void startConnection() {
         try {
             server = new ServerSocket(socketPort);
+//        	System.setProperty("javax.net.ssl.trustStore", "../carostore.jks");
+//        	System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+//            server = ((SSLServerSocketFactory)SSLServerSocketFactory.getDefault()).createServerSocket(socketPort);
             System.out.println("===== Started socket  =====");
 
             Thread thread_go_match = new Thread(new Runnable() {
