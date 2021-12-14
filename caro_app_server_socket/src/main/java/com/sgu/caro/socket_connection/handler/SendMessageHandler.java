@@ -23,28 +23,30 @@ public class SendMessageHandler {
         DataSocket dataSocket = new DataSocket();
         int user_id = data.getInt("user");
         Group group = new AcceptPairingHandler().getGroup(user_id);
-        ArrayList <Integer> users = (ArrayList)group.getWatchers().clone();
-        users.add(group.getUser_1());
-        users.add(group.getUser_2());
-        
-        for (Map.Entry<String, Socket> e : userList.entrySet()) {
-            if (users.contains(Integer.parseInt(e.getKey()))){
-                try {
-                    Socket socketClient = e.getValue();
-                    BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
+        if (group != null){
+            ArrayList <Integer> users = (ArrayList)group.getWatchers().clone();
+            users.add(group.getUser_1());
+            users.add(group.getUser_2());
 
-                    
-                    int userClientID = data.getInt("user");
-                    JSONObject user = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + userClientID);
-                
-                    String message = data.getString("message");
-                    String dataSend = dataSocket.exportDataSendMessage(userClientID, user.getString("firstName") + ' ' + user.getString("lastName"), message);
+            for (Map.Entry<String, Socket> e : userList.entrySet()) {
+                if (users.contains(Integer.parseInt(e.getKey()))){
+                    try {
+                        Socket socketClient = e.getValue();
+                        BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 
-                    outClient.write(dataSend);
-                    outClient.newLine();
-                    outClient.flush();
-                } catch (IOException ex) {
-                    Logger.getLogger(SendMessageHandler.class.getName()).log(Level.SEVERE, null, ex);
+
+                        int userClientID = data.getInt("user");
+                        JSONObject user = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + userClientID);
+
+                        String message = data.getString("message");
+                        String dataSend = dataSocket.exportDataSendMessage(userClientID, user.getString("firstName") + ' ' + user.getString("lastName"), message);
+
+                        outClient.write(dataSend);
+                        outClient.newLine();
+                        outClient.flush();
+                    } catch (IOException ex) {
+                        Logger.getLogger(SendMessageHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }
