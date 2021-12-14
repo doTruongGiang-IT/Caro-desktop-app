@@ -11,8 +11,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -23,63 +28,31 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.GUI.Login.RoundedCornerBorder;
+import com.sgu.caro.api_connection.DataAPI;
+import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 
 public class UserRankScreen extends JFrame {
-
+	DataAPI dataAPI = new DataAPI();
 	private SocketConnection socket;
 	private DataSocket dataSocket;
 
 	public UserRankScreen() {
 		initComponents();
-		
-//		socket.addListenConnection("get_rank_score", new SocketHandler() {
-//			@Override
-//			public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-//				rankPanel.removeAll();
-//				JSONArray users = data.getJSONArray("users");
-//				for (int i = 0; i < users.length(); i++) {
-//					JSONObject element = users.getJSONObject(i);
-//					UserRank player = new UserRank(element.getInt("id"), element.getString("name"),
-//							element.getInt("win_rate"), element.getInt("win_length"), element.getInt("score"));
-//					rankPanel.add(player);
-//				}
-//			}
-//		});
-//
-//		socket.addListenConnection("get_rank_win_rate", new SocketHandler() {
-//			@Override
-//			public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-//				rankPanel.removeAll();
-//				JSONArray users = data.getJSONArray("users");
-//				for (int i = 0; i < users.length(); i++) {
-//					JSONObject element = users.getJSONObject(i);
-//					UserRank player = new UserRank(element.getInt("id"), element.getString("name"),
-//							element.getInt("win_rate"), element.getInt("win_length"), element.getInt("score"));
-//					rankPanel.add(player);
-//				}
-//			}
-//		});
-//
-//		socket.addListenConnection("get_rank_win_length", new SocketHandler() {
-//			@Override
-//			public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-//				rankPanel.removeAll();
-//				JSONArray users = data.getJSONArray("users");
-//				for (int i = 0; i < users.length(); i++) {
-//					JSONObject element = users.getJSONObject(i);
-//					UserRank player = new UserRank(element.getInt("id"), element.getString("name"),
-//							element.getInt("win_rate"), element.getInt("win_length"), element.getInt("score"));
-//					rankPanel.add(player);
-//				}
-//			}
-//		});
-
 	}
 
 	private void initComponents() {
@@ -93,7 +66,7 @@ public class UserRankScreen extends JFrame {
 		}
 
 		this.setSize(700, 640);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setResizable(false);
 
 		userPanel = new JPanel();
@@ -104,39 +77,33 @@ public class UserRankScreen extends JFrame {
 		btnScore = new JButton("Điểm thành tích");
 		btnScore.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-//				String data = dataSocket.exportDataRankScore();
-//				socket.sendData(data);
-				test_mock_data();
+				getUserRankScoreFromAPI();;
 			}
 		});
 
 		btnWinRate = new JButton("Tỉ lệ thắng");
 		btnWinRate.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-//				String data = dataSocket.exportDataRankWinRate();
-//				socket.sendData(data);
-				test_mock_data();
+				getUserRankWinRateFromAPI();
 			}
 		});
 
 		btnWinLength = new JButton("Chuỗi trận thắng");
 		btnWinLength.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-//				String data = dataSocket.exportDataRankWinLength();
-//				socket.sendData(data);
-				test_mock_data();
+				getUserRankWinLengthFromAPI();
 			}
 		});
 
-		
-		label = new JLabel("           Id             Name                            Win Rate            Win Length                   Score");
+		label = new JLabel(
+				"           ID         Tài khoản                        Tỉ lệ thắng      Chuỗi trận thắng        Điểm thành tích");
 		titlePanel = new JPanel();
 		titlePanel.setBackground(Color.RED);
 		titlePanel.setPreferredSize(new Dimension(600, 20));
 		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
 		titlePanel.add(label);
-		//label.setForeground(Color.RED);
-		
+		// label.setForeground(Color.RED);
+
 		btnScore.setBackground(Color.decode("#00649F"));
 		btnScore.setForeground(Color.WHITE);
 		btnScore.setMargin(new Insets(0, 10, 0, 10));
@@ -146,7 +113,7 @@ public class UserRankScreen extends JFrame {
 		btnWinRate.setBackground(Color.decode("#00649F"));
 		btnWinRate.setForeground(Color.WHITE);
 		btnWinLength.setMargin(new Insets(0, 10, 0, 10));
-        
+
 		rankPanel = new JPanel();
 		rankPanel.setBackground(Color.white);
 		rankPanel.setPreferredSize(new Dimension(700, 600));
@@ -178,11 +145,11 @@ public class UserRankScreen extends JFrame {
 		this.setLocation(x, y);
 
 	}
-
-	public void test_mock_data() {
-		String urlAPI = "https://61b361dcaf5ff70017ca1f03.mockapi.io/users";
-
-		String charset = "UTF-8";
+	
+	
+	public void getUserRankScoreFromAPI() {
+		String urlAPI = TokenManager.getHOST() + "/caro_api/rating/score";
+		String token = TokenManager.getJwt();
 		BufferedReader reader;
 		String line;
 		StringBuilder response = new StringBuilder();
@@ -191,7 +158,8 @@ public class UserRankScreen extends JFrame {
 			userPanel.removeAll();
 			userPanel.validate();
 			connection = new URL(urlAPI).openConnection();
-			connection.setRequestProperty("Accept-Charset", charset);
+			connection.setRequestProperty("Authorization", token);
+			connection.setRequestProperty("Content-Type", "application/json");
 			reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			while ((line = reader.readLine()) != null) {
 				response.append(line);
@@ -201,14 +169,21 @@ public class UserRankScreen extends JFrame {
 			JSONArray jsonArray = new JSONArray(result);
 
 			StringBuilder string = new StringBuilder();
+
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject res = jsonArray.getJSONObject(i);
+				if(res.getInt("id")==12) {
+					continue;
+				}
 				UserRank user = new UserRank(res.getInt("id"), res.getString("name"), res.getInt("win_rate"),
 						res.getInt("win_length"), res.getInt("score"));
 				userPanel.add(user);
 				userPanel.validate();
 			}
 
+			System.out.println(string);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -216,9 +191,98 @@ public class UserRankScreen extends JFrame {
 		}
 	}
 	
+	public void getUserRankWinRateFromAPI() {
+		String urlAPI = TokenManager.getHOST() + "/caro_api/rating/win_rate";
+		String token = TokenManager.getJwt();
+		BufferedReader reader;
+		String line;
+		StringBuilder response = new StringBuilder();
+		URLConnection connection;
+		try {
+			userPanel.removeAll();
+			userPanel.validate();
+			connection = new URL(urlAPI).openConnection();
+			connection.setRequestProperty("Authorization", token);
+			connection.setRequestProperty("Content-Type", "application/json");
+			reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = reader.readLine()) != null) {
+				response.append(line);
+			}
+			reader.close();
+			String result = response.toString();
+			JSONArray jsonArray = new JSONArray(result);
+
+			StringBuilder string = new StringBuilder();
+			
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject res = jsonArray.getJSONObject(i);
+				if(res.getInt("id")==12) {
+					continue;
+				}
+				UserRank user = new UserRank(res.getInt("id"), res.getString("name"), res.getInt("win_rate"),
+						res.getInt("win_length"), res.getInt("score"));
+				userPanel.add(user);
+				userPanel.validate();
+			}
+
+			System.out.println(string);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getUserRankWinLengthFromAPI() {
+		String urlAPI = TokenManager.getHOST() + "/caro_api/rating/win_length";
+		String token = TokenManager.getJwt();
+		BufferedReader reader;
+		String line;
+		StringBuilder response = new StringBuilder();
+		URLConnection connection;
+		try {
+			userPanel.removeAll();
+			userPanel.validate();
+			connection = new URL(urlAPI).openConnection();
+			connection.setRequestProperty("Authorization", token);
+			connection.setRequestProperty("Content-Type", "application/json");
+			reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = reader.readLine()) != null) {
+				response.append(line);
+			}
+			reader.close();
+			String result = response.toString();
+			JSONArray jsonArray = new JSONArray(result);
+
+			StringBuilder string = new StringBuilder();
+			
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject res = jsonArray.getJSONObject(i);
+				if(res.getInt("id")==12) {
+					continue;
+				}
+				UserRank user = new UserRank(res.getInt("id"), res.getString("name"), res.getInt("win_rate"),
+						res.getInt("win_length"), res.getInt("score"));
+				userPanel.add(user);
+				userPanel.validate();
+			}
+
+			System.out.println(string);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
 		new UserRankScreen().setVisible(true);
 	}
+
 	private JLabel label;
 	private JPanel btnPanel, userPanel, mainPanel, rankPanel, titlePanel;
 	private JButton btnScore, btnWinRate, btnWinLength;
