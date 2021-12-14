@@ -2,6 +2,7 @@ package com.sgu.caro.socket_connection;
 
 import com.sgu.caro.socket_connection.handler.AcceptPairingHandler;
 import com.sgu.caro.socket_connection.handler.EndMatchHandler;
+import com.sgu.caro.socket_connection.handler.ExitGameHandler;
 import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import com.sgu.caro.socket_connection.handler.GoMatchHandler;
@@ -43,7 +44,7 @@ public class SocketConnection {
     private static ServerSocket server = null;
     private static String socketHost = "localhost";
     private static int socketPort = 5000;
-    private static Map<String, Socket> socketClients = new HashMap<String, Socket>();
+    public static Map<String, Socket> socketClients = new HashMap<String, Socket>();
 
     public SocketConnection() {
     }
@@ -164,6 +165,10 @@ public class SocketConnection {
                         System.out.println("timeout_match");
                         new TimeoutMatchHandler().run(data, in, out);
                         break;
+                    case "exit_game":
+                        System.out.println("exit_game");
+                        new ExitGameHandler().run(data, in, out);
+                        break;
                     case "stop":
                         System.out.println("July");
                         in.close();
@@ -173,9 +178,9 @@ public class SocketConnection {
                 }
             }
         } catch (IOException e) {
+            new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
+            GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             socketClients.remove(userID);
-//            new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
-//            GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             System.err.println(e);
         }
     }

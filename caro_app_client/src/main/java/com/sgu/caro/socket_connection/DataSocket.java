@@ -270,6 +270,27 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+            /**
+     *  # data format
+	{
+            "type": "exit_game",
+            "data": {
+                "user": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @return 
+     */
+    public String exportDataExitGame(int userID) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "exit_game");
+        data.put("user", userID);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }

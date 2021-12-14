@@ -1,5 +1,6 @@
 package com.sgu.caro.GUI.Login;
 
+import com.sgu.caro.GUI.MainScreen.ExitMainScreen;
 import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.GUI.WindowManager;
 import javax.swing.*;
@@ -141,6 +142,13 @@ public class Login {
                         TokenManager.setScore(score);
                         WindowManager.mainScreen = new MainScreenDesign();
                         WindowManager.mainScreen.setVisible(true);
+                        WindowManager.mainScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                        WindowManager.mainScreen.addWindowListener(new java.awt.event.WindowAdapter() {
+                            @Override
+                            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                                new ExitMainScreen(1, "Xác nhận", "Bạn có muốn thoát chương trình?", "Đồng Ý", "Quay Lại").setVisible(true);
+                            }
+                        });
                         jframe.setVisible(false);
                     } else {
                         usernameError.setForeground(Color.RED);

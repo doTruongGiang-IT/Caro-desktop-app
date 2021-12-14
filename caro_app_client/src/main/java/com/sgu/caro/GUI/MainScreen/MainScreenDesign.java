@@ -21,9 +21,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -92,6 +94,7 @@ public class MainScreenDesign extends JFrame {
     }
 
     private void initComponents() {
+
 
         this.setTitle("Game Caro");
         try {
@@ -170,7 +173,7 @@ public class MainScreenDesign extends JFrame {
                             }
                         }
                     }
-                    if (who_x == 1){
+                    if (who_x == 1) {
                         WindowManager.matchScreen = new MatchDesign(Integer.toString(user_1), user_1, username_1, Integer.toString(score_1), user_2, username_2, Integer.toString(score_2), matrix);
                     } else {
                         WindowManager.matchScreen = new MatchDesign(Integer.toString(user_2), user_2, username_2, Integer.toString(score_2), user_1, username_1, Integer.toString(score_1), matrix);

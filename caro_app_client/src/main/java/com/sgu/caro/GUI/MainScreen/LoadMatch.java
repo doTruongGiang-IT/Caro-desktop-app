@@ -3,6 +3,7 @@ package com.sgu.caro.GUI.MainScreen;
 import com.sgu.caro.GUI.Login.Login;
 import com.sgu.caro.GUI.MatchScreen.Cell;
 import com.sgu.caro.GUI.MatchScreen.MatchDesign;
+import com.sgu.caro.GUI.MatchScreen.OutMatchScreen;
 import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
@@ -277,6 +278,16 @@ public class LoadMatch extends javax.swing.JFrame {
             WindowManager.matchScreen = new MatchDesign(step_type, user_2, username_2, score_2, user_1, username_1, score_1);
         }
         WindowManager.matchScreen.setVisible(true);
+        WindowManager.matchScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        WindowManager.matchScreen.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (!step_type.equals("X") && !step_type.equals("O")) {
+                    new OutMatchScreen(true, user_1, 1, "Xác nhận", "Bạn có muốn thoát trận đấu? (Người xem) ", "Đồng Ý", "Quay Lại").setVisible(true);
+                } else {
+                    new OutMatchScreen(false, user_1, 1, "Xác nhận", "Bạn có muốn thoát trận đấu?", "Đồng Ý", "Quay Lại").setVisible(true);
+            }}
+        });
         WindowManager.mainScreen.setVisible(false);
         MainScreenDesign.loadMatch = true;
         this.setVisible(false);
