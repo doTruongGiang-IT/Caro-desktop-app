@@ -54,36 +54,31 @@ public class LoadAchievement extends JFrame {
 	public LoadAchievement() throws IOException {
 		initComponents();
 		
-		String API_URL = "http://localhost:8080/caro_api/stats/11";
+		String API_URL = "http://localhost:8080/caro_api/stats/" + userId;
 		
 		 try { 
-				System.out.println(API_URL);
-				System.out.println("user - " + userId);
-				System.out.println("token - "+ token);
+//				System.out.println(API_URL);
+//				System.out.println("user - " + userId);
+//				System.out.println("token - "+ token);
 				
 			 HttpClient client = HttpClient.newHttpClient();
-			 HttpRequest request = HttpRequest.newBuilder() .uri(new URI(API_URL)) 
+			 HttpRequest request = HttpRequest.newBuilder() 
+					 .uri(new URI(API_URL)) 
 					 .headers("Content-Type", "application/json;charset=UTF-8") 
 					 .headers("Authorization", token) 
 					 .GET()
 					 .build();
 			 HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			 BufferedReader reader = new BufferedReader(new InputStreamReader(((URLConnection) response).getInputStream()));
-			 String line = "";
-			 StringBuilder res = new StringBuilder();
-			 while ((line = reader.readLine()) != null) {
-				 res.append(line);
-			 }
-			 reader.close();
-			 String result = res.toString(); 
+			 System.out.println(response);
+			 JSONObject responseData = new JSONObject(response.body().toString());
+			 System.out.println(responseData);
 			 try {
-				 JSONObject jo = new JSONObject(result);
-				 txtScore.setText(String.valueOf(jo.getInt("score")));
-				 txtWinRate.setText(String.valueOf(jo.getInt("win_rate")));
-				 txtWinCount.setText(String.valueOf(jo.getInt("win_count")));
-				 txtWinLength.setText(String.valueOf(jo.getInt("win_length")));
-				 txtLoseCount.setText(String.valueOf(jo.getInt("lose_count")));
-				 txtLoseLength.setText(String.valueOf(jo.getInt("lose_length"))); 
+				 txtScore.setText(String.valueOf(responseData.getInt("score")));
+				 txtWinRate.setText(String.valueOf(responseData.getInt("win_rate"))+"%");
+				 txtWinCount.setText(String.valueOf(responseData.getInt("win_count")));
+				 txtWinLength.setText(String.valueOf(responseData.getInt("win_length")));
+				 txtLoseCount.setText(String.valueOf(responseData.getInt("lose_count")));
+				 txtLoseLength.setText(String.valueOf(responseData.getInt("lose_length"))); 
 			 } catch (Exception ex) {
 				 ex.printStackTrace(); 
 			 }
