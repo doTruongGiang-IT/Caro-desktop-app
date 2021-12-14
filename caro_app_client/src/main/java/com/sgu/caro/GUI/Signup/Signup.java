@@ -13,6 +13,8 @@ import com.sgu.caro.api_connection.DataAPI;
 import com.sgu.caro.api_connection.TokenManager;
 import com.toedter.calendar.JCalendar;
 
+import ch.qos.logback.core.status.ViewStatusMessagesServletBase;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -29,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -36,6 +39,8 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.miginfocom.swing.MigLayout;
@@ -105,21 +110,18 @@ public class Signup extends JFrame{
             	if(!validateMail(txtEmail.getText())) {
         			emailError.setText("Email không hợp lệ");
         			errorCount++;
-//        			JOptionPane.showMessageDialog(null, "Không thể đăng ký");
         		} else {
         			username = txtEmail.getText();
         		}
             	if(txtFirstname.getText().equals("") || allSpace(txtFirstname.getText())) {
         			firstnameError.setText("Họ không hợp lệ");
         			errorCount++;
-//        			JOptionPane.showMessageDialog(null, "Không thể đăng ký");
         		} else {
         			firstname = txtFirstname.getText();
         		}
             	if(allSpace(txtLastname.getText())  || txtLastname.getText().equals("")) {
         			lastnameError.setText("Tên không hợp lệ");
         			errorCount++;
-//        			JOptionPane.showMessageDialog(null, "Không thể đăng ký");
         		} else {
         			lastname = txtLastname.getText();
         		}
@@ -161,13 +163,11 @@ public class Signup extends JFrame{
             	if(!validatePassword(txtPass.getText())) {
         			passError.setText("Mật khẩu không hợp lệ");
         			errorCount++;
-//        			JOptionPane.showMessageDialog(null, "Không thể đăng ký");
         		} else {
         			passError.setText(" ");
         			if(!txtConfirmPass.getText().equals(txtPass.getText())) {
             			confirmPassError.setText("Mật khẩu không trùng khớp!");
             			errorCount++;
-//            			JOptionPane.showMessageDialog(null, "Không thể đăng ký");
             		} else {
             			confirmPassError.setText(" ");
             			password = txtPass.getText();
@@ -194,8 +194,21 @@ public class Signup extends JFrame{
                                 .POST(HttpRequest.BodyPublishers.ofString(jo.toString()))
                                 .build();
                         HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        new Login().setVisible(true);
-    					setVisible(false);
+                        JSONObject responseObj = new JSONObject(response.body().toString());
+                        JSONArray keys = responseObj.names();
+                        for (int i = 0; i < keys.length (); i++) {
+                           String key = keys.getString (i);
+                           String value = responseObj.getString (key);
+                           if(key.equals("role")) {
+                           		new Login().setVisible(true);
+                           		setVisible(false);
+                        	   break;
+                           } 
+                           if (key.equals("message")) {
+                        	   JOptionPane.showMessageDialog(null, "User đã tồn tại");
+                        	   break;
+                           }
+                        }
                     } catch (Exception ee) {
                     }
             	}
