@@ -113,7 +113,7 @@ public class GetInfoHandler {
             AcceptPairingHandler acceptPairingHandler = new AcceptPairingHandler();
             
             for (Group group : acceptPairingHandler.groups){
-                if (group.isAccept_pairing_1() && group.isAccept_pairing_2()){
+                if (group != null && group.isAccept_pairing_1() && group.isAccept_pairing_2()){
                     try {
                         ArrayList <String> watchers = new ArrayList<>();
                         for (int watcher_id : group.getWatchers()){
