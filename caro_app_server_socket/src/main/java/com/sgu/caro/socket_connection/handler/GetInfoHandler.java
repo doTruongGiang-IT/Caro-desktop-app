@@ -139,10 +139,12 @@ public class GetInfoHandler {
 
                         for (int watcher_id : group.getWatchers()){
                             Socket socket_client = userList.get(Integer.toString(watcher_id));
-                            BufferedWriter out_client = new BufferedWriter(new OutputStreamWriter(socket_client.getOutputStream()));
-                            out_client.write(dataSend);
-                            out_client.newLine();
-                            out_client.flush();
+                            if (socket_client != null){
+                                BufferedWriter out_client = new BufferedWriter(new OutputStreamWriter(socket_client.getOutputStream()));
+                                out_client.write(dataSend);
+                                out_client.newLine();
+                                out_client.flush();
+                            }
                         }
 
                     } catch (IOException ex) {
