@@ -118,14 +118,10 @@ public class Board extends JPanel {
                     boolean win = false;
                     isFree = false;
 
-                    if (!UserPanel.scheduler.isShutdown()) {
-                        UserPanel.scheduler.shutdown();
-                        UserPanel.scheduler = Executors.newScheduledThreadPool(1);
-                    }
-                    if (!UserPanel.schedulerTotalTime.isShutdown()) {
-                        UserPanel.schedulerTotalTime.shutdown();
-                        UserPanel.schedulerTotalTime = Executors.newScheduledThreadPool(1);
-                    }
+                    UserPanel.scheduler.shutdown();
+                    UserPanel.scheduler = Executors.newScheduledThreadPool(1);
+                    UserPanel.schedulerTotalTime.shutdown();
+                    UserPanel.schedulerTotalTime = Executors.newScheduledThreadPool(1);
                     
                     UserPanel.is_running = false;
                     
