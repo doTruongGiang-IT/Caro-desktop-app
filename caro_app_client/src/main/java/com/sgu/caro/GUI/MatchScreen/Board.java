@@ -1,6 +1,7 @@
 package com.sgu.caro.GUI.MatchScreen;
 
 import static com.sgu.caro.GUI.MatchScreen.UserPanel.is_timer_running;
+import static com.sgu.caro.GUI.MatchScreen.UserPanel.schedulerTotalTime;
 import com.sgu.caro.api_connection.TokenManager;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
@@ -118,9 +120,11 @@ public class Board extends JPanel {
 
                     if (!UserPanel.scheduler.isShutdown()) {
                         UserPanel.scheduler.shutdown();
+                        UserPanel.scheduler = Executors.newScheduledThreadPool(1);
                     }
                     if (!UserPanel.schedulerTotalTime.isShutdown()) {
                         UserPanel.schedulerTotalTime.shutdown();
+                        UserPanel.schedulerTotalTime = Executors.newScheduledThreadPool(1);
                     }
                     
                     
