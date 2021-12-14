@@ -102,7 +102,9 @@ public class SocketConnection {
                         break;
                     case "get_watcher":
                         System.out.println("get_watcher");
-                        actions.get("get_watcher").onHandle(data, in, out);
+                        if (actions.get("get_watcher") != null){
+                            actions.get("get_watcher").onHandle(data, in, out);
+                        }
                         break;
                     case "stop":
                         System.out.println("July");
