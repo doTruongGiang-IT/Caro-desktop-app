@@ -3,6 +3,7 @@ package com.sgu.caro.GUI.MainScreen;
 import com.sgu.caro.GUI.MatchScreen.Board;
 import com.sgu.caro.GUI.MatchScreen.Cell;
 import com.sgu.caro.GUI.MatchScreen.MatchDesign;
+import com.sgu.caro.GUI.MatchScreen.OutMatchScreen;
 import com.sgu.caro.GUI.MatchScreen.ResultMatchScreen;
 import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
@@ -179,6 +180,13 @@ public class MainScreenDesign extends JFrame {
                         WindowManager.matchScreen = new MatchDesign(Integer.toString(user_2), user_2, username_2, Integer.toString(score_2), user_1, username_1, Integer.toString(score_1), matrix);
                     }
                     WindowManager.matchScreen.setVisible(true);
+                    WindowManager.matchScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                    WindowManager.matchScreen.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                                new OutMatchScreen(true, user_1, 1, "Xác nhận", "Bạn có muốn thoát trận đấu? (Người xem) ", "Đồng Ý", "Quay Lại").setVisible(true);
+                        }
+                    });
                     WindowManager.mainScreen.setVisible(false);
                     MainScreenDesign.loadMatch = true;
 //                    this.setVisible(false);
