@@ -23,6 +23,7 @@ public class UserPanel extends javax.swing.JPanel {
     private String step_type;
     public static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     public static ScheduledExecutorService schedulerTotalTime = Executors.newScheduledThreadPool(1);
+    public static boolean is_running = true;
     public static boolean is_timer_running = false;
     public static boolean toogle_status = false;
     public static int countdownStarter = 30;
@@ -30,6 +31,7 @@ public class UserPanel extends javax.swing.JPanel {
 
     public UserPanel(String step_type, int user_1, String username_1, String score_1, int user_2, String username_2, String score_2) {
         this.step_type = step_type;
+        this.is_running = true;
         initComponents(user_1, username_1, score_1, user_2, username_2, score_2);
 
         listUser.setEditable(false);
@@ -67,8 +69,10 @@ public class UserPanel extends javax.swing.JPanel {
             txtTotalTime.setText("");
         }
         else{
-            schedulerTotalTime.shutdown();
-            schedulerTotalTime = Executors.newScheduledThreadPool(1);
+            if (!schedulerTotalTime.isShutdown()) {
+                schedulerTotalTime.shutdown();
+                schedulerTotalTime = Executors.newScheduledThreadPool(1);
+            }
 
             final Runnable runnableTotalTime = new Runnable() {
                 int countdownMatch = 600;
@@ -102,7 +106,7 @@ public class UserPanel extends javax.swing.JPanel {
             schedulerTotalTime.scheduleAtFixedRate(runnableTotalTime, 0, 1, SECONDS);
         }
         
-        while (true) {
+        while (is_running) {
             if (!step_type.equals("X") && !step_type.equals("O")) {
                 txtTime.setText("");
                 txtTime2.setText("");
@@ -110,8 +114,10 @@ public class UserPanel extends javax.swing.JPanel {
                 if (toogle_status) {
                     toogle_status = false;
                     countdownStarter = 30;
-                    scheduler.shutdown();
-                    scheduler = Executors.newScheduledThreadPool(1);
+                    if (!scheduler.isShutdown()) {
+                        scheduler.shutdown();
+                        scheduler = Executors.newScheduledThreadPool(1);
+                    }
 
                     final Runnable runnable = new Runnable() {
 
@@ -153,8 +159,10 @@ public class UserPanel extends javax.swing.JPanel {
                     toogle_status = false;
 
                     countdownStarter = 30;
-                    scheduler.shutdown();
-                    scheduler = Executors.newScheduledThreadPool(1);
+                    if (!scheduler.isShutdown()) {
+                        scheduler.shutdown();
+                        scheduler = Executors.newScheduledThreadPool(1);
+                    }
 
                     final Runnable runnable = new Runnable() {
 
