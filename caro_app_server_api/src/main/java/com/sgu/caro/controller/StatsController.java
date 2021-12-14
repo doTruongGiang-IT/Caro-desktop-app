@@ -53,8 +53,8 @@ public class StatsController {
 	@Autowired
     JwtService jwtService;
 	
-	@GetMapping("rating")
-    public List<Object> getAllMatch(@RequestHeader Map<String, String> headers, @Valid @RequestBody Map<String, String> type) {
+	@GetMapping("rating/score")
+    public List<Object> getAllMatchSortByScore(@RequestHeader Map<String, String> headers) {
 		List<Object> stats = new ArrayList<Object>();
         boolean flag = false;
         for (var entry : headers.entrySet()) {
@@ -68,9 +68,81 @@ public class StatsController {
         };
         if(flag) {
         	List<User> users = new ArrayList<User>();
-        	for(Map.Entry entry : type.entrySet()) {
-        		users = userRepository.findAll(Sort.by(Sort.Direction.DESC, (String) entry.getValue()));
+        	users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "score"));
+        	for(User user : users) {
+        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
+        		long id = user.getId();
+        		String firstName = user.getFirstName();
+        		String lastName = user.getLastName();
+        		double score = user.getScore();
+        		float winRate = user.getWin_rate();
+        		int winLength = user.getWin_length();
+        		
+        		hashStats.put("id", id);
+        		hashStats.put("name", firstName + " " + lastName);
+        		hashStats.put("win_rate", winRate);
+        		hashStats.put("win_length", winLength);
+        		hashStats.put("score", score);
+        		stats.add(hashStats);
         	};
+        };
+        
+        return flag ? stats : null;
+    };
+    
+    @GetMapping("rating/win_rate")
+    public List<Object> getAllMatchSortByWinRate(@RequestHeader Map<String, String> headers) {
+		List<Object> stats = new ArrayList<Object>();
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if(flag) {
+        	List<User> users = new ArrayList<User>();
+        	users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "winRate"));
+        	for(User user : users) {
+        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
+        		long id = user.getId();
+        		String firstName = user.getFirstName();
+        		String lastName = user.getLastName();
+        		double score = user.getScore();
+        		float winRate = user.getWin_rate();
+        		int winLength = user.getWin_length();
+        		
+        		hashStats.put("id", id);
+        		hashStats.put("name", firstName + " " + lastName);
+        		hashStats.put("win_rate", winRate);
+        		hashStats.put("win_length", winLength);
+        		hashStats.put("score", score);
+        		stats.add(hashStats);
+        	};
+        };
+        
+        return flag ? stats : null;
+    };
+    
+    @GetMapping("rating/win_length")
+    public List<Object> getAllMatchSortByWinLength(@RequestHeader Map<String, String> headers) {
+		List<Object> stats = new ArrayList<Object>();
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if(flag) {
+        	List<User> users = new ArrayList<User>();
+        	users = userRepository.findAll(Sort.by(Sort.Direction.DESC, "winLength"));
         	for(User user : users) {
         		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
         		long id = user.getId();
@@ -121,7 +193,11 @@ public class StatsController {
         	int matchesCount = userMatches.size();
         	int winMatchesCount = userWinMatches.size();
         	int loseMatchesCount = userLoseMatches.size();
-    		float winRate = (winMatchesCount * 100) / matchesCount;
+        	float winRate = 0f;
+        	
+        	if(matchesCount > 0) {
+        		winRate = (winMatchesCount * 100) / matchesCount;
+        	};
     		
     		Comparator<Match> compareById = (Match match1, Match match2) -> match1.getStart_date().compareTo(match2.getStart_date());
     		Collections.sort(userMatches, compareById);
