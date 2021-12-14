@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -15,7 +16,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.Label;
@@ -28,6 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sgu.caro.GUI.WindowManager;
+import com.sgu.caro.api_connection.TokenManager;
+
 import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -38,42 +48,49 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 
 public class LoadAchievement extends JFrame {
-	private int userID = 2;
-	String urlAPI = "https://61b35ec9af5ff70017ca1ee2.mockapi.io/stats";
-	private HttpURLConnection conn;
+    private static long userId = new TokenManager().getUser_id();
+    private static String token = new TokenManager().getJwt();
+
 	public LoadAchievement() throws IOException {
 		initComponents();
-
-	//test by mock API
-		URL url = null;
-		BufferedReader reader;
-		String line;
-		StringBuilder response = new StringBuilder();
-    	url = new URL(urlAPI);
-		conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		while ((line = reader.readLine()) != null) {
-			response.append(line);
-		}
-			reader.close();
-			String result = response.toString();
-		try {
-			JSONArray jsonArray = new JSONArray(result);
-			StringBuilder string = new StringBuilder();;
-			JSONObject res = jsonArray.getJSONObject(userID-1);
-			
-			txtScore.setText(String.valueOf(res.getInt("score")));
-			txtWinRate.setText(String.valueOf(res.getInt("win_rate")));
-			txtWinCount.setText(String.valueOf(res.getInt("win_count")));
-			txtWinLength.setText(String.valueOf(res.getInt("win_length")));
-			txtLoseRate.setText(String.valueOf(res.getInt("lose_rate")));
-			txtLoseCount.setText(String.valueOf(res.getInt("lose_count")));
-			txtLoseLength.setText(String.valueOf(res.getInt("lose_length")));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		String API_URL = "http://localhost:8080/caro_api/stats/11";
+		
+		 try { 
+				System.out.println(API_URL);
+				System.out.println("user - " + userId);
+				System.out.println("token - "+ token);
+				
+			 HttpClient client = HttpClient.newHttpClient();
+			 HttpRequest request = HttpRequest.newBuilder() .uri(new URI(API_URL)) 
+					 .headers("Content-Type", "application/json;charset=UTF-8") 
+					 .headers("Authorization", token) 
+					 .GET()
+					 .build();
+			 HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			 BufferedReader reader = new BufferedReader(new InputStreamReader(((URLConnection) response).getInputStream()));
+			 String line = "";
+			 StringBuilder res = new StringBuilder();
+			 while ((line = reader.readLine()) != null) {
+				 res.append(line);
+			 }
+			 reader.close();
+			 String result = res.toString(); 
+			 try {
+				 JSONObject jo = new JSONObject(result);
+				 txtScore.setText(String.valueOf(jo.getInt("score")));
+				 txtWinRate.setText(String.valueOf(jo.getInt("win_rate")));
+				 txtWinCount.setText(String.valueOf(jo.getInt("win_count")));
+				 txtWinLength.setText(String.valueOf(jo.getInt("win_length")));
+				 txtLoseCount.setText(String.valueOf(jo.getInt("lose_count")));
+				 txtLoseLength.setText(String.valueOf(jo.getInt("lose_length"))); 
+			 } catch (Exception ex) {
+				 ex.printStackTrace(); 
+			 }
+		 } catch (Exception e) {
+			 e.printStackTrace();
+		 }
+		 
 	//
         this.setTitle("Thành tích");
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -116,10 +133,6 @@ public class LoadAchievement extends JFrame {
 		lblWinLength.setHorizontalAlignment(SwingConstants.CENTER);		
 		txtWinLength = new JLabel("???");
 		
-		lblLoseRate = new JLabel("Tỷ lệ thua");
-		lblLoseRate.setHorizontalAlignment(SwingConstants.CENTER);		
-		txtLoseRate = new JLabel("???");
-		
 		lblLoseCount = new JLabel("Số trận thua");
 		lblLoseCount.setHorizontalAlignment(SwingConstants.CENTER);		
 		txtLoseCount = new JLabel("???");
@@ -144,8 +157,6 @@ public class LoadAchievement extends JFrame {
 		bodyPanel.add(txtWinCount);
 		bodyPanel.add(lblWinLength);
 		bodyPanel.add(txtWinLength);
-		bodyPanel.add(lblLoseRate);
-		bodyPanel.add(txtLoseRate);
 		bodyPanel.add(lblLoseCount);
 		bodyPanel.add(txtLoseCount);
 		bodyPanel.add(lblLoseLength);
@@ -166,7 +177,7 @@ public class LoadAchievement extends JFrame {
         new LoadAchievement().setVisible(true);
 	}
 	private JPanel headPanel, bodyPanel, footPanel;
-	private JLabel lblThanhTich, lblScore, lblWinRate, lblWinCount, lblWinLength, lblLoseRate, lblLoseCount, lblLoseLength;
-	private JLabel txtScore, txtWinRate, txtWinCount, txtWinLength, txtLoseRate, txtLoseCount, txtLoseLength;
+	private JLabel lblThanhTich, lblScore, lblWinRate, lblWinCount, lblWinLength, lblLoseCount, lblLoseLength;
+	private JLabel txtScore, txtWinRate, txtWinCount, txtWinLength, txtLoseCount, txtLoseLength;
 	private JButton btnExit;
 }
