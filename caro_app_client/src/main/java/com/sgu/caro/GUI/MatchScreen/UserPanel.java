@@ -85,8 +85,10 @@ public class UserPanel extends javax.swing.JPanel {
                     if (countdownMatch < 0) {
                         System.out.println("Timer Over!");
                         schedulerTotalTime.shutdown();
+                        schedulerTotalTime = Executors.newScheduledThreadPool(1);
                         if (!scheduler.isShutdown()) {
                             scheduler.shutdown();
+                            scheduler = Executors.newScheduledThreadPool(1);
                         }
                         
                         if (step_type.equals("X")){
@@ -135,8 +137,10 @@ public class UserPanel extends javax.swing.JPanel {
                             if (countdownStarter < 0) {
                                 System.out.println("Timer Over!");
                                 scheduler.shutdown();
+                                scheduler = Executors.newScheduledThreadPool(1);
                                 if (!schedulerTotalTime.isShutdown()) {
                                     schedulerTotalTime.shutdown();
+                                    schedulerTotalTime = Executors.newScheduledThreadPool(1);    
                                 }
                                 SocketConnection socket = new SocketConnection();
                                 DataSocket dataSocket = new DataSocket();
@@ -178,8 +182,10 @@ public class UserPanel extends javax.swing.JPanel {
                             if (countdownStarter < 0) {
                                 System.out.println("Timer Over!");
                                 scheduler.shutdown();
+                                scheduler = Executors.newScheduledThreadPool(1);
                                 if (!schedulerTotalTime.isShutdown()) {
                                     schedulerTotalTime.shutdown();
+                                    schedulerTotalTime = Executors.newScheduledThreadPool(1);
                                 }
                             }
                         }
