@@ -193,7 +193,11 @@ public class StatsController {
         	int matchesCount = userMatches.size();
         	int winMatchesCount = userWinMatches.size();
         	int loseMatchesCount = userLoseMatches.size();
-        	float winRate = (winMatchesCount * 100) / matchesCount;
+        	float winRate = 0f;
+        	
+        	if(matchesCount > 0) {
+        		winRate = (winMatchesCount * 100) / matchesCount;
+        	};
     		
     		Comparator<Match> compareById = (Match match1, Match match2) -> match1.getStart_date().compareTo(match2.getStart_date());
     		Collections.sort(userMatches, compareById);
