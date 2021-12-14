@@ -43,7 +43,7 @@ public class Board extends JPanel {
 
     /* For testing */
     private final int userID = TokenManager.getUser_id();
-    
+
     public Board(String stepType) {
 
         if (stepType.equals("X")) {
@@ -65,12 +65,11 @@ public class Board extends JPanel {
                 matrix[i][j] = cell;
             }
         }
-        
-        if (isFree){
+
+        if (isFree) {
             UserPanel.is_timer_running = true;
             UserPanel.toogle_status = true;
-        }
-        else{
+        } else {
             UserPanel.is_timer_running = false;
             UserPanel.toogle_status = true;
         }
@@ -116,23 +115,30 @@ public class Board extends JPanel {
                     int posX, posY;
                     boolean win = false;
                     isFree = false;
+
+                    if (!UserPanel.scheduler.isShutdown()) {
+                        UserPanel.scheduler.shutdown();
+                    }
+                    if (!UserPanel.schedulerTotalTime.isShutdown()) {
+                        UserPanel.schedulerTotalTime.shutdown();
+                    }
                     
-                    if (data.getJSONArray("res_pos").length() > 0){
+                    
+                    if (data.getJSONArray("res_pos").length() > 0) {
                         for (int i = 0; i < 5; i++) {
                             JSONArray e = data.getJSONArray("res_pos").getJSONArray(i);
                             posX = e.getInt(0);
                             posY = e.getInt(1);
 
                             Cell cell = matrix[posX - 1][posY - 1];
-                            if (!currentPlayer.equals(Cell.EMPTY_VALUE)){
+                            if (!currentPlayer.equals(Cell.EMPTY_VALUE)) {
                                 if (currentUserID == userID) {
                                     cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
                                     win = true;
                                 } else {
                                     cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
                                 }
-                            }
-                            else {
+                            } else {
                                 if (Integer.parseInt(stepType) == currentUserID) {
                                     cell.setValue(Cell.X_VALUE_WON);
                                 } else {
@@ -145,13 +151,12 @@ public class Board extends JPanel {
 
                     String message;
                     TokenManager userManagement = new TokenManager();
-                    if (!currentPlayer.equals(Cell.EMPTY_VALUE)){
-                        if (currentUserID == 0){
+                    if (!currentPlayer.equals(Cell.EMPTY_VALUE)) {
+                        if (currentUserID == 0) {
                             message = "Bạn đã hòa.";
                             new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
                             userManagement.setScore(userManagement.getScore() + 1);
-                        }
-                        else if (currentUserID == userID || win) {
+                        } else if (currentUserID == userID || win) {
                             message = "Bạn đã chiến thắng.";
                             new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
                             userManagement.setScore(userManagement.getScore() + 3);
@@ -160,8 +165,7 @@ public class Board extends JPanel {
                             new ResultMatchScreen(0, "Thông Báo", message, "Đồng Ý").setVisible(true);
                             userManagement.setScore(Math.max(0, userManagement.getScore() - 1));
                         }
-                    }
-                    else{
+                    } else {
                         message = "Trận đấu đã kết thúc";
                         new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
                     }
@@ -227,7 +231,7 @@ public class Board extends JPanel {
     public void setMatrix(Cell[][] matrix) {
         this.matrix = matrix;
     }
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);

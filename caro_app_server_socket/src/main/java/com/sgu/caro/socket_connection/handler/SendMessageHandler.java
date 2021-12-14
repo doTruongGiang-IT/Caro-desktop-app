@@ -23,7 +23,7 @@ public class SendMessageHandler {
         DataSocket dataSocket = new DataSocket();
         int user_id = data.getInt("user");
         Group group = new AcceptPairingHandler().getGroup(user_id);
-        ArrayList <Integer> users = group.getWatchers();
+        ArrayList <Integer> users = (ArrayList)group.getWatchers().clone();
         users.add(group.getUser_1());
         users.add(group.getUser_2());
         
