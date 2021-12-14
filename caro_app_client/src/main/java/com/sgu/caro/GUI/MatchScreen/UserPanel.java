@@ -67,10 +67,8 @@ public class UserPanel extends javax.swing.JPanel {
             txtTotalTime.setText("");
         }
         else{
-            if (!schedulerTotalTime.isShutdown()) {
-                schedulerTotalTime.shutdown();
-                schedulerTotalTime = Executors.newScheduledThreadPool(1);
-            }
+            schedulerTotalTime.shutdown();
+            schedulerTotalTime = Executors.newScheduledThreadPool(1);
 
             final Runnable runnableTotalTime = new Runnable() {
                 int countdownMatch = 600;
@@ -112,10 +110,8 @@ public class UserPanel extends javax.swing.JPanel {
                 if (toogle_status) {
                     toogle_status = false;
                     countdownStarter = 30;
-                    if (!scheduler.isShutdown()) {
-                        scheduler.shutdown();
-                        scheduler = Executors.newScheduledThreadPool(1);
-                    }
+                    scheduler.shutdown();
+                    scheduler = Executors.newScheduledThreadPool(1);
 
                     final Runnable runnable = new Runnable() {
 
@@ -157,10 +153,8 @@ public class UserPanel extends javax.swing.JPanel {
                     toogle_status = false;
 
                     countdownStarter = 30;
-                    if (!scheduler.isShutdown()) {
-                        scheduler.shutdown();
-                        scheduler = Executors.newScheduledThreadPool(1);
-                    }
+                    scheduler.shutdown();
+                    scheduler = Executors.newScheduledThreadPool(1);
 
                     final Runnable runnable = new Runnable() {
 
