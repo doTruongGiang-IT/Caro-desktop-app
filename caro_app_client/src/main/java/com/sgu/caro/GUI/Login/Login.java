@@ -132,9 +132,13 @@ public class Login {
                     if (responseData.has("access_token")) {
                         String jwt = responseData.getString("access_token");
                         int userId = Integer.parseInt(responseData.getString("user_id"));
+                        String display_name = responseData.getString("display_name");
+                        int score = Integer.parseInt(responseData.getString("score"));
                         System.out.println("access_token: " + jwt);
                         TokenManager.setJwt(jwt);
                         TokenManager.setUser_id(userId);
+                        TokenManager.setDisplay_name(display_name);
+                        TokenManager.setScore(score);
                         WindowManager.mainScreen = new MainScreenDesign();
                         WindowManager.mainScreen.setVisible(true);
                         jframe.setVisible(false);

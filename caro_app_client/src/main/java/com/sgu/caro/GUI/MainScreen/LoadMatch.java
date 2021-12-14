@@ -32,9 +32,15 @@ public class LoadMatch extends javax.swing.JFrame {
     private boolean getPairing = false;
     private boolean clickHuyBtn = false;
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static String username_1, score_1, username_2, score_2;
+    private static int user_id_1, user_id_2;
 
     public LoadMatch() {
         clickHuyBtn = true;
+        user_id_1 = new TokenManager().getUser_id();
+        username_1 = new TokenManager().getDisplay_name();
+        score_1 = Integer.toString(new TokenManager().getScore());
+        
         socket.addListenConnection("send_invitation", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
@@ -47,6 +53,11 @@ public class LoadMatch extends javax.swing.JFrame {
                 txtUserName.setText(displayname);
                 txtScore.setText(String.valueOf(score));
 
+                // Set attrib for user 2
+                user_id_2 = userId;
+                username_2 = displayname;
+                score_2 = Integer.toString(score);
+                
                 MatchDesign.user2 = userId;
                 
                 final Runnable runnable = new Runnable() {
@@ -76,7 +87,7 @@ public class LoadMatch extends javax.swing.JFrame {
                 String step_type = data.getString("step_type");
                 System.out.println(data.toString());
                 if (is_started) {
-                    startMatchScreen(step_type);
+                    startMatchScreen(step_type, user_id_1, username_1, score_1, user_id_2, username_2, score_2);
                 } else {
                     System.out.println("Not accept");
                     
@@ -258,8 +269,13 @@ public class LoadMatch extends javax.swing.JFrame {
         // Giao dienj waiting for other
     }
 
-    private void startMatchScreen(String step_type) {
-        WindowManager.matchScreen = new MatchDesign(step_type);
+    private void startMatchScreen(String step_type, int user_1, String username_1, String score_1, int user_2, String username_2, String score_2) {
+        if (step_type.equals("X")){
+            WindowManager.matchScreen = new MatchDesign(step_type, user_1, username_1, score_1, user_2, username_2, score_2);
+        }
+        else{
+            WindowManager.matchScreen = new MatchDesign(step_type, user_2, username_2, score_2, user_1, username_1, score_1);
+        }
         WindowManager.matchScreen.setVisible(true);
         WindowManager.mainScreen.setVisible(false);
         MainScreenDesign.loadMatch = true;

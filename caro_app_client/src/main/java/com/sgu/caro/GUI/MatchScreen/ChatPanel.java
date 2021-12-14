@@ -72,7 +72,7 @@ public class ChatPanel extends javax.swing.JPanel {
         socket.addListenConnection("send_message", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
-                    txtChat.append(data.getInt("user") + ":   " + data.getString("message") + "\n");
+                    txtChat.append(data.getString("username") + ":   " + data.getString("message") + "\n");
 //                    String received = in.readLine();
 //                    JSONObject obj = new JSONObject(received);
 //                    System.out.println("obj - " + obj);

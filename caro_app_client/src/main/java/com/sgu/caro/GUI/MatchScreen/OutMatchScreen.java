@@ -10,15 +10,20 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 
-public class ResultMatchScreen extends javax.swing.JFrame{
+public class OutMatchScreen extends javax.swing.JFrame{
     int x_Mouse, y_Mouse; // For Moving Window
     int win = 0;
+    boolean is_watcher;
+    int userID;
     
-    public ResultMatchScreen(){
+    public OutMatchScreen(){
         
     }
     
-    public ResultMatchScreen(int choice, String title, String alert, String choice_1, String choice_2) {
+    public OutMatchScreen(boolean is_watcher, int userID, int choice, String title, String alert, String choice_1, String choice_2) {
+        this.is_watcher = is_watcher;
+        this.userID = userID;
+        
         String image = "";
         if (choice == 0){         // Câu Hỏi
             image = "./images/alert_80_80.png";
@@ -38,7 +43,7 @@ public class ResultMatchScreen extends javax.swing.JFrame{
         setBackground(new Color(0, 0, 0, 0));
     }
     
-    public ResultMatchScreen(int choices, String title, String alert, String choice) {
+    public OutMatchScreen(int choices, String title, String alert, String choice) {
         win = choices;
         String image = "";
         if (choices == 0){         // Câu Hỏi
@@ -255,46 +260,33 @@ public class ResultMatchScreen extends javax.swing.JFrame{
         pack();
     }                  
 
-    private void exit_btnMouseClicked(java.awt.event.MouseEvent evt) {                                      
-        System.out.println("Thoát");
-        System.out.println("Main Screen: " + WindowManager.mainScreen);
-        System.out.println("Match Screen: " + WindowManager.matchScreen);
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        
-        if (win == 1){
-            DataSocket datasocket = new DataSocket();
-            String dataSend = datasocket.exportDataEndMatch(TokenManager.getUser_id(), MatchDesign.user2);
-            SocketConnection socketConnection = new SocketConnection();
-            socketConnection.sendData(dataSend);
-        }
-        this.dispose();                                   
-        this.dispose();
+    private void exit_btnMouseClicked(java.awt.event.MouseEvent evt) { 
+        this.dispose(); 
     }                                     
 
-    private void dongy_btnMouseClicked(java.awt.event.MouseEvent evt) {                                       
-        System.out.println("Đồng ý");
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        this.dispose();
+    private void dongy_btnMouseClicked(java.awt.event.MouseEvent evt) {          
+        if (is_watcher){
+            SocketConnection socket = new SocketConnection();
+            DataSocket dataSocket = new DataSocket();
+            String dataSend = dataSocket.exportDataOutMatchWatcher(new TokenManager().getUser_id(), userID);
+            System.out.println(dataSend);
+            socket.sendData(dataSend);
+            WindowManager.matchScreen.dispose();
+            WindowManager.mainScreen = new MainScreenDesign();
+            WindowManager.mainScreen.setVisible(true);
+            this.dispose();
+        }
+        else{
+            SocketConnection socket = new SocketConnection();
+            DataSocket dataSocket = new DataSocket();
+            String dataSend = dataSocket.exportDataOutMatchPlayer(new TokenManager().getUser_id());
+            System.out.println(dataSend);
+            socket.sendData(dataSend);
+            this.dispose();
+        }
     }                                      
 
-    private void quaylai_btnMouseClicked(java.awt.event.MouseEvent evt) {                                         
-        System.out.println("Quay Lại");
-        System.out.println("Main Screen: " + WindowManager.mainScreen);
-        System.out.println("Match Screen: " + WindowManager.matchScreen);
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        
-        if (win == 1){
-            DataSocket datasocket = new DataSocket();
-            String dataSend = datasocket.exportDataEndMatch(TokenManager.getUser_id(), MatchDesign.user2);
-            SocketConnection socketConnection = new SocketConnection();
-            socketConnection.sendData(dataSend);
-        }
+    private void quaylai_btnMouseClicked(java.awt.event.MouseEvent evt) {      
         this.dispose();
     }                                        
 
@@ -327,20 +319,21 @@ public class ResultMatchScreen extends javax.swing.JFrame{
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ResultMatchScreen(1, "Thông Báo", "Bạn có thông báo.", "Đồng Ý").setVisible(true);
+                new OutMatchScreen(1, "Thông Báo", "Bạn có thông báo.", "Đồng Ý").setVisible(true);
             }
         });
     }

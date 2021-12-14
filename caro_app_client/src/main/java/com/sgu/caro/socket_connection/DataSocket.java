@@ -156,6 +156,120 @@ public class DataSocket {
         return encryptData(jo.toString());
     }
     
+    /**
+     *  # data format
+	{
+            "type": "go_watch",
+            "data": {
+                "user": 1101, # id người xem
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataGoWatch(int userID, int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "go_watch");
+        data.put("user", userID);
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match_watcher",
+            "data": {
+                "user": 1101, # id người xem
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatchWatcher(int userID, int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match_watcher");
+        data.put("user", userID);
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match_player",
+            "data": {
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatchPlayer(int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match_player");
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "timeout_player",
+            "data": {
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataTimeoutPlayer(int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "timeout_player");
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+        /**
+     *  # data format
+	{
+            "type": "timeout_match",
+            "data": {
+                "user": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataTimeoutMatch(int userID) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "timeout_match");
+        data.put("user", userID);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }
