@@ -292,7 +292,7 @@ public class UserController {
             if (entry.getKey().equals("authorization")) {
                 String username = jwtService.getUsernameFromToken(entry.getValue());
                 String role = userRepository.findByUsername(username).getRole();
-                if (role.equals(ADMIN_ROLE)) {
+                if (!jwtService.isTokenExpired(entry.getValue())) {
                     flag = true;
                 };
             };
@@ -317,7 +317,7 @@ public class UserController {
             if (entry.getKey().equals("authorization")) {
                 String username = jwtService.getUsernameFromToken(entry.getValue());
                 String role = userRepository.findByUsername(username).getRole();
-                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                if (role.equals(ADMIN_ROLE)) {
                     flag = true;
                 };
             };
