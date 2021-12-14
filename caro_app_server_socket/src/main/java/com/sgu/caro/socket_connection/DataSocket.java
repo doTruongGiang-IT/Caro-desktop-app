@@ -65,12 +65,15 @@ public class DataSocket {
         
         jo.put("type", "result_match");
         data.put("user", userID);
-        for (int i=0; i<5; i++){
-            List<Integer> pos = new ArrayList<>();
-            pos.add(posX.get(i));
-            pos.add(posY.get(i));
-            JSONArray posData = new JSONArray(pos);
-            posMatch.add(posData);
+        
+        if (posX != null){
+            for (int i=0; i<5; i++){
+                List<Integer> pos = new ArrayList<>();
+                pos.add(posX.get(i));
+                pos.add(posY.get(i));
+                JSONArray posData = new JSONArray(pos);
+                posMatch.add(posData);
+            }
         }
         JSONArray posDataMatch = new JSONArray(posMatch);;
         data.put("res_pos", posDataMatch);
@@ -107,6 +110,7 @@ public class DataSocket {
             "type": "send_message",
             "data": {
                 "user": 1101, #id người dùng
+                "usernam": "asdjhsakd", # ten user
                 "message": "this is a message" # nội dung tin nhắn
             }
 	}
@@ -114,12 +118,13 @@ public class DataSocket {
      * @param message
      * @return 
      */
-    public String exportDataSendMessage(int userID, String message){
+    public String exportDataSendMessage(int userID, String username, String message){
         JSONObject jo = new JSONObject();        
         JSONObject data = new JSONObject();
         
         jo.put("type", "send_message");
         data.put("user", userID);
+        data.put("username", username);
         data.put("message", message);
         jo.put("data", data);
         return encryptData(jo.toString());
@@ -176,12 +181,16 @@ public class DataSocket {
         List<JSONObject> grouplist = new ArrayList<>();
         
         jo.put("type", "get_group");
-        for (Group group : groups){      
-            JSONObject element = new JSONObject();
-            element.put("user_1", group.getUser_1());
-            element.put("user_2", group.getUser_2());
-            element.put("number_of_watchers", group.getWatchers().size());
-            grouplist.add(element);
+        for (Group group : groups){  
+            if (group.isAccept_pairing_1() && group.isAccept_pairing_2()){
+                JSONObject element = new JSONObject();
+                element.put("user_1", group.getUser_1());
+                element.put("user_2", group.getUser_2());
+                element.put("username_1", group.getDataUser1().getName());
+                element.put("username_2", group.getDataUser2().getName());
+                element.put("number_of_watchers", group.getWatchers().size());
+                grouplist.add(element);
+            }
         }
         
         JSONArray groupdata = new JSONArray(grouplist);
@@ -228,6 +237,83 @@ public class DataSocket {
         
         JSONArray userdata = new JSONArray(userlist);
         data.put("users", userdata);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     * 	# data format
+        {
+            "type": "accept_watch",
+            "data": {
+                "accept": true,
+                "user_1": 1231,
+                "username_1": "1231",
+                "score_1": "123",
+                "user_2": 12312,
+                "username_2": "123",
+                "score_2": 123,
+                "who_x": 1,
+                "matrix": [[]]
+            }
+	}
+     * @param users
+     * @return 
+     */
+    public String exportDataAcceptWatch(boolean accept, int user_1, String username_1, int score_1, int user_2, String username_2, int score_2, int who_x, int[][] matrix){
+        JSONObject jo = new JSONObject();      
+        JSONObject data = new JSONObject();
+        List<JSONObject> userlist = new ArrayList<>();
+        
+        jo.put("type", "accept_watch");
+        JSONArray userdata = new JSONArray(userlist);
+        data.put("accept", accept);
+        data.put("user_1", user_1);
+        data.put("username_1", username_1);
+        data.put("score_1", score_1);
+        data.put("user_2", user_2);
+        data.put("username_2", username_2);
+        data.put("score_2", score_2);
+        data.put("who_x", who_x);
+        
+        List<JSONArray> posMatch = new ArrayList<>();
+        
+        for (int i=0; i<20; i++){
+            List<Integer> pos = new ArrayList<>();
+            for (int j=0; j<20; j++){
+                pos.add(matrix[i][j]);
+            }
+            JSONArray posData = new JSONArray(pos);
+            posMatch.add(posData);
+        }
+        JSONArray posDataMatch = new JSONArray(posMatch);;
+        data.put("matrix", posDataMatch);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     * 	# data format
+	{
+            "type": "get_watcher",
+            "data": {
+                "watchers": [
+                    "name 1",
+                    "name 2",
+                ]
+            }
+	}
+     * @param groups
+     * @return 
+     */
+    public String exportDataGetWatcher(ArrayList <String> watchers){
+        JSONObject jo = new JSONObject();      
+        JSONObject data = new JSONObject();      
+        
+        jo.put("type", "get_watcher");
+        
+        JSONArray groupdata = new JSONArray(watchers);
+        data.put("watchers", groupdata);
         jo.put("data", data);
         return encryptData(jo.toString());
     }

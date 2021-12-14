@@ -99,6 +99,8 @@ public class UserController {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
                 result.put("user_id", String.valueOf(user.getId()));
+                result.put("display_name", user.getName());
+                result.put("score", String.valueOf(user.getScore()));
             };
             
             if(pbkdf2PasswordEncoder.matches(password, user.getPassword()) && !user.isActive()) {

@@ -2,11 +2,17 @@ package com.sgu.caro.socket_connection;
 
 import com.sgu.caro.socket_connection.handler.AcceptPairingHandler;
 import com.sgu.caro.socket_connection.handler.EndMatchHandler;
+import com.sgu.caro.socket_connection.handler.ExitGameHandler;
 import com.sgu.caro.socket_connection.handler.GoStepHandler;
 import com.sgu.caro.socket_connection.handler.SendMessageHandler;
 import com.sgu.caro.socket_connection.handler.GoMatchHandler;
 import com.sgu.caro.socket_connection.handler.OutMatchHandler;
 import com.sgu.caro.socket_connection.handler.GetInfoHandler;
+import com.sgu.caro.socket_connection.handler.GoWatchHandler;
+import com.sgu.caro.socket_connection.handler.OutMatchWatcherHandler;
+import com.sgu.caro.socket_connection.handler.OutMatchPlayerHandler;
+import com.sgu.caro.socket_connection.handler.TimeoutPlayerHandler;
+import com.sgu.caro.socket_connection.handler.TimeoutMatchHandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -38,7 +44,7 @@ public class SocketConnection {
     private static ServerSocket server = null;
     private static String socketHost = "localhost";
     private static int socketPort = 5000;
-    private static Map<String, Socket> socketClients = new HashMap<String, Socket>();
+    public static Map<String, Socket> socketClients = new HashMap<String, Socket>();
 
     public SocketConnection() {
     }
@@ -71,6 +77,14 @@ public class SocketConnection {
                 }
             });
             thread_get_user.start();
+            
+            Thread thread_get_watcher = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new GetInfoHandler().getWatcher();
+                }
+            });
+            thread_get_watcher.start();
 
             while (true) {
                 Socket socket = server.accept();
@@ -131,6 +145,30 @@ public class SocketConnection {
                         System.out.println("end_match");
                         new EndMatchHandler().run(data, in, out);
                         break;
+                    case "go_watch":
+                        System.out.println("go_watch");
+                        new GoWatchHandler().run(data, in, out);
+                        break;
+                    case "out_match_watcher":
+                        System.out.println("out_match_watcher");
+                        new OutMatchWatcherHandler().run(data, in, out);
+                        break;
+                    case "out_match_player":
+                        System.out.println("out_match_player");
+                        new OutMatchPlayerHandler().run(data, in, out);
+                        break;
+                    case "timeout_player":
+                        System.out.println("timeout_player");
+                        new TimeoutPlayerHandler().run(data, in, out);
+                        break;
+                    case "timeout_match":
+                        System.out.println("timeout_match");
+                        new TimeoutMatchHandler().run(data, in, out);
+                        break;
+                    case "exit_game":
+                        System.out.println("exit_game");
+                        new ExitGameHandler().run(data, in, out);
+                        break;
                     case "stop":
                         System.out.println("July");
                         in.close();
@@ -140,9 +178,9 @@ public class SocketConnection {
                 }
             }
         } catch (IOException e) {
+            new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
+            GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             socketClients.remove(userID);
-//            new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
-//            GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             System.err.println(e);
         }
     }
