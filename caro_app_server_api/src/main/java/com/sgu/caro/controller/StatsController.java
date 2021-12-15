@@ -66,55 +66,32 @@ public class StatsController {
                 };
             };
         };
+        //Sort.by(Sort.Direction.ASC, "timePlay")
         if(flag) {
         	List<Match> matches = new ArrayList<Match>();
-        	matches = matchRepository.findAll(Sort.by(Sort.Direction.ASC, "timePlay"));
-        	for(Match match : matches) {
-        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
-        		long id = match.getId();
-        		long user1 = match.getUser_1();
-        		long user2 = match.getUser_2();
-        		long result = match.getResult();
-        		int result_type = match.getResult_type();
-        		String startDate = match.getStart_date();
-        		String endDate = match.getEnd_date();
-        		String time = match.getTimePlay();
-        		
-        		User player1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        		User player2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        		
-        		hashStats.put("id", id);
-        		hashStats.put("user_1", player1.getFirstName() + " " + player1.getLastName());
-        		hashStats.put("user_2", player2.getFirstName() + " " + player2.getLastName());
-        		hashStats.put("user_win", result == user1 ? player1.getFirstName() + " " + player1.getLastName() : (result == user2 ? player2.getFirstName() + " " + player2.getLastName() : "Trận hòa"));
-        		hashStats.put("start_date", startDate);
-                hashStats.put("end_date", endDate);
-        		hashStats.put("time_play", time);
-        		if(stats.size() < 10 && !time.equals("")) {
-        			stats.add(hashStats);
-        		};
-        	};
-        };
-        
-        return flag ? stats : null;
-    };
-    
-    @GetMapping("rating/longest_matches")
-    public List<Object> getTenLongestMatchByTimePlay(@RequestHeader Map<String, String> headers) {
-		List<Object> stats = new ArrayList<Object>();
-        boolean flag = false;
-        for (var entry : headers.entrySet()) {
-            if (entry.getKey().equals("authorization")) {
-                String username = jwtService.getUsernameFromToken(entry.getValue());
-                String role = userRepository.findByUsername(username).getRole();
-                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
-                    flag = true;
+        	matches = matchRepository.findAll();
+        	String startDate = "";
+        	String endDate = "";
+        	
+        	for (int i = 0 ; i < matches.size() - 1; i++) {
+        		Match temp = matches.get(0);
+                for (int j = i + 1; j < matches.size(); j++) {
+                	long timeI;
+					try {
+						timeI = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(matches.get(i).getEnd_date()).getTime() - new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(matches.get(i).getStart_date()).getTime();
+						long timeJ = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(matches.get(j).getEnd_date()).getTime() - new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(matches.get(j).getStart_date()).getTime();
+	                    if (timeI > timeJ) {
+	                        temp = matches.get(j);
+	                        matches.set(j, matches.get(i));
+	                        matches.set(i, temp);
+	                    };
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					};
                 };
             };
-        };
-        if(flag) {
-        	List<Match> matches = new ArrayList<Match>();
-        	matches = matchRepository.findAll(Sort.by(Sort.Direction.DESC, "timePlay"));
+        	
         	for(Match match : matches) {
         		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
         		long id = match.getId();
@@ -122,9 +99,22 @@ public class StatsController {
         		long user2 = match.getUser_2();
         		long result = match.getResult();
         		int result_type = match.getResult_type();
-        		String startDate = match.getStart_date();
-        		String endDate = match.getEnd_date();
-        		String time = match.getTimePlay();
+        		startDate = match.getStart_date();
+        		endDate = match.getEnd_date();
+                Date dateStart;
+                Date dateEnd;
+                String timePlay = "";
+				try {
+					dateStart = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(startDate);
+	                dateEnd = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse(endDate);
+	                long miliseconds =  dateEnd.getTime() - dateStart.getTime();
+					String minute = String.valueOf((miliseconds/1000)/60);
+	                String second = String.valueOf((miliseconds/1000)%60);
+	                timePlay = minute + ":" + second;
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				};
         		
         		User player1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         		User player2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -135,11 +125,14 @@ public class StatsController {
         		hashStats.put("user_win", result == user1 ? player1.getFirstName() + " " + player1.getLastName() : (result == user2 ? player2.getFirstName() + " " + player2.getLastName() : "Trận hòa"));
         		hashStats.put("start_date", startDate);
                 hashStats.put("end_date", endDate);
-        		hashStats.put("time_play", time);
-        		if(stats.size() < 10 && !time.equals("")) {
+        		hashStats.put("time_play", timePlay);
+        		stats.add(hashStats);
+        		
+        		if(stats.size() < 10) {
         			stats.add(hashStats);
         		};
         	};
+        	
         };
         
         return flag ? stats : null;
