@@ -268,7 +268,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
             Date date;
             String day = user.getString("dayOfBirth");
     		try {
-    			date = new SimpleDateFormat("dd/MM/yyyy").parse(tempDay);
+    			date = new SimpleDateFormat("yyyy/MM/dd").parse(tempDay);
     			dayOfBirth.setDate(date);
     		} catch (ParseException e1) {
     			e1.printStackTrace();
