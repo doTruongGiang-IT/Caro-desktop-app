@@ -141,7 +141,7 @@ public class MatchController {
     public Match createMatch(@Valid @RequestBody Match match) throws Exception {
         String startDate = match.getStart_date();
         String endDate = match.getEnd_date();
-        String timePlay = match.getTimePlay();
+//        String timePlay = match.getTimePlay();
         long user1 = match.getUser_1();
         long user2 = match.getUser_2();
         
@@ -157,9 +157,9 @@ public class MatchController {
         if (!endDate.matches(regexDatetime)) {
             match.setEnd_date(null);
         };
-        if (!timePlay.matches(regexTime)) {
-            match.setTimePlay(null);
-        };
+//        if (!timePlay.matches(regexTime)) {
+//            match.setTimePlay(null);
+//        };
         if(user1 == user2) {
         	throw new Exception("Wrong format for create match");
         };
