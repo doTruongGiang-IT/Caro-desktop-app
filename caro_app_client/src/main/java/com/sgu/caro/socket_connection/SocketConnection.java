@@ -29,7 +29,7 @@ public class SocketConnection {
     private static Socket socket = null;
     private static BufferedReader in = null;
     private static BufferedWriter out = null;
-    private static String socketHost = "139.177.184.82";    
+    private static String socketHost = "localhost";    
     private static int socketPort = 5000;
     private static Map <String, SocketHandler> actions = new HashMap<String, SocketHandler>();
     private static ArrayList<Thread> events = new ArrayList<Thread>();
