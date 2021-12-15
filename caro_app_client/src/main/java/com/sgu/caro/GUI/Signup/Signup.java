@@ -210,7 +210,7 @@ public class Signup extends JFrame{
                     jo.put("gender", gender);
                     jo.put("dayOfBirth", dayOfBirth);
                     
-                    String API_URL = "http://localhost:8080/caro_api/users";
+                    String API_URL = "http://139.177.184.82:8080/caro_api/users";
                     try {
                         HttpClient client = HttpClient.newHttpClient();
                         HttpRequest request = HttpRequest.newBuilder()

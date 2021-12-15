@@ -55,7 +55,7 @@ public class LoadAchievement extends JFrame {
     public LoadAchievement() throws IOException {
         initComponents();
 
-        String API_URL = "http://localhost:8080/caro_api/stats/" + userId;
+        String API_URL = "http://139.177.184.82:8080/caro_api/stats/" + userId;
 
         try {
 //				System.out.println(API_URL);

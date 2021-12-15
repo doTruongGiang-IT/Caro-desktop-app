@@ -43,7 +43,7 @@ import com.sgu.caro.logging.Logging;
 public class SocketConnection {
 
     private static ServerSocket server = null;
-    private static String socketHost = "localhost";
+    private static String socketHost = "139.177.184.82";
     private static int socketPort = 5000;
     public static Map<String, Socket> socketClients = new HashMap<String, Socket>();
 
