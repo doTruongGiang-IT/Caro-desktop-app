@@ -50,7 +50,6 @@ public class MainScreenDesign extends JFrame {
     public MainScreenDesign() {
         // Init socket
         SocketConnection socket = new SocketConnection();
-        socket.startConnection();
 
         initComponents();
 

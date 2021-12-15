@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 
 import com.sgu.caro.api_connection.DataAPI;
 import com.sgu.caro.api_connection.TokenManager;
+import com.sgu.caro.socket_connection.SocketConnection;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -171,6 +172,9 @@ public class Login extends JFrame {
                                 new ExitMainScreen(1, "Xác nhận", "Bạn có muốn thoát chương trình?", "Đồng Ý", "Quay Lại").setVisible(true);
                             }
                         });
+                        
+                        SocketConnection socket = new SocketConnection();
+                        socket.startConnection();
                         setVisible(false);
                     } else {
                         usernameError.setForeground(Color.RED);
