@@ -56,9 +56,10 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		setBounds(400, 120, 450, 400);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setResizable(false);
-
+		
 		c = getContentPane();
 		c.setLayout(null);
+		user = dataAPI.getInfoUserByID(TokenManager.getUser_id(), TokenManager.getJwt());
 
 		title = new JLabel("Cập nhật tài khoản");
 		title.setFont(new Font("Arial", Font.PLAIN, 28));
@@ -76,6 +77,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		txtLastName.setFont(new Font("Arial", Font.PLAIN, 15));
 		txtLastName.setSize(190, 20);
 		txtLastName.setLocation(200, 100);
+		txtLastName.setText(user.getString("lastName"));
 		c.add(txtLastName);
 
 		lblFirstName = new JLabel("Tên");
@@ -88,6 +90,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		txtFirstName.setFont(new Font("Arial", Font.PLAIN, 15));
 		txtFirstName.setSize(190, 20);
 		txtFirstName.setLocation(200, 150);
+		txtFirstName.setText(user.getString("firstName"));
 		c.add(txtFirstName);
 
 		lblGender = new JLabel("Giới tính");
@@ -160,7 +163,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		panel.setBounds(0, 0, 450, 400);
 		panel.setBackground(Color.decode("#a5d2f2"));
 		c.add(panel);
-		user = dataAPI.getInfoUserByID(TokenManager.getUser_id(), TokenManager.getJwt());
+		
 		setVisible(true);
 		
 	}
