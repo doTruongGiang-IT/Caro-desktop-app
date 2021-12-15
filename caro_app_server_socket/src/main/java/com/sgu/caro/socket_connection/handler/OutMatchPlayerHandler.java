@@ -96,8 +96,8 @@ public class OutMatchPlayerHandler {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(GoStepHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                Logging.log(Logging.MATCH_TYPE, "match_end", "[Out Match 3]: " + requestData);
             }
-            Logging.log(Logging.MATCH_TYPE, "match_end", "[Out Match 3]: " + requestData);
         } catch (IOException ex) {
             Logger.getLogger(OutMatchPlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
