@@ -23,7 +23,7 @@ import java.util.Date;
 
 public class UpdateAcc extends JFrame implements ActionListener {
 
-	/*
+    /*
 	 * users day_of_birth, first_name, gender, last_name
 	 */
 
@@ -191,76 +191,78 @@ public class UpdateAcc extends JFrame implements ActionListener {
 				 * "firstName": "Do Truong", "lastName": "Giang dep trai", "gender": "male",
 				 * "dayOfBirth": "2000/07/12", "score": 1, "role": "user", "name": "Do Giang",
 				 * "active": true, "win_length": 1, "win_rate": 9.0 }
-				 */
-				String userNameString = user.getString("username");
-				String passwordString = user.getString("password");
-				int scoreString = user.getInt("score");
-				String roleString = user.getString("role");
-				String nameString = user.getString("name");
-				boolean active = true;
-				int win_length = user.getInt("win_length");
-				int win_rate = user.getInt("win_rate");
+                 */
+                String userNameString = user.getString("username");
+                String passwordString = user.getString("password");
+                int scoreString = user.getInt("score");
+                String roleString = user.getString("role");
+                String nameString = user.getString("name");
+                boolean active = true;
+                int win_length = user.getInt("win_length");
+                int win_rate = user.getInt("win_rate");
 
-				jsonUpdateUser.put("id", TokenManager.getUser_id());
-				jsonUpdateUser.put("username", userNameString);
-				jsonUpdateUser.put("password", passwordString);
-				jsonUpdateUser.put("firstName", firstName);
-				jsonUpdateUser.put("lastName", lastName);
-				jsonUpdateUser.put("gender", gender);
-				jsonUpdateUser.put("dayOfBirth", strDayOfBirth);
-				jsonUpdateUser.put("score", scoreString);
-				jsonUpdateUser.put("role", roleString);
-				jsonUpdateUser.put("active", active);
-				jsonUpdateUser.put("win_length", win_length);
-				jsonUpdateUser.put("win_rate", win_rate);
-				jsonUpdateUser.put("name", nameString);
+                jsonUpdateUser.put("id", TokenManager.getUser_id());
+                jsonUpdateUser.put("username", userNameString);
+                jsonUpdateUser.put("password", passwordString);
+                jsonUpdateUser.put("firstName", firstName);
+                jsonUpdateUser.put("lastName", lastName);
+                jsonUpdateUser.put("gender", gender);
+                jsonUpdateUser.put("dayOfBirth", strDayOfBirth);
+                jsonUpdateUser.put("score", scoreString);
+                jsonUpdateUser.put("role", roleString);
+                jsonUpdateUser.put("active", active);
+                jsonUpdateUser.put("win_length", win_length);
+                jsonUpdateUser.put("win_rate", win_rate);
+                jsonUpdateUser.put("name", nameString);
 
-				boolean isUpdated = updateUserCallAPI(jsonUpdateUser);
-				if (isUpdated == true) {
+                boolean isUpdated = updateUserCallAPI(jsonUpdateUser);
+                if (isUpdated == true) {
 
-					txtNotification.setText("Thay đổi thành công");
-				} else txtNotification.setText("Thay đổi không thành công");
-			} else {
-				txtNotification.setText("Vui lòng điền đầy đủ thông tin!");
-			}
+                    txtNotification.setText("Thay đổi thành công");
+                } else {
+                    txtNotification.setText("Thay đổi không thành công");
+                }
+            } else {
+                txtNotification.setText("Vui lòng điền đầy đủ thông tin!");
+            }
 
-		}
+        }
 
-		if (e.getSource() == reset) {
-			String def = "";
-			txtFirstName.setText(def);
-			txtLastName.setText(def);
-			txtNotification.setText(def);
-		}
-	}
+        if (e.getSource() == reset) {
+            String def = "";
+            txtFirstName.setText(def);
+            txtLastName.setText(def);
+            txtNotification.setText(def);
+        }
+    }
 
-	public boolean updateUserCallAPI(JSONObject user) {
-		boolean isUpdate = false;
-		String jsonUserToString = user.toString();
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		String url = TokenManager.getHOST() + "/caro_api/users/" + TokenManager.getUser_id();
-		try {
-			HttpPut request = new HttpPut(url);
-			StringEntity params = new StringEntity(jsonUserToString);
-			request.addHeader("content-type", "application/json");
-			request.addHeader("Authorization",
-					TokenManager.getJwt());
-			request.setEntity(params);
-			HttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
-			String responseString = EntityUtils.toString(entity, "UTF-8");
-			System.out.println(responseString);
-			isUpdate = true;
-		} catch (Exception ex) {
-		} finally {
-			// @Deprecated httpClient.getConnectionManager().shutdown();
-		}
+    public boolean updateUserCallAPI(JSONObject user) {
+        boolean isUpdate = false;
+        String jsonUserToString = user.toString();
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        String url = TokenManager.getHOST() + "/caro_api/users/" + TokenManager.getUser_id();
+        try {
+            HttpPut request = new HttpPut(url);
+            StringEntity params = new StringEntity(jsonUserToString);
+            request.addHeader("content-type", "application/json");
+            request.addHeader("Authorization",
+                    TokenManager.getJwt());
+            request.setEntity(params);
+            HttpResponse response = httpClient.execute(request);
+            HttpEntity entity = response.getEntity();
+            String responseString = EntityUtils.toString(entity, "UTF-8");
+            System.out.println(responseString);
+            isUpdate = true;
+        } catch (Exception ex) {
+        } finally {
+            // @Deprecated httpClient.getConnectionManager().shutdown();
+        }
 
-		return isUpdate;
-	}
+        return isUpdate;
+    }
 
-	public static void main(String[] args) throws Exception {
-		new UpdateAcc();
-	}
+    public static void main(String[] args) throws Exception {
+        new UpdateAcc();
+    }
 
 }
