@@ -72,6 +72,7 @@ public class StatsController {
         	for(User user : users) {
         		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
         		long id = user.getId();
+                        String username = user.getUsername();
         		String firstName = user.getFirstName();
         		String lastName = user.getLastName();
         		double score = user.getScore();
@@ -79,6 +80,7 @@ public class StatsController {
         		int winLength = user.getWin_length();
         		
         		hashStats.put("id", id);
+        		hashStats.put("username", username);
         		hashStats.put("name", firstName + " " + lastName);
         		hashStats.put("win_rate", winRate);
         		hashStats.put("win_length", winLength);
@@ -109,6 +111,7 @@ public class StatsController {
         	for(User user : users) {
         		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
         		long id = user.getId();
+                        String username = user.getUsername();
         		String firstName = user.getFirstName();
         		String lastName = user.getLastName();
         		double score = user.getScore();
@@ -116,6 +119,7 @@ public class StatsController {
         		int winLength = user.getWin_length();
         		
         		hashStats.put("id", id);
+        		hashStats.put("username", username);
         		hashStats.put("name", firstName + " " + lastName);
         		hashStats.put("win_rate", winRate);
         		hashStats.put("win_length", winLength);
@@ -146,6 +150,7 @@ public class StatsController {
         	for(User user : users) {
         		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
         		long id = user.getId();
+                        String username = user.getUsername();
         		String firstName = user.getFirstName();
         		String lastName = user.getLastName();
         		double score = user.getScore();
@@ -153,6 +158,7 @@ public class StatsController {
         		int winLength = user.getWin_length();
         		
         		hashStats.put("id", id);
+        		hashStats.put("username", username);
         		hashStats.put("name", firstName + " " + lastName);
         		hashStats.put("win_rate", winRate);
         		hashStats.put("win_length", winLength);

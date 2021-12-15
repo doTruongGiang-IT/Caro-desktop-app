@@ -5,6 +5,7 @@ import com.sgu.caro.api_connection.DataAPI;
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.entity.Group;
+import com.sgu.caro.logging.Logging;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -52,15 +53,15 @@ public class GoStepHandler {
 
     public void run(JSONObject data, BufferedReader in, BufferedWriter out) {
         try {
-            System.out.println(matrixGoStep.size());
+            Logging.log(Logging.MATCH_TYPE, "go_step", "matrix size: " + matrixGoStep.size());
             DataSocket dataSocket = new DataSocket();
             int userID = data.getInt("user");
             int posX, posY;
             posX = data.getJSONArray("pos").getInt(0);
             posY = data.getJSONArray("pos").getInt(1);
 
-            System.out.println("User: " + userID);
-            System.out.println("posX: " + posX + ", " + "posY: " + posY);
+            Logging.log(Logging.MATCH_TYPE, "go_step", "User: " + userID);
+            Logging.log(Logging.MATCH_TYPE, "go_step", "posX: " + posX + ", " + "posY: " + posY);
             Group group = new AcceptPairingHandler().getGroup(userID);
 
             Matrix matrixGroup = matrixGoStep.get(group.toString());
@@ -79,14 +80,14 @@ public class GoStepHandler {
                     String dataSend = dataSocket.exportDataGoStep(userID, posX, posY);
 
                     outClient.write(dataSend);
-                    System.out.println("Sending: " + dataSend);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
                     outClient.newLine();
                     outClient.flush();
 
                     if (userWin != 0) {
                         dataSend = dataSocket.exportResultMatch(userWin, resultMatch.posX, resultMatch.posY);
                         outClient.write(dataSend);
-                        System.out.println("Sending: " + dataSend);
+                        Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
                         outClient.newLine();
                         outClient.flush();
                     }
@@ -121,7 +122,8 @@ public class GoStepHandler {
                 }catch (InterruptedException ex) {
                     Logger.getLogger(GoStepHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("Create Match with" + requestData);
+                
+                Logging.log(Logging.MATCH_TYPE, "match_end", "[Normal 0]: " + requestData);
             }
         }catch (IOException e) {
             System.err.println(e);

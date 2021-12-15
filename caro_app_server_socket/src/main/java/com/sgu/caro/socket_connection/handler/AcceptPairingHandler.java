@@ -5,6 +5,7 @@ import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.entity.Group;
 import com.sgu.caro.entity.User;
+import com.sgu.caro.logging.Logging;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class AcceptPairingHandler {
         try {
             BufferedWriter outUser1 = new BufferedWriter(new OutputStreamWriter(socketUser1.getOutputStream()));
             BufferedWriter outUser2 = new BufferedWriter(new OutputStreamWriter(socketUser2.getOutputStream()));
-            System.out.println(dataSend1);
+            Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend1);
             outUser1.write(dataSend1);
             outUser1.newLine();
             outUser1.flush();

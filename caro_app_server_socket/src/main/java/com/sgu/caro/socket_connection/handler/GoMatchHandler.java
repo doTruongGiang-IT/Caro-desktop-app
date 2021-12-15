@@ -1,6 +1,7 @@
 package com.sgu.caro.socket_connection.handler;
 
 import com.sgu.caro.api_connection.APIConnection;
+import com.sgu.caro.logging.Logging;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import org.springframework.web.client.RestTemplate;
@@ -24,8 +25,8 @@ public class GoMatchHandler {
     public void run(JSONObject data, BufferedReader in, BufferedWriter out){
         userQueue.add(data.getInt("user"));
         JSONObject user1 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + data.getInt("user"));
-        System.out.println(user1.toString());
-        System.out.println(userQueue.size());
+        Logging.log(Logging.MATCH_TYPE, "go_match", user1.toString());
+        Logging.log(Logging.MATCH_TYPE, "queue_size", Integer.toString(userQueue.size()));
     }
     
     public void getPair(){
@@ -42,8 +43,8 @@ public class GoMatchHandler {
                 JSONObject user1 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_1);
                 JSONObject user2 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_2);
                 
-                System.out.println(user1.toString());
-                System.out.println(user2.toString());
+                Logging.log(Logging.MATCH_TYPE, "get_pair", user1.toString());
+                Logging.log(Logging.MATCH_TYPE, "get_pair", user2.toString());
                 
                 String display_name_1 = user1.getString("firstName") + user1.getString("lastName");
                 String display_name_2 = user2.getString("firstName") + user2.getString("lastName");
@@ -62,8 +63,8 @@ public class GoMatchHandler {
                     String dataSendUser1 = datasocket.exportDataSendInvitation(user_id_2, display_name_2, score_2);
                     String dataSendUser2 = datasocket.exportDataSendInvitation(user_id_1, display_name_1, score_1);
                     
-                    System.out.println(dataSendUser1);
-                    System.out.println(dataSendUser2);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSendUser1);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSendUser2);
                     
                     outUser1.write(dataSendUser1);
                     outUser1.newLine();
