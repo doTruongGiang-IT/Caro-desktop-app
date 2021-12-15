@@ -53,6 +53,98 @@ public class StatsController {
 	@Autowired
     JwtService jwtService;
 	
+	@GetMapping("rating/shortest_matches")
+    public List<Object> getTenShortestMatchByTimePlay(@RequestHeader Map<String, String> headers) {
+		List<Object> stats = new ArrayList<Object>();
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if(flag) {
+        	List<Match> matches = new ArrayList<Match>();
+        	matches = matchRepository.findAll(Sort.by(Sort.Direction.ASC, "timePlay"));
+        	for(Match match : matches) {
+        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
+        		long id = match.getId();
+        		long user1 = match.getUser_1();
+        		long user2 = match.getUser_2();
+        		long result = match.getResult();
+        		int result_type = match.getResult_type();
+        		String startDate = match.getStart_date();
+        		String endDate = match.getEnd_date();
+        		String time = match.getTimePlay();
+        		
+        		User player1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        		User player2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        		
+        		hashStats.put("id", id);
+        		hashStats.put("user_1", player1.getFirstName() + " " + player1.getLastName());
+        		hashStats.put("user_2", player2.getFirstName() + " " + player2.getLastName());
+        		hashStats.put("user_win", result == user1 ? player1.getFirstName() + " " + player1.getLastName() : (result == user2 ? player2.getFirstName() + " " + player2.getLastName() : "Trận hòa"));
+        		hashStats.put("start_date", startDate);
+                hashStats.put("end_date", endDate);
+        		hashStats.put("time_play", time);
+        		if(stats.size() < 10 && !time.equals("")) {
+        			stats.add(hashStats);
+        		};
+        	};
+        };
+        
+        return flag ? stats : null;
+    };
+    
+    @GetMapping("rating/longest_matches")
+    public List<Object> getTenLongestMatchByTimePlay(@RequestHeader Map<String, String> headers) {
+		List<Object> stats = new ArrayList<Object>();
+        boolean flag = false;
+        for (var entry : headers.entrySet()) {
+            if (entry.getKey().equals("authorization")) {
+                String username = jwtService.getUsernameFromToken(entry.getValue());
+                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                    flag = true;
+                };
+            };
+        };
+        if(flag) {
+        	List<Match> matches = new ArrayList<Match>();
+        	matches = matchRepository.findAll(Sort.by(Sort.Direction.DESC, "timePlay"));
+        	for(Match match : matches) {
+        		LinkedHashMap<String, Object> hashStats = new LinkedHashMap<String, Object>();
+        		long id = match.getId();
+        		long user1 = match.getUser_1();
+        		long user2 = match.getUser_2();
+        		long result = match.getResult();
+        		int result_type = match.getResult_type();
+        		String startDate = match.getStart_date();
+        		String endDate = match.getEnd_date();
+        		String time = match.getTimePlay();
+        		
+        		User player1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        		User player2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        		
+        		hashStats.put("id", id);
+        		hashStats.put("user_1", player1.getFirstName() + " " + player1.getLastName());
+        		hashStats.put("user_2", player2.getFirstName() + " " + player2.getLastName());
+        		hashStats.put("user_win", result == user1 ? player1.getFirstName() + " " + player1.getLastName() : (result == user2 ? player2.getFirstName() + " " + player2.getLastName() : "Trận hòa"));
+        		hashStats.put("start_date", startDate);
+                hashStats.put("end_date", endDate);
+        		hashStats.put("time_play", time);
+        		if(stats.size() < 10 && !time.equals("")) {
+        			stats.add(hashStats);
+        		};
+        	};
+        };
+        
+        return flag ? stats : null;
+    };
+	
 	@GetMapping("rating/score")
     public List<Object> getAllMatchSortByScore(@RequestHeader Map<String, String> headers) {
 		List<Object> stats = new ArrayList<Object>();
