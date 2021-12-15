@@ -25,6 +25,8 @@ import java.awt.event.ActionEvent;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -40,6 +42,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +64,7 @@ public class Signup extends JFrame{
     private JLabel lblGender;
     private JComboBox cmbGender;
     private JLabel lblDayOfBirth;
+    private JLabel dayOfBirthError;
     private JLabel lblPassword;
     private JPasswordField txtPass;
     private JLabel passError;
@@ -135,31 +139,52 @@ public class Signup extends JFrame{
             	switch(result[1]) {
             	case "Jan":
             		month = "01";
+            		break;
         		case "Feb":
         			month = "02";
+            		break;
     			case "Mar":
     				month = "03";
+            		break;
             	case "Apr":
             		month = "04";
+            		break;
         		case "May":
         			month = "05";
+            		break;
     			case "Jun":
     				month = "06";
+            		break;
             	case "Jul":
             		month = "07";
+            		break;
         		case "Aug":
         			month = "08";
+            		break;
     			case "Sep":
     				month = "09";
+            		break;
             	case "Oct":
             		month = "10";
+            		break;
         		case "Nov":
         			month = "11";
+            		break;
     			case "Dec":
     				month = "12";
+            		break;
             	}
-            	dayOfBirth = year + "/" + month + "/" + day;
-            	
+                LocalDate currentDate = LocalDate.now();
+                LocalDate dayOfBirthChosen = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+                int diff = currentDate.compareTo(dayOfBirthChosen);
+                if(diff > 0) {
+                	dayOfBirth = year + "/" + month + "/" + day;
+                } else if (diff < 0) {
+                    dayOfBirthError.setText("Ngày tháng năm sinh không hợp lệ");
+                } else {
+                    dayOfBirthError.setText("Ngày tháng năm sinh không hợp lệ");
+                }
+
             	if(!validatePassword(txtPass.getText())) {
         			passError.setText("Mật khẩu không hợp lệ");
         			errorCount++;
@@ -360,30 +385,34 @@ public class Signup extends JFrame{
         lblDayOfBirth = new JLabel("Day Of Birth");
         mainPanel.add(lblDayOfBirth, "cell 1 7 4 2,alignx left");
         
+        dayOfBirthError = new JLabel(" ");
+        dayOfBirthError.setForeground(Color.RED);
+        mainPanel.add(dayOfBirthError, "cell 1 11 4 1");
+        
         lblPassword = new JLabel("Password:");
-        mainPanel.add(lblPassword, "cell 1 11,alignx left");
+        mainPanel.add(lblPassword, "cell 1 12,alignx left");
         
         txtPass = new JPasswordField();
-        mainPanel.add(txtPass, "cell 2 11 3 1,growx");
+        mainPanel.add(txtPass, "cell 2 12 3 1,growx");
         txtPass.addMouseListener(new EventMouseListener());
         
         passError = new JLabel(" ");
         passError.setForeground(Color.RED);
-        mainPanel.add(passError, "flowx,cell 1 12 4 1,alignx left");
+        mainPanel.add(passError, "flowx,cell 1 13 4 1,alignx left");
         
         calendar = new JCalendar();
         mainPanel.add(calendar, "cell 1 9 4 1,alignx center,aligny center");
         
         lblConfirmPass = new JLabel("Confirm password:");
-        mainPanel.add(lblConfirmPass, "cell 1 13");
+        mainPanel.add(lblConfirmPass, "cell 1 14");
         
         txtConfirmPass = new JPasswordField();
-        mainPanel.add(txtConfirmPass, "cell 2 13 3 1,growx");
+        mainPanel.add(txtConfirmPass, "cell 2 14 3 1,growx");
         txtConfirmPass.addMouseListener(new EventMouseListener());
         
         confirmPassError = new JLabel(" ");
         confirmPassError.setForeground(Color.RED);
-        mainPanel.add(confirmPassError, "cell 1 14 4 1,alignx left");
+        mainPanel.add(confirmPassError, "cell 1 15 4 1,alignx left");
         
         btnSignUp = new JButton("Sign up");
         mainPanel.add(btnSignUp, "cell 1 16,alignx center");
