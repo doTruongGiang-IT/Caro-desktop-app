@@ -97,6 +97,7 @@ public class MainScreenDesign extends JFrame {
 
             }
         });
+        
     }
 
     private void initComponents() {
@@ -140,6 +141,13 @@ public class MainScreenDesign extends JFrame {
                     new LoadMatch().setVisible(true);
                     loadMatch = false;
                 }
+            }
+        });
+        
+        btnRank = new JButton("Xếp Hạng");
+        btnRank.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new UserRankScreen().setVisible(true);
             }
         });
         lblSpace = new JLabel("................................");
@@ -218,6 +226,7 @@ public class MainScreenDesign extends JFrame {
 
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
+        mainLeftPanel.add(btnRank);
         mainLeftPanel.add(btnNewGame);
         mainLeftPanel.add(lblSpace);
         mainLeftPanel.add(btnThanhTich);
@@ -269,7 +278,7 @@ public class MainScreenDesign extends JFrame {
     // leftPanel, leftScroll để liệt kê danh sách bàn chơi
     private JPanel leftPanel;
     private JScrollPane leftScroll;
-    private JButton btnNewGame;
+    private JButton btnNewGame, btnRank;
     private JLabel lblBanCo;
     // mainRightPanel là panel chính chứa các component phần Danh sách kỳ thủ
     private JPanel mainRightPanel;
