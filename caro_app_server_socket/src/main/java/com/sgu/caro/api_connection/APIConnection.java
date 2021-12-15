@@ -24,7 +24,7 @@ public class APIConnection {
 
     private static final String username = "socket@caro.com";
     private static final String password = "socket123!@#";
-    public static final String HOST = "http://139.177.184.82:8080";
+    public static final String HOST = "http://172.104.108.31:8080";
     public static final String authAPIURL = HOST + "/caro_api/authAdmin";
     public static final String getUserByUsernameAPIURL = HOST + "/caro_api/users/";
     public static final String getUserListAPIURL = HOST + "/caro_api/users";

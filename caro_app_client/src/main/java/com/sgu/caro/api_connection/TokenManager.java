@@ -6,7 +6,7 @@ public class TokenManager {
     private static int user_id;
     private static String display_name;
     private static int score;
-    private static final String HOST = "http://139.177.184.82:8080";
+    private static final String HOST = "http://172.104.108.31:8080";
 
     public static String getJwt() {
         return jwt;
