@@ -19,6 +19,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class UpdateAcc extends JFrame implements ActionListener {
@@ -50,7 +53,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 	private JLabel txtNotification;
 	DataAPI dataAPI = new DataAPI();
 	final JSONObject user; 
-
+	final String tempDay;
 	public UpdateAcc() {
 		setTitle("Registration Form");
 		setBounds(400, 120, 450, 400);
@@ -60,7 +63,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		c = getContentPane();
 		c.setLayout(null);
 		user = dataAPI.getInfoUserByID(TokenManager.getUser_id(), TokenManager.getJwt());
-
+		
 		title = new JLabel("Cập nhật tài khoản");
 		title.setFont(new Font("Arial", Font.PLAIN, 28));
 		title.setSize(250, 30);
@@ -101,7 +104,6 @@ public class UpdateAcc extends JFrame implements ActionListener {
 
 		rbMale = new JRadioButton("Nam");
 		rbMale.setFont(new Font("Arial", Font.PLAIN, 15));
-		rbMale.setSelected(true);
 		rbMale.setBackground(Color.decode("#a5d2f2"));
 		rbMale.setSize(75, 20);
 		rbMale.setLocation(200, 200);
@@ -109,11 +111,19 @@ public class UpdateAcc extends JFrame implements ActionListener {
 
 		rbFemale = new JRadioButton("Nữ");
 		rbFemale.setFont(new Font("Arial", Font.PLAIN, 15));
-		rbFemale.setSelected(false);
+		//rbFemale.setSelected(false);
 		rbFemale.setBackground(Color.decode("#a5d2f2"));
 		rbFemale.setSize(80, 20);
 		rbFemale.setLocation(275, 200);
 		c.add(rbFemale);
+		
+		if(user.getString("gender").equals("male")) {
+			rbMale.setSelected(true);
+			rbFemale.setSelected(false);
+		} else {
+			rbMale.setSelected(false);
+			rbFemale.setSelected(true);
+		}
 
 		genderGroup = new ButtonGroup();
 		genderGroup.add(rbMale);
@@ -129,12 +139,12 @@ public class UpdateAcc extends JFrame implements ActionListener {
 		dayOfBirth.setSize(190, 20);
 		dayOfBirth.setLocation(200, 250);
 		Date date;
+        tempDay = user.getString("dayOfBirth");
 		try {
-			date = new SimpleDateFormat("yyyy-MM-dd").parse("2000-01-01");
+			date = new SimpleDateFormat("yyyy/MM/dd").parse(tempDay);
 			dayOfBirth.setDate(date);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ParseException e1) {
+			e1.printStackTrace();
 		}
 		c.add(dayOfBirth);
 
@@ -177,51 +187,67 @@ public class UpdateAcc extends JFrame implements ActionListener {
 				String data = "";
 				String firstName = txtFirstName.getText();
 				String lastName = txtLastName.getText();
+				String strDayOfBirth;
 				if (rbMale.isSelected())
 					gender = "male";
 				else
 					gender = "female";
 				SimpleDateFormat formatDay = new SimpleDateFormat("yyyy/MM/dd");
-				String strDayOfBirth = formatDay.format(dayOfBirth.getDate());
+				Date dateUserInput  = dayOfBirth.getDate();
+				Date checkLeftDay;
+				Date checkRightDay;
+				try {
+					checkLeftDay = new SimpleDateFormat("yyyy/MM/dd").parse("1900/01/01");
+					checkRightDay = new SimpleDateFormat("yyyy/MM/dd").parse("2021/01/01");
+					if(dateUserInput.after(checkLeftDay) && dateUserInput.before(checkRightDay)) {
+						strDayOfBirth = formatDay.format(dayOfBirth.getDate());
+						JSONObject jsonUpdateUser = new JSONObject();
+						/*
+						 * { "id": 2, "username": "duongdong@gmail.com", "password":
+						 * "55e68311694e6bd07e53c68429a4f600aea3bdd880d25d559f166cb30d17a9de34c88c6f8f1bc5f4",
+						 * "firstName": "Do Truong", "lastName": "Giang dep trai", "gender": "male",
+						 * "dayOfBirth": "2000/07/12", "score": 1, "role": "user", "name": "Do Giang",
+						 * "active": true, "win_length": 1, "win_rate": 9.0 }
+		                 */
+		                String userNameString = user.getString("username");
+		                String passwordString = user.getString("password");
+		                int scoreString = user.getInt("score");
+		                String roleString = user.getString("role");
+		                String nameString = user.getString("name");
+		                boolean active = true;
+		                int win_length = user.getInt("win_length");
+		                int win_rate = user.getInt("win_rate");
+
+		                jsonUpdateUser.put("id", TokenManager.getUser_id());
+		                jsonUpdateUser.put("username", userNameString);
+		                jsonUpdateUser.put("password", passwordString);
+		                jsonUpdateUser.put("firstName", firstName);
+		                jsonUpdateUser.put("lastName", lastName);
+		                jsonUpdateUser.put("gender", gender);
+		                jsonUpdateUser.put("dayOfBirth", strDayOfBirth);
+		                jsonUpdateUser.put("score", scoreString);
+		                jsonUpdateUser.put("role", roleString);
+		                jsonUpdateUser.put("active", active);
+		                jsonUpdateUser.put("win_length", win_length);
+		                jsonUpdateUser.put("win_rate", win_rate);
+		                jsonUpdateUser.put("name", nameString);
+
+		                boolean isUpdated = updateUserCallAPI(jsonUpdateUser);
+		                if (isUpdated == true) {
+
+		                    txtNotification.setText("Thay đổi thành công");
+		                } else {
+		                    txtNotification.setText("Thay đổi không thành công");
+		                }
+	    			} else {
+	    				txtNotification.setText("Thay đổi không thành công");
+	    			}
+				} catch (ParseException e1) {
+					System.out.println("Get day khong duoc");
+				}
+				
 				//JSONObject user = dataAPI.getInfoUserByID(TokenManager.getUser_id(), TokenManager.getJwt());
-				JSONObject jsonUpdateUser = new JSONObject();
-				/*
-				 * { "id": 2, "username": "duongdong@gmail.com", "password":
-				 * "55e68311694e6bd07e53c68429a4f600aea3bdd880d25d559f166cb30d17a9de34c88c6f8f1bc5f4",
-				 * "firstName": "Do Truong", "lastName": "Giang dep trai", "gender": "male",
-				 * "dayOfBirth": "2000/07/12", "score": 1, "role": "user", "name": "Do Giang",
-				 * "active": true, "win_length": 1, "win_rate": 9.0 }
-                 */
-                String userNameString = user.getString("username");
-                String passwordString = user.getString("password");
-                int scoreString = user.getInt("score");
-                String roleString = user.getString("role");
-                String nameString = user.getString("name");
-                boolean active = true;
-                int win_length = user.getInt("win_length");
-                int win_rate = user.getInt("win_rate");
-
-                jsonUpdateUser.put("id", TokenManager.getUser_id());
-                jsonUpdateUser.put("username", userNameString);
-                jsonUpdateUser.put("password", passwordString);
-                jsonUpdateUser.put("firstName", firstName);
-                jsonUpdateUser.put("lastName", lastName);
-                jsonUpdateUser.put("gender", gender);
-                jsonUpdateUser.put("dayOfBirth", strDayOfBirth);
-                jsonUpdateUser.put("score", scoreString);
-                jsonUpdateUser.put("role", roleString);
-                jsonUpdateUser.put("active", active);
-                jsonUpdateUser.put("win_length", win_length);
-                jsonUpdateUser.put("win_rate", win_rate);
-                jsonUpdateUser.put("name", nameString);
-
-                boolean isUpdated = updateUserCallAPI(jsonUpdateUser);
-                if (isUpdated == true) {
-
-                    txtNotification.setText("Thay đổi thành công");
-                } else {
-                    txtNotification.setText("Thay đổi không thành công");
-                }
+				
             } else {
                 txtNotification.setText("Vui lòng điền đầy đủ thông tin!");
             }
@@ -230,8 +256,23 @@ public class UpdateAcc extends JFrame implements ActionListener {
 
         if (e.getSource() == reset) {
             String def = "";
-            txtFirstName.setText(def);
-            txtLastName.setText(def);
+            txtFirstName.setText(user.getString("firstName"));
+            txtLastName.setText(user.getString("lastName"));
+            if(user.getString("gender").equals("male")) {
+    			rbMale.setSelected(true);
+    			rbFemale.setSelected(false);
+    		} else {
+    			rbMale.setSelected(false);
+    			rbFemale.setSelected(true);
+    		}
+            Date date;
+            String day = user.getString("dayOfBirth");
+    		try {
+    			date = new SimpleDateFormat("dd/MM/yyyy").parse(tempDay);
+    			dayOfBirth.setDate(date);
+    		} catch (ParseException e1) {
+    			e1.printStackTrace();
+    		}
             txtNotification.setText(def);
         }
     }
