@@ -4,6 +4,8 @@ public class TokenManager {
 
     private static String jwt;
     private static int user_id;
+    private static String display_name;
+    private static int score;
     private static final String HOST = "http://localhost:8080";
 
     public static String getJwt() {
@@ -22,7 +24,24 @@ public class TokenManager {
         TokenManager.user_id = user_id;
     }
 
+    public static String getDisplay_name() {
+        return display_name;
+    }
+
+    public static void setDisplay_name(String display_name) {
+        TokenManager.display_name = display_name;
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static void setScore(int score) {
+        TokenManager.score = score;
+    }
+
     public static String getHOST() {
         return HOST;
     }
+    
 }

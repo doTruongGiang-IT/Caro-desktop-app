@@ -3,6 +3,7 @@ package com.sgu.caro.GUI.MainScreen;
 import com.sgu.caro.GUI.Login.Login;
 import com.sgu.caro.GUI.MatchScreen.Cell;
 import com.sgu.caro.GUI.MatchScreen.MatchDesign;
+import com.sgu.caro.GUI.MatchScreen.OutMatchScreen;
 import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
@@ -32,9 +33,15 @@ public class LoadMatch extends javax.swing.JFrame {
     private boolean getPairing = false;
     private boolean clickHuyBtn = false;
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static String username_1, score_1, username_2, score_2;
+    private static int user_id_1, user_id_2;
 
     public LoadMatch() {
         clickHuyBtn = true;
+        user_id_1 = new TokenManager().getUser_id();
+        username_1 = new TokenManager().getDisplay_name();
+        score_1 = Integer.toString(new TokenManager().getScore());
+        
         socket.addListenConnection("send_invitation", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
@@ -47,6 +54,11 @@ public class LoadMatch extends javax.swing.JFrame {
                 txtUserName.setText(displayname);
                 txtScore.setText(String.valueOf(score));
 
+                // Set attrib for user 2
+                user_id_2 = userId;
+                username_2 = displayname;
+                score_2 = Integer.toString(score);
+                
                 MatchDesign.user2 = userId;
                 
                 final Runnable runnable = new Runnable() {
@@ -76,7 +88,7 @@ public class LoadMatch extends javax.swing.JFrame {
                 String step_type = data.getString("step_type");
                 System.out.println(data.toString());
                 if (is_started) {
-                    startMatchScreen(step_type);
+                    startMatchScreen(step_type, user_id_1, username_1, score_1, user_id_2, username_2, score_2);
                 } else {
                     System.out.println("Not accept");
                     
@@ -258,9 +270,24 @@ public class LoadMatch extends javax.swing.JFrame {
         // Giao dienj waiting for other
     }
 
-    private void startMatchScreen(String step_type) {
-        WindowManager.matchScreen = new MatchDesign(step_type);
+    private void startMatchScreen(String step_type, int user_1, String username_1, String score_1, int user_2, String username_2, String score_2) {
+        if (step_type.equals("X")){
+            WindowManager.matchScreen = new MatchDesign(step_type, user_1, username_1, score_1, user_2, username_2, score_2);
+        }
+        else{
+            WindowManager.matchScreen = new MatchDesign(step_type, user_2, username_2, score_2, user_1, username_1, score_1);
+        }
         WindowManager.matchScreen.setVisible(true);
+        WindowManager.matchScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        WindowManager.matchScreen.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (!step_type.equals("X") && !step_type.equals("O")) {
+                    new OutMatchScreen(true, user_1, 1, "Xác nhận", "Bạn có muốn thoát trận đấu? (Người xem) ", "Đồng Ý", "Quay Lại").setVisible(true);
+                } else {
+                    new OutMatchScreen(false, user_1, 1, "Xác nhận", "Bạn có muốn thoát trận đấu?", "Đồng Ý", "Quay Lại").setVisible(true);
+            }}
+        });
         WindowManager.mainScreen.setVisible(false);
         MainScreenDesign.loadMatch = true;
         this.setVisible(false);

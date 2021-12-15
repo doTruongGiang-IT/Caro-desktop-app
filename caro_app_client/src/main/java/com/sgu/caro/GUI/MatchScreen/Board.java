@@ -1,5 +1,6 @@
 package com.sgu.caro.GUI.MatchScreen;
 
+import static com.sgu.caro.GUI.MatchScreen.UserPanel.is_timer_running;
 import com.sgu.caro.api_connection.TokenManager;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,9 +48,12 @@ public class Board extends JPanel {
 
         if (stepType.equals("X")) {
             currentPlayer = Cell.X_VALUE;
-        } else {
+        } else if (stepType.equals("O")) {
             currentPlayer = Cell.O_VALUE;
+        } else {
+            currentPlayer = Cell.EMPTY_VALUE;
         }
+        isFree = (currentPlayer.equals(Cell.X_VALUE));
 
         this.setPreferredSize(new Dimension(width, height));
         socket = new SocketConnection();
@@ -62,6 +66,14 @@ public class Board extends JPanel {
             }
         }
 
+        if (isFree) {
+            UserPanel.is_timer_running = true;
+            UserPanel.toogle_status = true;
+        } else {
+            UserPanel.is_timer_running = false;
+            UserPanel.toogle_status = true;
+        }
+
         socket.addListenConnection("go_step", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
@@ -72,11 +84,23 @@ public class Board extends JPanel {
 
                 Cell cell = matrix[posX - 1][posY - 1];
 
-                if (currentUserID == userID) {
-                    cell.setValue(currentPlayer);
+                if (!currentPlayer.equals(Cell.EMPTY_VALUE)) {
+                    if (currentUserID == userID) {
+                        cell.setValue(currentPlayer);
+                        UserPanel.is_timer_running = false;
+                        UserPanel.toogle_status = true;
+                    } else {
+                        cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE);
+                        isFree = true;
+                        UserPanel.is_timer_running = true;
+                        UserPanel.toogle_status = true;
+                    }
                 } else {
-                    cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE : Cell.O_VALUE);
-                    isFree = true;
+                    if (Integer.parseInt(stepType) == currentUserID) {
+                        cell.setValue(Cell.X_VALUE);
+                    } else {
+                        cell.setValue(Cell.O_VALUE);
+                    }
                 }
                 validate();
                 repaint();
@@ -91,28 +115,59 @@ public class Board extends JPanel {
                     int posX, posY;
                     boolean win = false;
                     isFree = false;
-                    for (int i = 0; i < 5; i++) {
-                        JSONArray e = data.getJSONArray("res_pos").getJSONArray(i);
-                        posX = e.getInt(0);
-                        posY = e.getInt(1);
 
-                        Cell cell = matrix[posX - 1][posY - 1];
-                        if (currentUserID == userID) {
-                            cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
-                            win = true;
-                        } else {
-                            cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
+                    if (!UserPanel.scheduler.isShutdown()) {
+                        UserPanel.scheduler.shutdown();
+                    }
+                    if (!UserPanel.schedulerTotalTime.isShutdown()) {
+                        UserPanel.schedulerTotalTime.shutdown();
+                    }
+                    
+                    
+                    if (data.getJSONArray("res_pos").length() > 0) {
+                        for (int i = 0; i < 5; i++) {
+                            JSONArray e = data.getJSONArray("res_pos").getJSONArray(i);
+                            posX = e.getInt(0);
+                            posY = e.getInt(1);
+
+                            Cell cell = matrix[posX - 1][posY - 1];
+                            if (!currentPlayer.equals(Cell.EMPTY_VALUE)) {
+                                if (currentUserID == userID) {
+                                    cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.O_VALUE_WON : Cell.X_VALUE_WON);
+                                    win = true;
+                                } else {
+                                    cell.setValue(currentPlayer.equals(Cell.O_VALUE) ? Cell.X_VALUE_WON : Cell.O_VALUE_WON);
+                                }
+                            } else {
+                                if (Integer.parseInt(stepType) == currentUserID) {
+                                    cell.setValue(Cell.X_VALUE_WON);
+                                } else {
+                                    cell.setValue(Cell.O_VALUE_WON);
+                                }
+                            }
                         }
                     }
                     Thread.sleep(500);
 
                     String message;
-                    if (win) {
-                        message = "Bạn đã chiến thắng.";
-                        new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
+                    TokenManager userManagement = new TokenManager();
+                    if (!currentPlayer.equals(Cell.EMPTY_VALUE)) {
+                        if (currentUserID == 0) {
+                            message = "Bạn đã hòa.";
+                            new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
+                            userManagement.setScore(userManagement.getScore() + 1);
+                        } else if (currentUserID == userID || win) {
+                            message = "Bạn đã chiến thắng.";
+                            new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
+                            userManagement.setScore(userManagement.getScore() + 3);
+                        } else {
+                            message = "Rất tiếc bạn đã thua";
+                            new ResultMatchScreen(0, "Thông Báo", message, "Đồng Ý").setVisible(true);
+                            userManagement.setScore(Math.max(0, userManagement.getScore() - 1));
+                        }
                     } else {
-                        message = "Rất tiếc bạn đã thua";
-                        new ResultMatchScreen(0, "Thông Báo", message, "Đồng Ý").setVisible(true);
+                        message = "Trận đấu đã kết thúc";
+                        new ResultMatchScreen(1, "Thông Báo", message, "Đồng Ý").setVisible(true);
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
@@ -139,7 +194,7 @@ public class Board extends JPanel {
                             System.out.println(cellPosX + " " + cellPosY);
                             System.out.println(currentPlayer);
 
-                            if (cell.getValue().equals("") && isFree) {
+                            if (!currentPlayer.equals(Cell.EMPTY_VALUE) && cell.getValue().equals("") && isFree) {
                                 String data = dataSocket.exportDataGoStep(userID, cellPosX, cellPosY);
                                 socket.sendData(data);
                                 isFree = false;
@@ -171,6 +226,10 @@ public class Board extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setMatrix(Cell[][] matrix) {
+        this.matrix = matrix;
     }
 
     @Override
@@ -209,9 +268,9 @@ public class Board extends JPanel {
                 } else if (cell.getValue().equals(Cell.X_VALUE)) {
                     graphics2D.drawImage(imgX, x, y, w, h, this);
                 } else if (cell.getValue().equals(Cell.O_VALUE_WON)) {
-                    graphics2D.drawImage(imgXCurrent, x, y, w, h, this);
-                } else if (cell.getValue().equals(Cell.X_VALUE_WON)) {
                     graphics2D.drawImage(imgOCurrent, x, y, w, h, this);
+                } else if (cell.getValue().equals(Cell.X_VALUE_WON)) {
+                    graphics2D.drawImage(imgXCurrent, x, y, w, h, this);
                 }
                 ++k;
             }

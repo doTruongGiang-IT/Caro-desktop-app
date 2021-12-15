@@ -157,36 +157,136 @@ public class DataSocket {
     }
     
     /**
-     * # data format
-     {
-     		"type": "watch_achievement",
-     		"data": {
-     			"user": 1101, #id người dùng 1
-     			"score": tổng điểm của người dùng 1
-     			"win_rate": tỷ lệ thắng của người dùng 1
-     			"win_count": số lần thắng của người dùng 1
-     			"win_length": chuỗi trận thắng dài nhất của người dùng 1
-     			"lose_rate": tỷ lệ thua của người dùng 1
-     			"lose_count": số lần thua của người dùng 1
-     			"lose_length": chuỗi trận thua dài nhất của người dùng 1
-     		}
-     }
-     * @param userID
-     * @return
+     *  # data format
+	{
+            "type": "go_watch",
+            "data": {
+                "user": 1101, # id người xem
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
      */
-    public String exportDataWatchAchievement(int userID1, int score, int win_rate, int win_count, int win_length, int lose_rate, int lose_count, int lose_length) {
+    public String exportDataGoWatch(int userID, int userID_1) {
         JSONObject jo = new JSONObject();
         JSONObject data = new JSONObject();
 
-        jo.put("type", "wathc_achievement");
-        data.put("user", userID1);
-        data.put("score", score);
-        data.put("win_rate", win_rate);
-        data.put("win_count", win_count);
-        data.put("win_length", win_length);
-        data.put("lose_rate", lose_rate);
-        data.put("lose_count", lose_count);
-        data.put("lose_length", lose_length);
+        jo.put("type", "go_watch");
+        data.put("user", userID);
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match_watcher",
+            "data": {
+                "user": 1101, # id người xem
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatchWatcher(int userID, int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match_watcher");
+        data.put("user", userID);
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "out_match_player",
+            "data": {
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataOutMatchPlayer(int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "out_match_player");
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+    /**
+     *  # data format
+	{
+            "type": "timeout_player",
+            "data": {
+                "user_1": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataTimeoutPlayer(int userID_1) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "timeout_player");
+        data.put("user_1", userID_1);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+        /**
+     *  # data format
+	{
+            "type": "timeout_match",
+            "data": {
+                "user": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @param userID2
+     * @return 
+     */
+    public String exportDataTimeoutMatch(int userID) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "timeout_match");
+        data.put("user", userID);
+        jo.put("data", data);
+        return encryptData(jo.toString());
+    }
+    
+            /**
+     *  # data format
+	{
+            "type": "exit_game",
+            "data": {
+                "user": 123, # id của 1 kỳ thủ trong trận đấu
+            }
+	}
+     * @param userID1
+     * @return 
+     */
+    public String exportDataExitGame(int userID) {
+        JSONObject jo = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        jo.put("type", "exit_game");
+        data.put("user", userID);
         jo.put("data", data);
         return encryptData(jo.toString());
     }

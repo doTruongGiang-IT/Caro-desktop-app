@@ -22,9 +22,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,7 +68,9 @@ public class MainScreenDesign extends JFrame {
                     BanChoi board = new BanChoi(
                             i + 1,
                             String.valueOf(element.getInt("user_1")),
+                            element.getString("username_1"),
                             String.valueOf(element.getInt("user_2")),
+                            element.getString("username_2"),
                             element.getInt("number_of_watchers")
                     );
                     leftPanel.add(board);
@@ -126,9 +130,6 @@ public class MainScreenDesign extends JFrame {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftScroll = new JScrollPane(leftPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        mainLeftPanel.add(lblBanCo);
-        mainLeftPanel.add(leftScroll);
-
         btnNewGame = new JButton("Vào chơi");
         mainLeftPanel.add(btnNewGame);
         btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -167,6 +168,60 @@ public class MainScreenDesign extends JFrame {
                 }
             }
         });
+
+        SocketConnection socket = new SocketConnection();
+
+        socket.addListenConnection("accept_watch", new SocketHandler() {
+            @Override
+            public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
+                boolean accept = data.getBoolean("accept");
+                if (accept) {
+                    int user_1 = data.getInt("user_1");
+                    String username_1 = data.getString("username_1");
+                    int score_1 = data.getInt("score_1");
+                    int user_2 = data.getInt("user_2");
+                    String username_2 = data.getString("username_2");
+                    int score_2 = data.getInt("score_2");
+                    int who_x = data.getInt("who_x");
+
+                    Cell[][] matrix = new Cell[20][20];
+                    for (int i = 0; i < 20; i++) {
+                        JSONArray e = data.getJSONArray("matrix").getJSONArray(i);
+                        for (int j = 0; j < 20; j++) {
+                            int status = e.getInt(j);
+
+                            Cell cell = new Cell();
+                            if (status != 0) {
+                                if (status == user_1 && who_x == 1) {
+                                    cell.setValue(Cell.X_VALUE);
+                                    matrix[i][j] = cell;
+                                } else {
+                                    cell.setValue(Cell.O_VALUE);
+                                    matrix[i][j] = cell;
+                                }
+                            } else {
+                                cell.setValue(Cell.EMPTY_VALUE);
+                                matrix[i][j] = cell;
+                            }
+                        }
+                    }
+                    if (who_x == 1) {
+                        WindowManager.matchScreen = new MatchDesign(Integer.toString(user_1), user_1, username_1, Integer.toString(score_1), user_2, username_2, Integer.toString(score_2), matrix);
+                    } else {
+                        WindowManager.matchScreen = new MatchDesign(Integer.toString(user_2), user_2, username_2, Integer.toString(score_2), user_1, username_1, Integer.toString(score_1), matrix);
+                    }
+                    WindowManager.matchScreen.setVisible(true);
+                    WindowManager.mainScreen.setVisible(false);
+                    MainScreenDesign.loadMatch = true;
+//                    this.setVisible(false);
+//                    this.dispose();
+                }
+            }
+        });
+
+        mainLeftPanel.add(lblBanCo);
+        mainLeftPanel.add(leftScroll);
+        mainLeftPanel.add(btnNewGame);
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
 
         //=============== Phần danh sách người chơi
@@ -192,6 +247,7 @@ public class MainScreenDesign extends JFrame {
 
         // Thêm panel chính vào Jframe
         getContentPane().add(mainPanel, BorderLayout.SOUTH);
+        this.add(mainPanel);
 
         // Set vị trí ở giữa
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
