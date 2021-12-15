@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
+import com.sgu.caro.logging.Logging;
 
 /**
  *
@@ -52,7 +53,8 @@ public class SocketConnection {
     public void startConnection() {
         try {
             server = new ServerSocket(socketPort);
-            System.out.println("===== Started socket  =====");
+            System.out.println("===== Socket server has started =====");
+            Logging.log(Logging.SOCKET_TYPE, "socket_start", "===== Socket server has started =====");
 
             Thread thread_go_match = new Thread(new Runnable() {
                 @Override
@@ -88,24 +90,26 @@ public class SocketConnection {
 
             while (true) {
                 Socket socket = server.accept();
-                System.out.println(socket);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 String userID = in.readLine();
-                System.out.println(userID);
-                socketClients.put(userID, socket);
+                Logging.log(Logging.SOCKET_TYPE, "user_access", "user " + userID + " accessed");
+                
+                if (!socketClients.containsKey(userID)){
+                    socketClients.put(userID, socket);
 
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleClient(userID, socket, in, out);
-                    }
-                });
-                thread.start();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handleClient(userID, socket, in, out);
+                        }
+                    });
+                    thread.start();
+                }
             }
 
         } catch (IOException e) {
-            System.err.println(e);
+//            System.err.println(e);
         }
     }
 
@@ -115,62 +119,61 @@ public class SocketConnection {
 
             while (true) {
                 String rawDateReceive = in.readLine();
-                System.out.println(rawDateReceive);
+                Logging.log(Logging.SOCKET_TYPE, "socket_received", "Received: " + rawDateReceive);
                 JSONObject dataReceive = dataSocket.importData(rawDateReceive);
                 JSONObject data = dataReceive.getJSONObject("data");
                 String type = dataReceive.getString("type");
 
                 switch (type) {
                     case "go_step":
-                        System.out.println("go_step");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "go_step");
                         new GoStepHandler().run(data, in, out);
                         break;
                     case "send_message":
-                        System.out.println("send_message");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "send_message");
                         new SendMessageHandler().run(data, in, out);
                         break;
                     case "go_match":
-                        System.out.println("go_match");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "go_match");
                         new GoMatchHandler().run(data, in, out);
                         break;
                     case "out_match":
-                        System.out.println("out_match");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "out_match");
                         new OutMatchHandler().run(data, in, out);
                         break;
                     case "accept_pariring":
-                        System.out.println("accept_pariring");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "accept_pariring");
                         new AcceptPairingHandler().run(data, in, out);
                         break;
                     case "end_match":
-                        System.out.println("end_match");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "end_match");
                         new EndMatchHandler().run(data, in, out);
                         break;
                     case "go_watch":
-                        System.out.println("go_watch");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "go_watch");
                         new GoWatchHandler().run(data, in, out);
                         break;
                     case "out_match_watcher":
-                        System.out.println("out_match_watcher");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "out_match_watcher");
                         new OutMatchWatcherHandler().run(data, in, out);
                         break;
                     case "out_match_player":
-                        System.out.println("out_match_player");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "out_match_player");
                         new OutMatchPlayerHandler().run(data, in, out);
                         break;
                     case "timeout_player":
-                        System.out.println("timeout_player");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "timeout_player");
                         new TimeoutPlayerHandler().run(data, in, out);
                         break;
                     case "timeout_match":
-                        System.out.println("timeout_match");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "timeout_match");
                         new TimeoutMatchHandler().run(data, in, out);
                         break;
                     case "exit_game":
-                        System.out.println("exit_game");
+                        Logging.log(Logging.SOCKET_TYPE, "socket_type", "exit_game");
                         new ExitGameHandler().run(data, in, out);
                         break;
                     case "stop":
-                        System.out.println("July");
                         in.close();
                         out.close();
                         socket.close();
@@ -178,17 +181,18 @@ public class SocketConnection {
                 }
             }
         } catch (IOException e) {
+            Logging.log(Logging.SOCKET_TYPE, "user_disconnect", userID);
             new AcceptPairingHandler().removeGroup(Integer.valueOf(userID));
             GoMatchHandler.userQueue.remove(Integer.valueOf(userID));
             socketClients.remove(userID);
-            System.err.println(e);
+//            System.err.println(e);
         }
     }
 
     public void stopConnection() {
         try {
             server.close();
-            System.out.println("===== Closed socket =====");
+            Logging.log(Logging.SOCKET_TYPE, "socket_close", "===== Closed socket =====");
         } catch (IOException e) {
             System.err.println(e);
         }
