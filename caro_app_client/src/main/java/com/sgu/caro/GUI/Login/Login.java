@@ -284,17 +284,10 @@ public class Login {
         return pattern.matcher(mail).matches();
     }
 
-    private boolean validatePassword(String text) {
-        passwordError.setForeground(Color.RED);
-        if (text.length() < 8) {
-            passwordError.setText("Độ dài mật khẩu ít nhất là 8");
-            return false;
-        } else if (!text.matches(".*[a-zA-Z]+.*")) {
-            passwordError.setText("Mật khẩu phải có ký tự alphabel");
-            return false;
-        } else {
-            return true;
-        }
+    private static boolean validatePassword(String text) {
+    	String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(text).matches();
     }
 
     public void init() {
