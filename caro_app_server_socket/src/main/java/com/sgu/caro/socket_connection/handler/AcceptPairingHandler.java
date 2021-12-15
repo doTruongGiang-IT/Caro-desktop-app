@@ -1,8 +1,10 @@
 package com.sgu.caro.socket_connection.handler;
 
+import com.sgu.caro.api_connection.APIConnection;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import com.sgu.caro.entity.Group;
+import com.sgu.caro.entity.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import java.lang.Math;
+import java.time.LocalDateTime;
 
 public class AcceptPairingHandler {
 
@@ -34,7 +37,7 @@ public class AcceptPairingHandler {
         }
         
         String dataSend1, dataSend2;
-        
+        boolean is_success = false;
         if (is_accepted) {
             group.setAccept_pairing_1(userId, true);
             group.setAccept_pairing_2(userId, true);
@@ -42,6 +45,7 @@ public class AcceptPairingHandler {
             if (group.isAccept_pairing_1() && group.isAccept_pairing_2()) {
                 dataSend1 = datasocket.exportDataStartMatch(true, "X");
                 dataSend2 = datasocket.exportDataStartMatch(true, "O");
+                is_success = true;
                 new GoStepHandler().addMatrix(group);
             } else {
                 return;
@@ -51,10 +55,34 @@ public class AcceptPairingHandler {
             dataSend2 = datasocket.exportDataStartMatch(false, "");
             removeGroup(userId);
         }
-
+        
         int user_id_1 = group.getUser_1();
         int user_id_2 = group.getUser_2();
 
+        if (is_success){
+            group.setWho_x(user_id_1);
+            APIConnection apiConnection = new APIConnection();
+            JSONObject user1 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_1);
+            JSONObject user2 = apiConnection.callGetAPI(apiConnection.getUserByUsernameAPIURL + user_id_2);
+            group.setDataUser1(new User(
+                    user_id_1, 
+                    user1.getString("username"), 
+                    user1.getString("firstName"),
+                    user1.getString("lastName"),
+                    user1.getInt("score")
+            ));
+            
+            group.setDataUser2(new User(
+                    user_id_2, 
+                    user2.getString("username"), 
+                    user2.getString("firstName"),
+                    user2.getString("lastName"),
+                    user2.getInt("score")
+            ));
+            group.setStart_date(LocalDateTime.now());
+                
+        }
+        
         Map<String, Socket> userList = new SocketConnection().getSocketClients();
         Socket socketUser1 = userList.get(String.valueOf(user_id_1));
         Socket socketUser2 = userList.get(String.valueOf(user_id_2));
@@ -78,7 +106,7 @@ public class AcceptPairingHandler {
 
     public Group getGroup(int userId) {
         for (Group g : groups) {
-            if (g.getUser_1() == userId || g.getUser_2() == userId) {
+            if (g.getUser_1() == userId || g.getUser_2() == userId || g.getWatchers().contains(userId)) {
                 return g;
             }
         }

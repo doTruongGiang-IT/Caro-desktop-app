@@ -132,7 +132,7 @@ public class Signup extends JFrame{
             	gender = String.valueOf(cmbGender.getItemAt(cmbGender.getSelectedIndex()));
             	
             	String dateChoose = calendar.getDate().toString();
-            	String[] result = dateChoose.split("\s");
+            	String[] result = dateChoose.split(" ");
             	String day = result[2];
             	String year = result[5];
             	String month = "";
@@ -310,7 +310,7 @@ public class Signup extends JFrame{
         if (text.length() < 8) {
         	passError.setText("Độ dài mật khẩu ít nhất là 8");
             return false;
-        } else if (!text.matches(".*[a-zA-Z]+.*")) {
+        } else if (!text.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
         	passError.setText("Mật khẩu phải có ký tự alphabel");
             return false;
         } else {
@@ -319,7 +319,7 @@ public class Signup extends JFrame{
     }
 
     private boolean allSpace(String text) {
-    	String regex = "^\s+";
+    	String regex = "^ +";
     	Pattern pattern = Pattern.compile(regex);
     	return pattern.matcher(text).matches();
     }

@@ -20,6 +20,7 @@ public class APIConnection {
     public static final String authAPIURL = HOST + "/caro_api/authAdmin";
     public static final String getUserByUsernameAPIURL = HOST + "/caro_api/users/";
     public static final String getUserListAPIURL = HOST + "/caro_api/users";
+    public static final String postMatchAPIURL = HOST + "/caro_api/matches";
     private static String jwt = "";
 
     public APIConnection() {
