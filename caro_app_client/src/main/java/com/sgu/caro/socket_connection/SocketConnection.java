@@ -72,7 +72,9 @@ public class SocketConnection {
                         break;
                     case "result_match":
                         System.out.println("result_match");
-                        actions.get("result_match").onHandle(data, in, out);
+                        if (actions.get("result_match") != null){
+                            actions.get("result_match").onHandle(data, in, out);
+                        }
                         break;
                     case "send_message":
                         System.out.println("send_message");
