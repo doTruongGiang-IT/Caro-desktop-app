@@ -179,6 +179,10 @@ public class UserController {
         for (var entry : headers.entrySet()) {
             if (entry.getKey().equals("authorization")) {
                 String username = jwtService.getUsernameFromToken(entry.getValue());
+                User user = userRepository.findByUsername(username);
+                if (user == null){
+                    break;
+                }
                 String role = userRepository.findByUsername(username).getRole();
                 if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
                     flag = true;
