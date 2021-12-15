@@ -1,25 +1,21 @@
-package com.sgu.caro.GUI.MatchScreen;
+package com.sgu.caro.GUI.MainScreen;
 
-import com.sgu.caro.GUI.MainScreen.ExitMainScreen;
-import com.sgu.caro.GUI.MainScreen.MainScreenDesign;
 import com.sgu.caro.GUI.WindowManager;
 import com.sgu.caro.api_connection.TokenManager;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import java.awt.Color;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import javax.swing.*;
+import javax.swing.JFrame;
 
-public class ResultMatchScreen extends javax.swing.JFrame{
+public class ExitMainScreen extends javax.swing.JFrame{
     int x_Mouse, y_Mouse; // For Moving Window
     int win = 0;
     
-    public ResultMatchScreen(){
+    public ExitMainScreen(){
         
     }
     
-    public ResultMatchScreen(int choice, String title, String alert, String choice_1, String choice_2) {
+    public ExitMainScreen(int choice, String title, String alert, String choice_1, String choice_2) {
         String image = "";
         if (choice == 0){         // Câu Hỏi
             image = "./images/alert_80_80.png";
@@ -34,27 +30,6 @@ public class ResultMatchScreen extends javax.swing.JFrame{
             image = "./images/alert_80_80.png";
         }
         initComponents(image, title, alert, choice_1, choice_2);
-        setSize(400, 260);
-        setLocationRelativeTo(null);
-        setBackground(new Color(0, 0, 0, 0));
-    }
-    
-    public ResultMatchScreen(int choices, String title, String alert, String choice) {
-        win = choices;
-        String image = "";
-        if (choices == 0){         // Câu Hỏi
-            image = "./images/alert_80_80.png";
-        }
-        else if (choices == 1){    // Thông Báo
-            image = "./images/alert_80_80.png";
-        }
-        else if (choices == 2){    // Lỗi
-            image = "./images/alert_80_80.png";
-        }
-        else if (choices == 3){    // Thành Công
-            image = "./images/alert_80_80.png";
-        }
-        initComponents(image, title, alert, choice);
         setSize(400, 260);
         setLocationRelativeTo(null);
         setBackground(new Color(0, 0, 0, 0));
@@ -256,68 +231,22 @@ public class ResultMatchScreen extends javax.swing.JFrame{
         pack();
     }                  
 
-    private void exit_btnMouseClicked(java.awt.event.MouseEvent evt) {                                      
-        System.out.println("Thoát");
-        System.out.println("Main Screen: " + WindowManager.mainScreen);
-        System.out.println("Match Screen: " + WindowManager.matchScreen);
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        WindowManager.mainScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        WindowManager.mainScreen.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                new ExitMainScreen(1, "Xác nhận", "Bạn có muốn thoát chương trình?", "Đồng Ý", "Quay Lại").setVisible(true);
-            }
-        });
-        
-        if (win == 1){
-            DataSocket datasocket = new DataSocket();
-            String dataSend = datasocket.exportDataEndMatch(TokenManager.getUser_id(), MatchDesign.user2);
-            SocketConnection socketConnection = new SocketConnection();
-            socketConnection.sendData(dataSend);
-        }
-        this.dispose();                                   
-        this.dispose();
+    private void exit_btnMouseClicked(java.awt.event.MouseEvent evt) { 
+        this.dispose(); 
     }                                     
 
-    private void dongy_btnMouseClicked(java.awt.event.MouseEvent evt) {                                       
-        System.out.println("Đồng ý");
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        WindowManager.mainScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        WindowManager.mainScreen.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                new ExitMainScreen(1, "Xác nhận", "Bạn có muốn thoát chương trình?", "Đồng Ý", "Quay Lại").setVisible(true);
-            }
-        });
+    private void dongy_btnMouseClicked(java.awt.event.MouseEvent evt) {         
+        SocketConnection socket = new SocketConnection();
+        DataSocket dataSocket = new DataSocket();
+        String dataSend = dataSocket.exportDataExitGame(new TokenManager().getUser_id());
+        System.out.println(dataSend);
+        socket.sendData(dataSend);
+        WindowManager.mainScreen.dispose();
+        System.exit(0);
         this.dispose();
     }                                      
 
-    private void quaylai_btnMouseClicked(java.awt.event.MouseEvent evt) {                                         
-        System.out.println("Quay Lại");
-        System.out.println("Main Screen: " + WindowManager.mainScreen);
-        System.out.println("Match Screen: " + WindowManager.matchScreen);
-        WindowManager.matchScreen.dispose();
-        WindowManager.mainScreen = new MainScreenDesign();
-        WindowManager.mainScreen.setVisible(true);
-        WindowManager.mainScreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        WindowManager.mainScreen.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                new ExitMainScreen(1, "Xác nhận", "Bạn có muốn thoát chương trình?", "Đồng Ý", "Quay Lại").setVisible(true);
-            }
-        });
-        
-        this.dispose();
-        if (win == 1){
-            DataSocket datasocket = new DataSocket();
-            String dataSend = datasocket.exportDataEndMatch(TokenManager.getUser_id(), MatchDesign.user2);
-            SocketConnection socketConnection = new SocketConnection();
-            socketConnection.sendData(dataSend);
-        }
+    private void quaylai_btnMouseClicked(java.awt.event.MouseEvent evt) {      
         this.dispose();
     }                                        
 
@@ -337,35 +266,36 @@ public class ResultMatchScreen extends javax.swing.JFrame{
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ResultMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ResultMatchScreen(1, "Thông Báo", "Bạn có thông báo.", "Đồng Ý").setVisible(true);
-            }
-        });
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(OutMatchScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new OutMatchScreen(1, "Thông Báo", "Bạn có thông báo.", "Đồng Ý").setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify                     

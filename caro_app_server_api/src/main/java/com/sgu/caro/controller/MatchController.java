@@ -141,18 +141,24 @@ public class MatchController {
     public Match createMatch(@Valid @RequestBody Match match) throws Exception {
         String startDate = match.getStart_date();
         String endDate = match.getEnd_date();
+        String timePlay = match.getTimePlay();
         long user1 = match.getUser_1();
         long user2 = match.getUser_2();
         
         User user_1 = userRepository.findById(user1).orElseThrow(() -> new ResourceNotFoundException("User 1 not found"));
         User user_2 = userRepository.findById(user2).orElseThrow(() -> new ResourceNotFoundException("User 2 not found"));
         
-    	String regex = "([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})";
-        if (!startDate.matches(regex)) {
+    	String regexDatetime = "([0-9]{4})/([0-9]{2})/([0-9]{2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})";
+    	String regexTime = "([0]{1,2}):([0-9]{1,2}):([0-9]{1,2})";
+    	
+        if (!startDate.matches(regexDatetime)) {
             match.setStart_date(null);
         };
-        if (!endDate.matches(regex)) {
+        if (!endDate.matches(regexDatetime)) {
             match.setEnd_date(null);
+        };
+        if (!timePlay.matches(regexTime)) {
+            match.setTimePlay(null);
         };
         if(user1 == user2) {
         	throw new Exception("Wrong format for create match");

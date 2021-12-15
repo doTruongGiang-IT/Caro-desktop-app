@@ -88,11 +88,27 @@ public class SocketConnection {
                         break;
                     case "get_group":
                         System.out.println("get_group");
-                        actions.get("get_group").onHandle(data, in, out);
+                        if (actions.get("get_group") != null)
+                            actions.get("get_group").onHandle(data, in, out);
                         break;
                     case "get_user":
                         System.out.println("get_user");
-                        actions.get("get_user").onHandle(data, in, out);
+                        if (actions.get("get_user") != null)
+                            actions.get("get_user").onHandle(data, in, out);
+                        break;
+                    case "accept_watch":
+                        System.out.println("accept_watch");
+                        actions.get("accept_watch").onHandle(data, in, out);
+                        break;
+                    case "get_watcher":
+                        System.out.println("get_watcher");
+                        if (actions.get("get_watcher") != null){
+                            actions.get("get_watcher").onHandle(data, in, out);
+                        }
+                        break;
+                    case "watch_achievement":
+                        System.out.println("watch_achievement");
+                        actions.get("watch_achievement").onHandle(data, in, out);
                         break;
                     case "stop":
                         System.out.println("July");

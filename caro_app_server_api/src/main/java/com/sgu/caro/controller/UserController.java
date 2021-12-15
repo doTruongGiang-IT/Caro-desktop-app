@@ -99,6 +99,8 @@ public class UserController {
                 String token = jwtService.generateTokenLogin(user.getUsername());
                 result.put("access_token", token);
                 result.put("user_id", String.valueOf(user.getId()));
+                result.put("display_name", user.getName());
+                result.put("score", String.valueOf(user.getScore()));
             };
             
             if(pbkdf2PasswordEncoder.matches(password, user.getPassword()) && !user.isActive()) {
@@ -294,9 +296,9 @@ public class UserController {
         boolean flag = false;
         for (var entry : headers.entrySet()) {
             if (entry.getKey().equals("authorization")) {
-                String username = jwtService.getUsernameFromToken(entry.getValue());
-                String role = userRepository.findByUsername(username).getRole();
-                if (role.equals(ADMIN_ROLE)) {
+//                String username = jwtService.getUsernameFromToken(entry.getValue());
+//                String role = userRepository.findByUsername(username).getRole();
+                if (!jwtService.isTokenExpired(entry.getValue())) {
                     flag = true;
                 };
             };
@@ -321,7 +323,7 @@ public class UserController {
             if (entry.getKey().equals("authorization")) {
                 String username = jwtService.getUsernameFromToken(entry.getValue());
                 String role = userRepository.findByUsername(username).getRole();
-                if (!jwtService.isTokenExpired(entry.getValue()) || role.equals(ADMIN_ROLE)) {
+                if (role.equals(ADMIN_ROLE)) {
                     flag = true;
                 };
             };
