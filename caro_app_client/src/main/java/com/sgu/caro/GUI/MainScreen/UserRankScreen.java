@@ -101,6 +101,7 @@ public class UserRankScreen extends JFrame {
 		titlePanel.setBackground(Color.RED);
 		titlePanel.setPreferredSize(new Dimension(600, 20));
 		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+                label.setForeground(Color.WHITE);
 		titlePanel.add(label);
 		// label.setForeground(Color.RED);
 

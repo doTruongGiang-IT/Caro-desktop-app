@@ -138,9 +138,9 @@ public class MainScreenDesign extends JFrame{
                 new UserRankScreen().setVisible(true);
             }
         });
-        mainLeftPanel.add(btnRank);
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
+        mainLeftPanel.add(btnRank);
         mainLeftPanel.add(btnNewGame);
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
         
