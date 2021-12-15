@@ -36,104 +36,105 @@ import java.awt.BorderLayout;
 import java.awt.SystemColor;
 import java.awt.Rectangle;
 
-public class MainScreenDesign extends JFrame{
+public class MainScreenDesign extends JFrame {
+
     public static boolean loadMatch = true;
 //    public static boolean loadAchievement = true;
     private static SocketConnection socket = new SocketConnection();
     private static DataSocket dataSocket = new DataSocket();
     private static int userId = new TokenManager().getUser_id();
-    
+
     public MainScreenDesign() {
         // Init socket
         SocketConnection socket = new SocketConnection();
         socket.startConnection();
-        
+
         initComponents();
-        
+
         socket.addListenConnection("get_group", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 leftPanel.removeAll();
                 leftPanel.validate();
                 JSONArray groups = data.getJSONArray("groups");
-                for (int i=0; i<groups.length(); i++){
+                for (int i = 0; i < groups.length(); i++) {
                     JSONObject element = groups.getJSONObject(i);
-                    System.out.println(i + 1 + 
-                        String.valueOf(element.getInt("user_1")) +
-                        String.valueOf(element.getInt("user_2")) +
-                        element.getInt("number_of_watchers"));
+                    System.out.println(i + 1
+                            + String.valueOf(element.getInt("user_1"))
+                            + String.valueOf(element.getInt("user_2"))
+                            + element.getInt("number_of_watchers"));
                     BanChoi board = new BanChoi(
-                        i + 1, 
-                        String.valueOf(element.getInt("user_1")), 
-                        String.valueOf(element.getInt("user_2")),
-                        element.getInt("number_of_watchers")
+                            i + 1,
+                            String.valueOf(element.getInt("user_1")),
+                            String.valueOf(element.getInt("user_2")),
+                            element.getInt("number_of_watchers")
                     );
                     leftPanel.add(board);
                     leftPanel.validate();
                 }
-                    
+
             }
         });
-        
+
         socket.addListenConnection("get_user", new SocketHandler() {
             @Override
             public void onHandle(JSONObject data, BufferedReader in, BufferedWriter out) {
                 rightPanel.removeAll();
                 JSONArray users = data.getJSONArray("users");
-                for (int i=0; i<users.length(); i++){
+                for (int i = 0; i < users.length(); i++) {
                     JSONObject element = users.getJSONObject(i);
                     KyThu player = new KyThu(
-                        element.getInt("id"), 
-                        element.getString("name"),
-                        element.getInt("score")
+                            element.getInt("id"),
+                            element.getString("name"),
+                            element.getInt("score")
                     );
                     rightPanel.add(player);
                 }
-                    
+
             }
         });
     }
+
     private void initComponents() {
-        
+
         this.setTitle("Game Caro");
         try {
             setIconImage((new ImageIcon()).getImage());
             setIconImage((new ImageIcon(ImageIO.read(new File("images/xo.png")))).getImage());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         this.setSize(900, 640);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        
+
         // Set Layout cho Panel chính
         mainPanel = new JPanel();
         mainPanel.setBackground(Color.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-        
+
         //================ Phần danh sách bàn
         mainLeftPanel = new JPanel();
         mainLeftPanel.setBackground(Color.white);
-        mainLeftPanel.setPreferredSize(new Dimension((int)(getWidth()*60/100), getHeight()));
+        mainLeftPanel.setPreferredSize(new Dimension((int) (getWidth() * 60 / 100), getHeight()));
         mainLeftPanel.setLayout(new BoxLayout(mainLeftPanel, BoxLayout.Y_AXIS));
-        
+
         lblBanCo = new JLabel("Bàn cờ");
-        
+
         leftPanel = new JPanel();
         leftPanel.setBackground(Color.white);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        leftScroll = new JScrollPane(leftPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
+        leftScroll = new JScrollPane(leftPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
-        
+
         btnNewGame = new JButton("Vào chơi");
         mainLeftPanel.add(btnNewGame);
         btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnNewGame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if(loadMatch) {
+                if (loadMatch) {
                     String data = dataSocket.exportDataGoMatch(userId);
                     socket.sendData(data);
                     new LoadMatch().setVisible(true);
@@ -144,7 +145,7 @@ public class MainScreenDesign extends JFrame{
         lblSpace = new JLabel("................................");
         lblSpace.setForeground(SystemColor.menu);
         mainLeftPanel.add(lblSpace);
-                
+
         btnThanhTich = new JButton("Xem thành tích");
         btnThanhTich.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainLeftPanel.add(btnThanhTich);
@@ -156,55 +157,56 @@ public class MainScreenDesign extends JFrame{
 //                    new LoadAchievement().setVisible(true);
 //                    loadAchievement = false;
 //                }
-            	try {
-					new LoadAchievement().setVisible(true);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                try {
+                    LoadAchievement loadAchievement = new LoadAchievement();
+                    loadAchievement.setVisible(true);
+                    loadAchievement.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-        });        
+        });
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
-        
-    
+
         //=============== Phần danh sách người chơi
         mainRightPanel = new JPanel();
         mainRightPanel.setBackground(Color.white);
-        mainRightPanel.setPreferredSize(new Dimension((int)(getWidth()*40/100), getHeight()));
+        mainRightPanel.setPreferredSize(new Dimension((int) (getWidth() * 40 / 100), getHeight()));
         mainRightPanel.setLayout(new BoxLayout(mainRightPanel, BoxLayout.Y_AXIS));
-        
+
         lblKyThu = new JLabel("Kỳ thủ");
-        
+
         rightPanel = new JPanel();
         rightPanel.setBackground(Color.white);
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        rightScroll = new JScrollPane(rightPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
+        rightScroll = new JScrollPane(rightPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         mainRightPanel.add(lblKyThu);
         mainRightPanel.add(rightScroll);
         mainRightPanel.add(Box.createRigidArea(new Dimension(90, 0)));
-        
+
         // Thêm mainLeftPanel và mainRightPanel vào mainPanel
         mainPanel.add(mainLeftPanel);
         mainPanel.add(mainRightPanel);
-        
+
         // Thêm panel chính vào Jframe
         getContentPane().add(mainPanel, BorderLayout.SOUTH);
-        
+
         // Set vị trí ở giữa
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = (int) dimension.getWidth()/2 - this.getWidth()/2;
-        int y = (int) dimension.getHeight()/2 - this.getHeight()/2;
+        int x = (int) dimension.getWidth() / 2 - this.getWidth() / 2;
+        int y = (int) dimension.getHeight() / 2 - this.getHeight() / 2;
         this.setLocation(x, y);
-        
-        this.pack();  
-        
+
+        this.pack();
+
     }
-    
+
     public static void main(String[] args) {
         new MainScreenDesign().setVisible(true);
     }
-    
+
     // mainPanel là panel chính
     private JPanel mainPanel;
     // mainLeftPanel là panel chính chứa các component phần Danh sách bàn chơi
