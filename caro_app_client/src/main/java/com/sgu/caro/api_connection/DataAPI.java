@@ -4,7 +4,9 @@ package com.sgu.caro.api_connection;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataAPI {
     public DataAPI() {}
@@ -34,6 +36,14 @@ public class DataAPI {
     public JSONObject importData(String rawData){
         return new JSONObject(rawData);
     }
+//    
+//    public Map<String, String> convertListBeforeJava8(List<Object> list) {
+//        Map<String, String> map = new HashMap<>();
+//        for (Object user : list) {
+//            map.put(user., animal);
+//        }
+//        return map;
+//    }
     
     public static void main(String[] args) {}
 }

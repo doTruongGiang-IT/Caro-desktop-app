@@ -3,6 +3,7 @@ package com.sgu.caro.socket_connection.handler;
 import com.sgu.caro.api_connection.APIConnection;
 import com.sgu.caro.api_connection.DataAPI;
 import com.sgu.caro.entity.Group;
+import com.sgu.caro.logging.Logging;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import java.io.BufferedReader;
@@ -95,8 +96,8 @@ public class OutMatchPlayerHandler {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(GoStepHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("Create Match with" + requestData);
             }
+            Logging.log(Logging.MATCH_TYPE, "match_end", "[Out Match 3]: " + requestData);
         } catch (IOException ex) {
             Logger.getLogger(OutMatchPlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

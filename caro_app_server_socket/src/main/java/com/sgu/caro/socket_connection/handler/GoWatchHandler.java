@@ -2,6 +2,7 @@ package com.sgu.caro.socket_connection.handler;
 
 import com.sgu.caro.entity.Group;
 import com.sgu.caro.entity.User;
+import com.sgu.caro.logging.Logging;
 import com.sgu.caro.socket_connection.DataSocket;
 import com.sgu.caro.socket_connection.SocketConnection;
 import java.io.BufferedReader;
@@ -49,7 +50,7 @@ public class GoWatchHandler {
                 DataSocket dataSocket = new DataSocket();
                 String dataSend = dataSocket.exportDataAcceptWatch(true, user_1, username_1, score_1, user_2, username_2, score_2, who_x, matrix.matrix);
                 out.write(dataSend);
-                System.out.println("Sending: " + dataSend);
+                Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
                 out.newLine();
                 out.flush();
             } catch (IOException ex) {

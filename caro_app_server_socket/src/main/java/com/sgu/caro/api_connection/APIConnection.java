@@ -1,12 +1,20 @@
 package com.sgu.caro.api_connection;
 
 import com.sgu.caro.socket_connection.DataSocket;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.json.JSONObject;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.springframework.http.MediaType;
 
@@ -21,6 +29,14 @@ public class APIConnection {
     public static final String getUserByUsernameAPIURL = HOST + "/caro_api/users/";
     public static final String getUserListAPIURL = HOST + "/caro_api/users";
     public static final String postMatchAPIURL = HOST + "/caro_api/matches";
+    public static final String getRatingScoreAPIURL = HOST + "/caro_api/rating/score";
+    public static final String getRatingWinRateAPIURL = HOST + "/caro_api/rating/win_rate";
+    public static final String getRatingWinLengthAPIURL = HOST + "/caro_api/rating/win_length";
+    public static final String getRatingShortestMatchAPIURL = HOST + "/caro_api/rating/shortest_matches";
+    public static final String getRatingLongestMatchAPIURL = HOST + "/caro_api/rating/longest_matches";
+    public static final String patchBlockUserAPIURL = HOST + "/caro_api/block_user/";
+    public static final String patchUnblockUserAPIURL = HOST + "/caro_api/unblock_user/";
+    public static final String patchRejectMatchAPIURL = HOST + "/caro_api/reject_invite/";
     private static String jwt = "";
 
     public APIConnection() {
@@ -57,7 +73,7 @@ public class APIConnection {
         JSONObject jsonObj = datasocket.importData(resultRestTemplate.getBody());
         return jsonObj;
     }
-    
+
     public JSONArray callGetListAPI(String URL) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -72,6 +88,24 @@ public class APIConnection {
         DataSocket datasocket = new DataSocket();
         JSONArray jsonObj = datasocket.importDataList(resultRestTemplate.getBody());
         return jsonObj;
+    }
+
+    public void callPatchAPI(String URL) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL))
+                    .method("PATCH", BodyPublishers.ofString(""))
+                    .header("Authorization", jwt)
+                    .header("Content-Type", "application/json")
+                    .build();
+            
+            HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException ex) {
+            Logger.getLogger(APIConnection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(APIConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
