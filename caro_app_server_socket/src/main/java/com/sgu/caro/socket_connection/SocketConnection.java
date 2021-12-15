@@ -95,17 +95,15 @@ public class SocketConnection {
                 String userID = in.readLine();
                 Logging.log(Logging.SOCKET_TYPE, "user_access", "user " + userID + " accessed");
                 
-                if (!socketClients.containsKey(userID)){
-                    socketClients.put(userID, socket);
+                socketClients.put(userID, socket);
 
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            handleClient(userID, socket, in, out);
-                        }
-                    });
-                    thread.start();
-                }
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleClient(userID, socket, in, out);
+                    }
+                });
+                thread.start();
             }
 
         } catch (IOException e) {
