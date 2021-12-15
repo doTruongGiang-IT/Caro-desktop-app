@@ -224,11 +224,12 @@ public class StatsController {
     		};
     		
     		hashAchievement.put("win_rate", winRate);
-    		hashAchievement.put("win_count", winMatchesCount);
-    		hashAchievement.put("lose_count", loseMatchesCount);
-    		hashAchievement.put("win_length", max_win_length);
-    		hashAchievement.put("lose_length", max_loss_length);
+    		hashAchievement.put("win_count", winMatchesCount == 0 ? 0 : winMatchesCount);
+    		hashAchievement.put("lose_count", loseMatchesCount == 0 ? 0 : loseMatchesCount);
+    		hashAchievement.put("win_length", winMatchesCount == 0 ? 0 : max_win_length);
+    		hashAchievement.put("lose_length", loseMatchesCount == 0 ? 0 : max_loss_length);
     		hashAchievement.put("score", userStats.getScore());
+
     		
     		userStats.setWin_rate(winRate);
     		userStats.setWin_length(max_win_length);
@@ -241,7 +242,11 @@ public class StatsController {
         	};
         	if(winLength != null) {
         		winLength.setAccessible(true);
-            	ReflectionUtils.setField(winLength, userStats, max_win_length);
+        		if(winMatchesCount == 0) {
+                	ReflectionUtils.setField(winLength, userStats, 0);
+        		} else {
+                	ReflectionUtils.setField(winLength, userStats, max_win_length);
+        		}
         	};
             userRepository.save(userStats);
         };

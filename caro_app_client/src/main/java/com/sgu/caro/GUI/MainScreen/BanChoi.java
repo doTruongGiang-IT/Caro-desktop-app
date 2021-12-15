@@ -1,14 +1,27 @@
 package com.sgu.caro.GUI.MainScreen;
 
+import com.sgu.caro.api_connection.TokenManager;
+import com.sgu.caro.socket_connection.DataSocket;
+import com.sgu.caro.socket_connection.SocketConnection;
+import com.sgu.caro.socket_connection.SocketHandler;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import org.json.JSONObject;
+
 public class BanChoi extends javax.swing.JPanel {
+
     private int stt;
-    private String user_1, user_2;
+    private String user_1, user_2, username_1, username_2;
     private int numberOfWatchers;
-    
-    public BanChoi(int stt, String user_1, String user_2, int numberOfWatchers) {
+
+    public BanChoi(int stt, String user_1, String username_1, String user_2, String username_2, int numberOfWatchers) {
         this.stt = stt;
         this.user_1 = user_1;
         this.user_2 = user_2;
+        this.username_1 = username_1;
+        this.username_2 = username_2;
         this.numberOfWatchers = numberOfWatchers;
         initComponents();
     }
@@ -26,11 +39,18 @@ public class BanChoi extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(600, 87));
 
         lblStt.setText(String.valueOf(stt));
-        lblUser1.setText("User 1: " + user_1);
-        lblUser2.setText("User 2: " + user_2);
+        lblUser1.setText("User 1: " + username_1);
+        lblUser2.setText("User 2: " + username_2);
         lblBanChoi.setText("Watchers: " + String.valueOf(numberOfWatchers));
 
         btnWatch.setText("Vào Xem");
+        btnWatch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SocketConnection socket = new SocketConnection();
+                DataSocket dataSocket = new DataSocket();
+                socket.sendData(dataSocket.exportDataGoWatch(new TokenManager().getUser_id(), Integer.parseInt(user_1)));
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
