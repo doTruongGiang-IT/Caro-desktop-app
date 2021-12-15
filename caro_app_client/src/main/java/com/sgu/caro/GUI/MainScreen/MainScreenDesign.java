@@ -131,7 +131,6 @@ public class MainScreenDesign extends JFrame {
         leftScroll = new JScrollPane(leftPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         btnNewGame = new JButton("Vào chơi");
-        mainLeftPanel.add(btnNewGame);
         btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnNewGame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -145,11 +144,9 @@ public class MainScreenDesign extends JFrame {
         });
         lblSpace = new JLabel("................................");
         lblSpace.setForeground(SystemColor.menu);
-        mainLeftPanel.add(lblSpace);
 
         btnThanhTich = new JButton("Xem thành tích");
         btnThanhTich.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainLeftPanel.add(btnThanhTich);
         btnThanhTich.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 //                if(loadAchievement) {
@@ -222,6 +219,8 @@ public class MainScreenDesign extends JFrame {
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
         mainLeftPanel.add(btnNewGame);
+        mainLeftPanel.add(lblSpace);
+        mainLeftPanel.add(btnThanhTich);
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
 
         //=============== Phần danh sách người chơi
