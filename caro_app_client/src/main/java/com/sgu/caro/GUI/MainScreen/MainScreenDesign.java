@@ -106,6 +106,13 @@ public class MainScreenDesign extends JFrame{
         mainPanel.setBackground(Color.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
         
+        btnUpdateUser = new JButton("Cập nhật");
+        btnUpdateUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new UpdateAcc().setVisible(true);
+            }
+        });
+        
         //================ Phần danh sách bàn
         mainLeftPanel = new JPanel();
         mainLeftPanel.setBackground(Color.white);
@@ -131,6 +138,7 @@ public class MainScreenDesign extends JFrame{
             }
         });
         
+        
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
         mainLeftPanel.add(btnNewGame);
@@ -150,8 +158,10 @@ public class MainScreenDesign extends JFrame{
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightScroll = new JScrollPane(rightPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
+        
         mainRightPanel.add(lblKyThu);
         mainRightPanel.add(rightScroll);
+        mainRightPanel.add(btnUpdateUser);
         mainRightPanel.add(Box.createRigidArea(new Dimension(90, 0)));
         
         // Thêm mainLeftPanel và mainRightPanel vào mainPanel
@@ -182,7 +192,7 @@ public class MainScreenDesign extends JFrame{
     // leftPanel, leftScroll để liệt kê danh sách bàn chơi
     private JPanel leftPanel;
     private JScrollPane leftScroll;
-    private JButton btnNewGame;
+    private JButton btnNewGame, btnUpdateUser;
     private JLabel lblBanCo;
     
     // mainRightPanel là panel chính chứa các component phần Danh sách kỳ thủ
