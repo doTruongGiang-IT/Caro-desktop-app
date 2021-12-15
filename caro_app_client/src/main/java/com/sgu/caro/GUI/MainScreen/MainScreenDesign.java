@@ -223,13 +223,17 @@ public class MainScreenDesign extends JFrame {
                 }
             }
         });
+        
+        bottomLeftPanel = new JPanel();
+        bottomLeftPanel.setLayout(new BoxLayout(bottomLeftPanel, BoxLayout.X_AXIS));
+        
+        bottomLeftPanel.add(btnThanhTich);
+        bottomLeftPanel.add(btnNewGame);
+        bottomLeftPanel.add(btnRank);
 
         mainLeftPanel.add(lblBanCo);
         mainLeftPanel.add(leftScroll);
-        mainLeftPanel.add(btnRank);
-        mainLeftPanel.add(btnNewGame);
-        mainLeftPanel.add(lblSpace);
-        mainLeftPanel.add(btnThanhTich);
+        mainLeftPanel.add(bottomLeftPanel);
         mainLeftPanel.add(Box.createRigidArea(new Dimension(130, 0)));
 
         //=============== Phần danh sách người chơi
@@ -273,6 +277,9 @@ public class MainScreenDesign extends JFrame {
 
     // mainPanel là panel chính
     private JPanel mainPanel;
+    
+    // chưa các button xem thành tích, newgame, xem rank
+    private JPanel bottomLeftPanel;
     // mainLeftPanel là panel chính chứa các component phần Danh sách bàn chơi
     private JPanel mainLeftPanel;
     // leftPanel, leftScroll để liệt kê danh sách bàn chơi
