@@ -181,7 +181,7 @@ public class UpdateAcc extends JFrame implements ActionListener {
 					gender = "male";
 				else
 					gender = "female";
-				SimpleDateFormat formatDay = new SimpleDateFormat("dd-MM-yyyy");
+				SimpleDateFormat formatDay = new SimpleDateFormat("yyyy/MM/dd");
 				String strDayOfBirth = formatDay.format(dayOfBirth.getDate());
 				//JSONObject user = dataAPI.getInfoUserByID(TokenManager.getUser_id(), TokenManager.getJwt());
 				JSONObject jsonUpdateUser = new JSONObject();
