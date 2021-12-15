@@ -68,10 +68,10 @@ public class CLITool {
                     run_option_6();
                     break;
                 case 7:
-                    run_option_1();
+                    run_option_7();
                     break;
                 case 8:
-                    run_option_1();
+                    run_option_8();
                     break;
                 default:
                     System.err.println("Invalid option");

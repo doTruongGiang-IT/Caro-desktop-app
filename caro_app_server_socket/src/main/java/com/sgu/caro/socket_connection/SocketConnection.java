@@ -94,15 +94,18 @@ public class SocketConnection {
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 String userID = in.readLine();
                 Logging.log(Logging.SOCKET_TYPE, "user_access", "user " + userID + " accessed");
-                socketClients.put(userID, socket);
+                
+                if (!socketClients.containsKey(userID)){
+                    socketClients.put(userID, socket);
 
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleClient(userID, socket, in, out);
-                    }
-                });
-                thread.start();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handleClient(userID, socket, in, out);
+                        }
+                    });
+                    thread.start();
+                }
             }
 
         } catch (IOException e) {

@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 public class AcceptPairingHandler {
 
     private static DataSocket datasocket = new DataSocket();
+    private static APIConnection apiConnection = new APIConnection();
 
     static public ArrayList<Group> groups = new ArrayList<>();
 
@@ -55,6 +56,7 @@ public class AcceptPairingHandler {
             dataSend1 = datasocket.exportDataStartMatch(false, "");
             dataSend2 = datasocket.exportDataStartMatch(false, "");
             removeGroup(userId);
+            apiConnection.callPatchAPI(apiConnection.patchRejectMatchAPIURL + Integer.toString(userId));
         }
         
         int user_id_1 = group.getUser_1();

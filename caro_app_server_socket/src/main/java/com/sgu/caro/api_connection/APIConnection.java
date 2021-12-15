@@ -36,6 +36,7 @@ public class APIConnection {
     public static final String getRatingLongestMatchAPIURL = HOST + "/caro_api/rating/longest_matches";
     public static final String patchBlockUserAPIURL = HOST + "/caro_api/block_user/";
     public static final String patchUnblockUserAPIURL = HOST + "/caro_api/unblock_user/";
+    public static final String patchRejectMatchAPIURL = HOST + "/caro_api/reject_invite/";
     private static String jwt = "";
 
     public APIConnection() {
