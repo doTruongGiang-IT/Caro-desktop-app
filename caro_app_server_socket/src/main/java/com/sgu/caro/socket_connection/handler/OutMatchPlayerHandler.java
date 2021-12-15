@@ -98,6 +98,7 @@ public class OutMatchPlayerHandler {
                 }
                 Logging.log(Logging.MATCH_TYPE, "match_end", "[Out Match 3]: " + requestData);
             }
+            
         } catch (IOException ex) {
             Logger.getLogger(OutMatchPlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

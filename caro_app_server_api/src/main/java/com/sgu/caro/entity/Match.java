@@ -53,19 +53,20 @@ public class Match {
     @Column(name = "end_date")
     private String end_date;
     
-    @NotNull
-    @NotBlank(message = "Time play is required")
-    @DateTimeFormat(pattern = "hh:mm:ss")
-    @Column(name = "timePlay")
-    private String timePlay;
+//    @NotNull
+//    @NotBlank(message = "Time play is required")
+//    @DateTimeFormat(pattern = "hh:mm:ss")
+//    @Column(name = "timePlay")
+//    private String timePlay;
 
     public Match() {
     }
 
 	public Match(@NotNull long user_1, @NotNull long user_2, @NotNull long result, @NotNull int result_type,
 			@NotNull @NotBlank(message = "Start date is required") String start_date,
-			@NotNull @NotBlank(message = "End date is required") String end_date,
-			@NotNull @NotBlank(message = "Time play is required") String timePlay) {
+			@NotNull @NotBlank(message = "End date is required") String end_date
+//			@NotNull @NotBlank(message = "Time play is required") String timePlay
+	) {
 		super();
 		this.user_1 = user_1;
 		this.user_1 = user_2;
@@ -73,7 +74,7 @@ public class Match {
 		this.result_type = result_type;
 		this.start_date = start_date;
 		this.end_date = end_date;
-		this.timePlay = timePlay;
+//		this.timePlay = timePlay;
 	}
 
 	public long getId() {
@@ -132,12 +133,12 @@ public class Match {
 		this.end_date = end_date;
 	}
 
-	public String getTimePlay() {
-		return timePlay;
-	}
-
-	public void setTimePlay(String timePlay) {
-		this.timePlay = timePlay;
-	}
+//	public String getTimePlay() {
+//		return timePlay;
+//	}
+//
+//	public void setTimePlay(String timePlay) {
+//		this.timePlay = timePlay;
+//	}
 	
 }
