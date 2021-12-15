@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Login {
+
     JFrame jframe;
     JButton loginButton;
     JTextField email;
@@ -41,9 +42,9 @@ public class Login {
     public Login() throws IOException {
         BufferedImage myPicture = ImageIO.read(new File("./images/logo.png"));
         ImageIcon newImage = new ImageIcon(myPicture);
-        Image image = newImage.getImage(); 
-        Image newimg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH); 
-        newImage = new ImageIcon(newimg);  
+        Image image = newImage.getImage();
+        Image newimg = image.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH);
+        newImage = new ImageIcon(newimg);
         picLabel = new JLabel(newImage);
 
         jframe = new JFrame("Đăng nhập");
@@ -301,7 +302,7 @@ public class Login {
         if (text.length() < 8) {
             passwordError.setText("Độ dài mật khẩu ít nhất là 8");
             return false;
-        } else if (!text.matches(".*[a-zA-Z]+.*")) {
+        } else if (!text.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
             passwordError.setText("Mật khẩu phải có ký tự alphabel");
             return false;
         } else {
