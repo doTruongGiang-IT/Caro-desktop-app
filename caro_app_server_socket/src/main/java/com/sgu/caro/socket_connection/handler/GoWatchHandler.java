@@ -50,7 +50,7 @@ public class GoWatchHandler {
                 DataSocket dataSocket = new DataSocket();
                 String dataSend = dataSocket.exportDataAcceptWatch(true, user_1, username_1, score_1, user_2, username_2, score_2, who_x, matrix.matrix);
                 out.write(dataSend);
-                Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
+                Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSend);
                 out.newLine();
                 out.flush();
             } catch (IOException ex) {

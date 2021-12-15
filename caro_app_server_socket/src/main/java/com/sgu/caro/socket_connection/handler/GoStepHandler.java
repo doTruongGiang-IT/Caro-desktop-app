@@ -80,14 +80,14 @@ public class GoStepHandler {
                     String dataSend = dataSocket.exportDataGoStep(userID, posX, posY);
 
                     outClient.write(dataSend);
-                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSend);
                     outClient.newLine();
                     outClient.flush();
 
                     if (userWin != 0) {
                         dataSend = dataSocket.exportResultMatch(userWin, resultMatch.posX, resultMatch.posY);
                         outClient.write(dataSend);
-                        Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend);
+                        Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSend);
                         outClient.newLine();
                         outClient.flush();
                     }

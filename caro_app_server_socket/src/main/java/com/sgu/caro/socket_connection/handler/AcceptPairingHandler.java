@@ -93,7 +93,7 @@ public class AcceptPairingHandler {
         try {
             BufferedWriter outUser1 = new BufferedWriter(new OutputStreamWriter(socketUser1.getOutputStream()));
             BufferedWriter outUser2 = new BufferedWriter(new OutputStreamWriter(socketUser2.getOutputStream()));
-            Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSend1);
+            Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSend1);
             outUser1.write(dataSend1);
             outUser1.newLine();
             outUser1.flush();

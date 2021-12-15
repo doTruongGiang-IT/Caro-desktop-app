@@ -63,8 +63,8 @@ public class GoMatchHandler {
                     String dataSendUser1 = datasocket.exportDataSendInvitation(user_id_2, display_name_2, score_2);
                     String dataSendUser2 = datasocket.exportDataSendInvitation(user_id_1, display_name_1, score_1);
                     
-                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSendUser1);
-                    Logging.log(Logging.SOCKET_TYPE, "socket_send", dataSendUser2);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSendUser1);
+                    Logging.log(Logging.SOCKET_TYPE, "socket_send", "Send: " + dataSendUser2);
                     
                     outUser1.write(dataSendUser1);
                     outUser1.newLine();
