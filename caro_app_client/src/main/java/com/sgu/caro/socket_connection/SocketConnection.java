@@ -94,18 +94,6 @@ public class SocketConnection {
                         System.out.println("get_user");
                         actions.get("get_user").onHandle(data, in, out);
                         break;
-                    case "get_rank_score":
-                        System.out.println("get_rank_score");
-                        actions.get("get_rank_score").onHandle(data, in, out);
-                        break;
-                    case "get_rank_win_rate":
-                        System.out.println("get_rank_win_rate");
-                        actions.get("get_rank_win_rate").onHandle(data, in, out);
-                        break;
-                    case "get_rank_win_length":
-                        System.out.println("get_rank_win_length");
-                        actions.get("get_rank_win_length").onHandle(data, in, out);
-                        break;
                     case "stop":
                         System.out.println("July");
                         in.close();
