@@ -34,7 +34,7 @@ public class GetInfoHandler {
                 if (group == null){
                     try {
                         Socket socketClient = e.getValue();
-                        BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));;
+                        BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 
                         outClient.write(dataSend);
                         outClient.newLine();
@@ -85,7 +85,7 @@ public class GetInfoHandler {
                 if (acceptPairingHandler.getGroup(Integer.valueOf(e.getKey())) == null){
                     try {
                         Socket socketClient = e.getValue();
-                        BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));;
+                        BufferedWriter outClient = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 
                         outClient.write(dataSend);
                         outClient.newLine();
