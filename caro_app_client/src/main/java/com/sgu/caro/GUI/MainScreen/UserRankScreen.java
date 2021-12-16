@@ -173,7 +173,7 @@ public class UserRankScreen extends JFrame {
 
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject res = jsonArray.getJSONObject(i);
-				if(res.getInt("id")==12) {
+				if(res.getInt("id")==1) {
 					continue;
 				}
 				UserRank user = new UserRank(res.getInt("id"), res.getString("name"), res.getInt("win_rate"),
@@ -261,7 +261,7 @@ public class UserRankScreen extends JFrame {
 			
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject res = jsonArray.getJSONObject(i);
-				if(res.getInt("id")==12) {
+				if(res.getInt("id")==1) {
 					continue;
 				}
 				UserRank user = new UserRank(res.getInt("id"), res.getString("name"), res.getInt("win_rate"),
