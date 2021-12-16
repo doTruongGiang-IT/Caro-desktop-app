@@ -45,7 +45,7 @@ public class SocketConnection {
     private static ServerSocket server = null;
     private static String socketHost = "localhost";
     private static int socketPort = 5000;
-    public static Map<String, Socket> socketClients = new HashMap<String, Socket>();
+    public static Map<String, Socket> socketClients = new HashMap<String, Socket>(); // Danh sách client theo userID
 
     public SocketConnection() {
     }

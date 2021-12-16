@@ -29,10 +29,10 @@ public class SocketConnection {
     private static Socket socket = null;
     private static BufferedReader in = null;
     private static BufferedWriter out = null;
-    private static String socketHost = "172.104.108.31";    
-    private static int socketPort = 5000;
+    private static String socketHost = "172.104.108.31";    // IP của socket server 
+    private static int socketPort = 5000;                   // PORT của socket server 
     private static Map <String, SocketHandler> actions = new HashMap<String, SocketHandler>();
-    private static ArrayList<Thread> events = new ArrayList<Thread>();
+    private static ArrayList<Thread> events = new ArrayList<Thread>(); // Unused
 
     public SocketConnection() {}
     
@@ -138,7 +138,7 @@ public class SocketConnection {
     
     
         
-   public void sendData(String data){
+    public void sendData(String data){
         try {
             out.write(data);
             out.newLine();
