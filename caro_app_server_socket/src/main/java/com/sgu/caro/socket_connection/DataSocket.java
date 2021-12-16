@@ -186,8 +186,18 @@ public class DataSocket {
                 JSONObject element = new JSONObject();
                 element.put("user_1", group.getUser_1());
                 element.put("user_2", group.getUser_2());
-                element.put("username_1", group.getDataUser1().getName());
-                element.put("username_2", group.getDataUser2().getName());
+                if (group.getDataUser1() == null){
+                    element.put("username_1", "");
+                }
+                else{
+                    element.put("username_1", group.getDataUser1().getName());
+                }
+                if (group.getDataUser2() == null){
+                    element.put("username_2", "");
+                }
+                else{
+                    element.put("username_2", group.getDataUser2().getName());
+                }
                 element.put("number_of_watchers", group.getWatchers().size());
                 grouplist.add(element);
             }
