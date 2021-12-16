@@ -199,7 +199,8 @@ public class UpdateAcc extends JFrame implements ActionListener {
 				try {
 					checkLeftDay = new SimpleDateFormat("yyyy/MM/dd").parse("1900/01/01");
 					checkRightDay = new SimpleDateFormat("yyyy/MM/dd").parse("2021/01/01");
-					if(dateUserInput.after(checkLeftDay) && dateUserInput.before(checkRightDay)) {
+					
+					if((dateUserInput != null) && dateUserInput.after(checkLeftDay) && dateUserInput.before(checkRightDay)) {
 						strDayOfBirth = formatDay.format(dayOfBirth.getDate());
 						JSONObject jsonUpdateUser = new JSONObject();
 						/*
