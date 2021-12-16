@@ -117,6 +117,11 @@ public class SocketConnection {
 
             while (true) {
                 String rawDateReceive = in.readLine();
+                
+                if (rawDateReceive == null || rawDateReceive.trim().equals("")){
+                    continue;
+                }
+                
                 Logging.log(Logging.SOCKET_TYPE, "socket_received", "Received: " + rawDateReceive);
                 JSONObject dataReceive = dataSocket.importData(rawDateReceive);
                 JSONObject data = dataReceive.getJSONObject("data");
